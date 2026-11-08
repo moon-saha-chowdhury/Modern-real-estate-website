@@ -1,0 +1,23 @@
+import { PageIntro } from "@/components/common/PageIntro";
+import { SampleBadge } from "@/components/common/SampleBadge";
+import { pageMetadata } from "@/lib/constants/metadata";
+
+export const metadata = pageMetadata.contact;
+
+export default function Page() {
+  return (
+    <PageIntro
+      eyebrow="Contact"
+      index="04"
+      title={[
+        "Let’s build something",
+        <>
+          <em className="text-champagne">meaningful</em>.
+        </>,
+      ]}
+      intro={<p>Project enquiries, site visits and landowner partnerships.</p>}
+    >
+      <SampleBadge className="text-mist" label="In development — Milestone 7" />
+    </PageIntro>
+  );
+}

@@ -1,36 +1,79 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Meridian Developments
 
-## Getting Started
+Premium architectural real-estate website for **Meridian Developments**. The visual identity is
+**Midnight Forest — Architectural Luxury**.
 
-First, run the development server:
+|           |                                                                                          |
+| --------- | ---------------------------------------------------------------------------------------- |
+| Framework | Next.js 16.4 (App Router, Turbopack, Cache Components, Partial Prefetching)              |
+| Language  | TypeScript 5 (strict)                                                                    |
+| Styling   | Tailwind CSS v4: tokens in [`src/styles/tokens.css`](src/styles/tokens.css)              |
+| Motion    | GSAP + ScrollTrigger (scroll storytelling), Motion for React (UI), Lenis (smooth scroll) |
+| 3D        | React Three Fiber / three.js, loaded only on demand for the room tour (Milestone 6)      |
+| QA        | Playwright: behavioural tests and screenshots at 1440 / 1024 / 390 px                    |
+
+> **Next.js 16 note.** This version differs from older Next.js. Read the bundled docs in
+> `node_modules/next/dist/docs/` before using an API. In particular:
+> `new Date()` and other synchronous IO in server components must sit behind `'use cache'` or `<Suspense>`.
+> The images config needs an `images.qualities` allowlist.
+> `middleware` has been renamed to `proxy`.
+
+## Getting started
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev          # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+| Script                        | Purpose                                                   |
+| ----------------------------- | --------------------------------------------------------- |
+| `npm run dev`                 | Development server                                        |
+| `npm run build` / `npm start` | Production build / serve                                  |
+| `npm run lint`                | ESLint (Next core-web-vitals + TypeScript)                |
+| `npm run typecheck`           | `tsc --noEmit`                                            |
+| `npm run format`              | Prettier, with Tailwind class sorting                     |
+| `npm run test:e2e`            | Playwright behavioural tests (run `npm run build` first)  |
+| `npm run qa:screens`          | Writes visual QA screenshots to `.artifacts/screenshots/` |
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Playwright uses the locally installed Google Chrome (`channel: "chrome"`). To use the bundled Chromium instead, run `npx playwright install chromium` and set `PW_CHANNEL=""`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Project structure
 
-## Learn More
+```
+src/
+  app/                    Routes (App Router). Pages compose sections; no business logic here.
+    styleguide/           Internal design-system reference (noindex, not in nav)
+  components/
+    layout/               Navbar, MobileNavigation, Footer, Providers, SmoothScroll, Wordmark
+    common/               Button, Container, Section, SectionHeading, Eyebrow, TextReveal,
+                          Reveal, ImageReveal, PageIntro, SampleBadge
+    home/ projects/ virtual-tour/   (added in later milestones)
+  data/                   Company + project content (typed). Placeholder content is flagged.
+  lib/
+    animations/           eases.ts (shared motion vocabulary), gsap.ts (registers plugins once)
+    constants/            Site config and navigation
+    utils/                cn(), nav helpers
+    fonts.ts              next/font: Google Sans Flex · Manrope · IBM Plex Mono
+  hooks/                  useMediaQuery, usePrefersReducedMotion
+  types/                  company.ts, project.ts (project data model)
+  styles/tokens.css       Design tokens (colour, type scale, spacing, motion)
+tests/                    Playwright: e2e/ and visual/
+docs/                     Design system, asset requirements, workflow
+.claude/skills/           Project-specific Claude Code skills
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Content integrity
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+This site must never present invented company information as fact.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Records in `src/data/` carry `isPlaceholder: true` until real data replaces them.
+- Any UI that renders placeholder content must show a `<SampleBadge />`.
+- Stock photography (Unsplash) is marked `isSample: true` with a `credit`, and is labelled in the UI.
+- Statistics, testimonials, contact details and locations stay hidden until real data is supplied.
 
-## Deploy on Vercel
+## Documentation
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [docs/DESIGN-SYSTEM.md](docs/DESIGN-SYSTEM.md): Midnight Forest tokens, typography, layout and motion rules
+- [docs/ASSETS.md](docs/ASSETS.md): assets and information needed from Meridian
+- [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md): Git branching, commits and milestone workflow
+- [docs/ROADMAP.md](docs/ROADMAP.md): milestones and status
