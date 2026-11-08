@@ -39,3 +39,21 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# allow committing an env template
+!.env.example
+
+# playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
+# local QA output (screenshots, encoded media scratch)
+/.artifacts/
+
+# editors / OS
+.idea/
+.vscode/*
+!.vscode/extensions.json
+Thumbs.db
