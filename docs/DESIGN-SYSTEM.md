@@ -16,7 +16,7 @@ Source of truth: [`src/styles/tokens.css`](../src/styles/tokens.css). Live refer
 | `charcoal`               | #141914 | Footer, trust section, image placeholders                     |
 | `sage`                   | #647C62 | Decorative / large type only (4.0:1 on obsidian)              |
 | `brand`                  | #337418 | Accent: active marks, progress lines, focus on light surfaces |
-| `champagne`              | #C2B99F | Italic emphasis, numerals, eyebrows on dark                   |
+| `champagne`              | #C2B99F | Slanted emphasis, numerals, eyebrows on dark                  |
 | `ivory`                  | #F1EFE7 | Light sections; primary text on dark                          |
 | `mist`                   | #A5AAA1 | Secondary text on dark                                        |
 | `line`                   | #303A32 | Hairlines on dark                                             |
@@ -46,13 +46,13 @@ Source of truth: [`src/styles/tokens.css`](../src/styles/tokens.css). Live refer
 
 ## Typography
 
-| Role    | Font                                | Utility                                         |
-| ------- | ----------------------------------- | ----------------------------------------------- |
-| Display | Instrument Serif (regular + italic) | `font-display text-display-{xl,lg,md,sm}`       |
-| Body    | Manrope (variable)                  | `text-lead`, `text-body`, `text-small`          |
-| Labels  | IBM Plex Mono 400/500               | `label-mono` (11px, uppercase, 0.14em tracking) |
+| Role    | Font                                                    | Utility                                         |
+| ------- | ------------------------------------------------------- | ----------------------------------------------- |
+| Display | Google Sans Flex (variable: `opsz`, `slnt`), weight 340 | `font-display text-display-{xl,lg,md,sm}`       |
+| Body    | Manrope (variable)                                      | `text-lead`, `text-body`, `text-small`          |
+| Labels  | IBM Plex Mono 400/500                                   | `label-mono` (11px, uppercase, 0.14em tracking) |
 
-- Use italic for emphasis (`<em>`, champagne on dark), at most once per heading.
+- Emphasis is `<em>`: a −10° slant (`slnt` axis; the family has no italic) at weight 300, in champagne on dark. Use it at most once per heading.
 - Break heading lines deliberately: pass `lines={[…]}` to `TextReveal` / `SectionHeading`.
 - Only the hero uses `display-xl`. Page openers use `display-lg` and section headings use `display-md`.
 - Cap body measure near 70ch (`max-w-prose`).

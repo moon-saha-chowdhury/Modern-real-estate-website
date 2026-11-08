@@ -1,12 +1,8 @@
-import type { Metadata } from "next";
 import { PageIntro } from "@/components/common/PageIntro";
 import { SampleBadge } from "@/components/common/SampleBadge";
+import { pageMetadata } from "@/lib/constants/metadata";
 
-export const metadata: Metadata = {
-  title: "Expertise",
-  description:
-    "Residential and commercial development, architecture, engineering, project management and landowner partnership.",
-};
+export const metadata = pageMetadata.expertise;
 
 export default function Page() {
   return (

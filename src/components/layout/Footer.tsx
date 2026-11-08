@@ -1,18 +1,11 @@
 import Link from "next/link";
-import type { ReactNode } from "react";
 import { cacheLife } from "next/cache";
 import { Container } from "@/components/common/Container";
 import { SampleBadge } from "@/components/common/SampleBadge";
 import { company } from "@/data/company";
-import { legalNav, mainNav } from "@/lib/constants/site";
-
-const portfolioLinks = [
-  { label: "Residential", href: "/projects?category=residential" },
-  { label: "Commercial", href: "/projects?category=commercial" },
-  { label: "Upcoming", href: "/projects?status=upcoming" },
-  { label: "Ongoing", href: "/projects?status=ongoing" },
-  { label: "Completed", href: "/projects?status=completed" },
-];
+import { legalNav, mainNav, portfolioNav } from "@/lib/constants/site";
+import { FOOTER_LINK_CLASS as linkClass } from "@/lib/constants/ui";
+import type { FooterColumnProps } from "@/types/ui";
 
 /** Cached so `new Date()` stays out of the prerendered shell (Cache Components). */
 async function CurrentYear() {
@@ -21,7 +14,7 @@ async function CurrentYear() {
   return <>{new Date().getFullYear()}</>;
 }
 
-function FooterColumn({ title, children }: { title: string; children: ReactNode }) {
+function FooterColumn({ title, children }: FooterColumnProps) {
   return (
     <div className="flex flex-col gap-5">
       <h2 className="label-mono text-champagne">{title}</h2>
@@ -29,9 +22,6 @@ function FooterColumn({ title, children }: { title: string; children: ReactNode 
     </div>
   );
 }
-
-const linkClass =
-  "text-small text-ivory/70 transition-colors duration-300 hover:text-ivory focus-visible:text-ivory";
 
 export function Footer() {
   const { contact, social } = company;
@@ -71,7 +61,7 @@ export function Footer() {
         <div className="col-span-2 lg:col-span-2">
           <FooterColumn title="Portfolio">
             <ul className="flex flex-col gap-3">
-              {portfolioLinks.map((item) => (
+              {portfolioNav.map((item) => (
                 <li key={item.href}>
                   <Link href={item.href} className={linkClass}>
                     {item.label}
@@ -129,7 +119,7 @@ export function Footer() {
       {/* Oversized wordmark, cropped by the page edge */}
       <div aria-hidden="true" className="pointer-events-none select-none">
         <Container>
-          <p className="translate-y-[0.22em] font-display text-[clamp(5.5rem,25vw,23rem)] leading-[0.8] tracking-[-0.03em] text-ivory/[0.06]">
+          <p className="translate-y-[0.22em] font-display text-[clamp(5.5rem,25vw,23rem)] leading-[0.8] tracking-[-0.03em] text-ivory/6">
             Meridian
           </p>
         </Container>

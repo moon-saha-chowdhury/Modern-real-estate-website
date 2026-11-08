@@ -21,3 +21,12 @@ export const legalNav: NavItem[] = [
 ];
 
 export const primaryCta: NavItem = { label: "Explore Projects", href: "/projects" };
+
+/** Portfolio shortcuts (footer). Query params are read by the /projects filters in Milestone 4. */
+export const portfolioNav: NavItem[] = [
+  { label: "Residential", href: "/projects?category=residential" },
+  { label: "Commercial", href: "/projects?category=commercial" },
+  { label: "Upcoming", href: "/projects?status=upcoming" },
+  { label: "Ongoing", href: "/projects?status=ongoing" },
+  { label: "Completed", href: "/projects?status=completed" },
+];

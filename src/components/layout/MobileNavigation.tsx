@@ -10,12 +10,7 @@ import { DURATION, EASE_MERIDIAN, EASE_MERIDIAN_IN_OUT } from "@/lib/animations/
 import { mainNav, primaryCta } from "@/lib/constants/site";
 import { cn } from "@/lib/utils/cn";
 import { isActive } from "@/lib/utils/nav";
-
-interface MobileNavigationProps {
-  open: boolean;
-  pathname: string;
-  onNavigate: () => void;
-}
+import type { MobileNavigationProps } from "@/types/ui";
 
 /**
  * Full-screen editorial menu (below lg). The panel wipes down like a drawing sheet,

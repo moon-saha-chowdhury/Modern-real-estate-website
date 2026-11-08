@@ -13,7 +13,7 @@ Read `docs/DESIGN-SYSTEM.md` and `src/styles/tokens.css` first. Use the tokens a
 2. **Each section gets its own composition.** Before building, write one sentence describing the layout and check it differs from the sections either side of it.
 3. **Image-led.** Photography carries the emotion. Crop deliberately: tall portrait (4:5, 3:4) against wide (16:9, 21:9). Let images bleed to one edge of the screen.
 4. **Hairlines, not boxes.** Separate content with `border-line` / `border-line-light` rules and whitespace. No rounded cards, shadows, glassmorphism or gradient fills.
-5. **Type does the work.** Use serif display with one italic emphasis in champagne, mono labels as annotations, and body text in mist / ink-soft.
+5. **Type does the work.** Use light Google Sans Flex display type with one slanted `<em>` emphasis in champagne, mono labels as annotations, and body text in mist / ink-soft.
 6. **Surface rhythm.** Follow the section sequence in DESIGN-SYSTEM.md. Two adjacent sections never share a tone.
 7. **Green is rare.** `brand` is only for active markers, progress lines and links on ivory. Never put brand on forest.
 
@@ -33,3 +33,8 @@ Read `docs/DESIGN-SYSTEM.md` and `src/styles/tokens.css` first. Use the tokens a
 - Would this section look at home on an international architecture studio's site?
 - Remove one element. Is it better? If so, leave it out.
 - Is placeholder content visibly labelled?
+
+## Relationship to `apple-design`
+
+Use `apple-design` for interaction craft: press feedback, springs, gestures, interruptibility, type tracking and reduced-motion fallbacks.
+Where it conflicts with this skill or the master prompt, **this skill wins**. For example, it recommends translucent `backdrop-filter` chrome and system fonts, but Meridian uses solid surfaces and its own font set.

@@ -1,13 +1,5 @@
-import type { ReactNode } from "react";
 import { cn } from "@/lib/utils/cn";
-
-interface EyebrowProps {
-  children: ReactNode;
-  /** Optional drawing-set style index, e.g. "01". */
-  index?: string;
-  className?: string;
-  as?: "p" | "span" | "h2";
-}
+import type { EyebrowProps } from "@/types/ui";
 
 /** Small uppercase technical label — reads like an annotation on an architectural drawing. */
 export function Eyebrow({ children, index, className, as: Tag = "p" }: EyebrowProps) {

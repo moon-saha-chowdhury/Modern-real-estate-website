@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils/cn";
+import type { WordmarkProps } from "@/types/ui";
 
 /**
  * Typographic wordmark — stands in until the official logo (SVG) is supplied.
  */
-export function Wordmark({ className, onClick }: { className?: string; onClick?: () => void }) {
+export function Wordmark({ className, onClick }: WordmarkProps) {
   return (
     <Link
       href="/"

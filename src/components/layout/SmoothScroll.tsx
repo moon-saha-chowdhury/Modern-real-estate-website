@@ -1,18 +1,11 @@
 "use client";
 
 import Lenis from "lenis";
-import { createContext, useContext, useEffect, useMemo, useRef, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, type ReactNode } from "react";
 import { gsap, ScrollTrigger } from "@/lib/animations/gsap";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
-
-interface SmoothScrollApi {
-  /** Current Lenis instance, or null when smooth scrolling is disabled (reduced motion). */
-  get: () => Lenis | null;
-  lock: () => void;
-  unlock: () => void;
-}
-
-const SmoothScrollContext = createContext<SmoothScrollApi | null>(null);
+import { SmoothScrollContext } from "@/lib/context/smooth-scroll";
+import type { SmoothScrollApi } from "@/types/ui";
 
 /**
  * Lenis smooth scrolling driven by GSAP's ticker so ScrollTrigger and Lenis share one clock.
@@ -56,10 +49,4 @@ export function SmoothScroll({ children }: { children: ReactNode }) {
   );
 
   return <SmoothScrollContext.Provider value={api}>{children}</SmoothScrollContext.Provider>;
-}
-
-export function useSmoothScroll(): SmoothScrollApi {
-  const ctx = useContext(SmoothScrollContext);
-  if (!ctx) throw new Error("useSmoothScroll must be used inside <SmoothScroll>");
-  return ctx;
 }

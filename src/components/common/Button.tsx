@@ -1,62 +1,38 @@
 import Link from "next/link";
-import type { ComponentPropsWithoutRef } from "react";
 import { ArrowUpRight } from "lucide-react";
+import { BUTTON_VARIANT_CLASSES } from "@/lib/constants/ui";
 import { cn } from "@/lib/utils/cn";
-
-type Variant = "primary" | "outline" | "text";
-type Surface = "dark" | "light";
-
-interface BaseProps {
-  /** String label — rendered twice for the vertical "roll" hover. */
-  children: string;
-  variant?: Variant;
-  /** Background the button sits on. */
-  surface?: Surface;
-  icon?: boolean;
-  className?: string;
-}
-
-type ButtonAsLink = BaseProps & { href: string } & Omit<
-    ComponentPropsWithoutRef<typeof Link>,
-    "children" | "className" | "href"
-  >;
-type ButtonAsButton = BaseProps & { href?: undefined } & Omit<
-    ComponentPropsWithoutRef<"button">,
-    "children" | "className"
-  >;
-
-export type ButtonProps = ButtonAsLink | ButtonAsButton;
-
-const variants: Record<Variant, Record<Surface, string>> = {
-  primary: {
-    dark: "bg-ivory text-obsidian hover:bg-champagne",
-    light: "bg-obsidian text-ivory hover:bg-forest",
-  },
-  outline: {
-    dark: "border border-ivory/25 text-ivory hover:border-ivory/80",
-    light: "border border-obsidian/25 text-obsidian hover:border-obsidian/80",
-  },
-  text: {
-    dark: "text-ivory",
-    light: "text-obsidian",
-  },
-};
+import type {
+  ButtonAsButton,
+  ButtonAsLink,
+  ButtonBaseProps,
+  ButtonProps,
+  ButtonVariant,
+  Surface,
+} from "@/types/ui";
 
 export function buttonClasses(
-  variant: Variant = "primary",
+  variant: ButtonVariant = "primary",
   surface: Surface = "dark",
   className?: string,
 ) {
   return cn(
-    "group/btn relative inline-flex items-center gap-3 label-mono whitespace-nowrap",
-    "transition-colors duration-500 ease-meridian disabled:pointer-events-none disabled:opacity-50",
+    "group/btn relative inline-flex items-center gap-3 label-mono whitespace-nowrap select-none",
+    "transition-[color,background-color,border-color,scale] duration-500 ease-meridian",
+    // Press feedback lands on pointer-down, instantly (apple-design §1)
+    "active:scale-[0.98] active:duration-100",
+    "disabled:pointer-events-none disabled:opacity-50",
     variant === "text" ? "h-auto py-2" : "h-12 px-6",
-    variants[variant][surface],
+    BUTTON_VARIANT_CLASSES[variant][surface],
     className,
   );
 }
 
-function Inner({ children, icon, variant }: Pick<BaseProps, "children" | "icon" | "variant">) {
+function Inner({
+  children,
+  icon,
+  variant,
+}: Pick<ButtonBaseProps, "children" | "icon" | "variant">) {
   return (
     <>
       <span className="relative block overflow-hidden">

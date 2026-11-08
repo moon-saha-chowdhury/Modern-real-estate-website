@@ -1,18 +1,7 @@
-import type { ReactNode } from "react";
 import { cn } from "@/lib/utils/cn";
+import type { SectionHeadingProps } from "@/types/ui";
 import { Eyebrow } from "./Eyebrow";
 import { TextReveal } from "./TextReveal";
-
-interface SectionHeadingProps {
-  eyebrow: string;
-  index?: string;
-  /** Controlled line breaks — one entry per line. */
-  title: ReactNode[];
-  intro?: ReactNode;
-  size?: "md" | "lg";
-  as?: "h1" | "h2";
-  className?: string;
-}
 
 /**
  * Editorial heading block: annotation label, serif statement, optional intro offset to the right.

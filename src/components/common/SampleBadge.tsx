@@ -1,16 +1,11 @@
 import { cn } from "@/lib/utils/cn";
+import type { SampleBadgeProps } from "@/types/ui";
 
 /**
  * Marks placeholder content. Required wherever `isPlaceholder` / `isSample` data is rendered,
  * so sample material is never mistaken for real company information.
  */
-export function SampleBadge({
-  className,
-  label = "Sample content",
-}: {
-  className?: string;
-  label?: string;
-}) {
+export function SampleBadge({ className, label = "Sample content" }: SampleBadgeProps) {
   return (
     <span
       className={cn(

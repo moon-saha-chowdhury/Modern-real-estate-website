@@ -53,7 +53,7 @@ src/
     animations/           eases.ts (shared motion vocabulary), gsap.ts (registers plugins once)
     constants/            Site config and navigation
     utils/                cn(), nav helpers
-    fonts.ts              next/font: Instrument Serif · Manrope · IBM Plex Mono
+    fonts.ts              next/font: Google Sans Flex · Manrope · IBM Plex Mono
   hooks/                  useMediaQuery, usePrefersReducedMotion
   types/                  company.ts, project.ts (project data model)
   styles/tokens.css       Design tokens (colour, type scale, spacing, motion)

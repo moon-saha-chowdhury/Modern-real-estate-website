@@ -1,20 +1,10 @@
 "use client";
 
 import { motion } from "motion/react";
-import type { ElementType, ReactNode } from "react";
 import { DURATION, EASE_MERIDIAN, STAGGER } from "@/lib/animations/eases";
+import { LINE_STAGGER_MULTIPLIER, VIEWPORT_TEXT } from "@/lib/animations/presets";
 import { cn } from "@/lib/utils/cn";
-
-interface TextRevealProps {
-  /** Each entry is one deliberately controlled line. Supports inline markup (e.g. <em>). */
-  lines: ReactNode[];
-  as?: ElementType;
-  className?: string;
-  lineClassName?: string;
-  delay?: number;
-  /** Animate on mount instead of when scrolled into view (hero). */
-  immediate?: boolean;
-}
+import type { TextRevealProps } from "@/types/ui";
 
 /**
  * Line-by-line masked reveal. Each line slides up from behind its own mask.
@@ -28,8 +18,6 @@ export function TextReveal({
   delay = 0,
   immediate = false,
 }: TextRevealProps) {
-  const viewport = { once: true, margin: "0px 0px -12% 0px" } as const;
-
   return (
     <Tag className={className}>
       {lines.map((line, i) => (
@@ -40,11 +28,13 @@ export function TextReveal({
           <motion.span
             className="block will-change-transform"
             initial={{ y: "105%" }}
-            {...(immediate ? { animate: { y: "0%" } } : { whileInView: { y: "0%" }, viewport })}
+            {...(immediate
+              ? { animate: { y: "0%" } }
+              : { whileInView: { y: "0%" }, viewport: VIEWPORT_TEXT })}
             transition={{
               duration: DURATION.reveal,
               ease: EASE_MERIDIAN,
-              delay: delay + i * STAGGER * 1.5,
+              delay: delay + i * STAGGER * LINE_STAGGER_MULTIPLIER,
             }}
           >
             {line}

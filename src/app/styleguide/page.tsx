@@ -1,55 +1,16 @@
-import type { Metadata } from "next";
 import { Button } from "@/components/common/Button";
 import { Container } from "@/components/common/Container";
 import { Eyebrow } from "@/components/common/Eyebrow";
 import { SampleBadge } from "@/components/common/SampleBadge";
-import { Section, type SectionTone } from "@/components/common/Section";
+import { Section } from "@/components/common/Section";
 import { SectionHeading } from "@/components/common/SectionHeading";
+import { pageMetadata } from "@/lib/constants/metadata";
+import { COLOUR_SWATCHES, TYPE_SPECIMENS } from "@/lib/constants/styleguide";
+import { SECTION_TONES } from "@/lib/constants/ui";
+import { surfaceOf } from "@/lib/utils/surface";
 
 /** Internal design-system reference. Not linked from navigation and excluded from indexing. */
-export const metadata: Metadata = {
-  title: "Design system",
-  robots: { index: false, follow: false },
-};
-
-const colours = [
-  { name: "Obsidian", token: "obsidian", hex: "#101713", role: "Primary dark", text: "ivory" },
-  { name: "Forest", token: "forest", hex: "#1E3027", role: "Deep forest", text: "ivory" },
-  { name: "Charcoal", token: "charcoal", hex: "#141914", role: "Secondary dark", text: "ivory" },
-  { name: "Sage", token: "sage", hex: "#647C62", role: "Muted accent · large type", text: "ivory" },
-  { name: "Brand", token: "brand", hex: "#337418", role: "Deliberate accent", text: "ivory" },
-  {
-    name: "Champagne",
-    token: "champagne",
-    hex: "#C2B99F",
-    role: "Editorial highlight",
-    text: "obsidian",
-  },
-  { name: "Ivory", token: "ivory", hex: "#F1EFE7", role: "Light surface · text", text: "obsidian" },
-  { name: "Mist", token: "mist", hex: "#A5AAA1", role: "Secondary text", text: "obsidian" },
-  { name: "Line", token: "line", hex: "#303A32", role: "Borders", text: "ivory" },
-] as const;
-
-const swatchBg: Record<string, string> = {
-  obsidian: "bg-obsidian",
-  forest: "bg-forest",
-  charcoal: "bg-charcoal",
-  sage: "bg-sage",
-  brand: "bg-brand",
-  champagne: "bg-champagne",
-  ivory: "bg-ivory",
-  mist: "bg-mist",
-  line: "bg-line",
-};
-
-const typeScale = [
-  { label: "Display XL", className: "text-display-xl", sample: "Shaping tomorrow" },
-  { label: "Display LG", className: "text-display-lg", sample: "Selected developments" },
-  { label: "Display MD", className: "text-display-md", sample: "From land to landmark" },
-  { label: "Display SM", className: "text-display-sm", sample: "Engineering excellence" },
-];
-
-const tones: SectionTone[] = ["obsidian", "forest", "charcoal", "ivory"];
+export const metadata = pageMetadata.styleguide;
 
 export default function StyleguidePage() {
   return (
@@ -87,9 +48,9 @@ export default function StyleguidePage() {
             Colour
           </Eyebrow>
           <ul className="grid grid-cols-2 gap-px border border-line bg-line md:grid-cols-3 lg:grid-cols-9">
-            {colours.map((c) => (
+            {COLOUR_SWATCHES.map((c) => (
               <li key={c.token} className="flex flex-col bg-charcoal">
-                <div className={`${swatchBg[c.token]} aspect-[3/4] lg:aspect-[1/2]`} />
+                <div className={`${c.swatchClass} aspect-[3/4] lg:aspect-[1/2]`} />
                 <div className="flex flex-col gap-1 p-4">
                   <span className="text-small text-ivory">{c.name}</span>
                   <span className="label-mono text-mist">{c.hex}</span>
@@ -105,15 +66,14 @@ export default function StyleguidePage() {
       <Section tone="obsidian" spacing="compact">
         <Container className="flex flex-col gap-12">
           <Eyebrow index="02" className="text-champagne">
-            Typography
+            Typography — Google Sans Flex · Manrope · IBM Plex Mono
           </Eyebrow>
           <div className="flex flex-col divide-y divide-line border-y border-line">
-            {typeScale.map((t) => (
+            {TYPE_SPECIMENS.map((t) => (
               <div key={t.label} className="grid-editorial items-baseline gap-y-3 py-8">
                 <span className="col-span-full label-mono text-mist lg:col-span-2">{t.label}</span>
                 <p className={`col-span-full font-display lg:col-span-10 ${t.className}`}>
-                  {t.sample.split(" ").slice(0, -1).join(" ")}{" "}
-                  <em className="text-champagne">{t.sample.split(" ").slice(-1)}</em>
+                  {t.sample} <em className="text-champagne">{t.emphasis}</em>
                 </p>
               </div>
             ))}
@@ -157,8 +117,8 @@ export default function StyleguidePage() {
           </Eyebrow>
         </Container>
         <div className="mt-12 flex flex-col">
-          {tones.map((tone) => {
-            const surface = tone === "ivory" ? "light" : "dark";
+          {SECTION_TONES.map((tone) => {
+            const surface = surfaceOf(tone);
             return (
               <Section key={tone} tone={tone} spacing="none" className="py-14">
                 <Container className="flex flex-col gap-8 md:flex-row md:items-center md:justify-between">

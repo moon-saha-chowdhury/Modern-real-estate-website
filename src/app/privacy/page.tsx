@@ -1,11 +1,8 @@
-import type { Metadata } from "next";
 import { PageIntro } from "@/components/common/PageIntro";
 import { SampleBadge } from "@/components/common/SampleBadge";
+import { pageMetadata } from "@/lib/constants/metadata";
 
-export const metadata: Metadata = {
-  title: "Privacy policy",
-  description: "Privacy policy for Meridian Developments.",
-};
+export const metadata = pageMetadata.privacy;
 
 export default function Page() {
   return (

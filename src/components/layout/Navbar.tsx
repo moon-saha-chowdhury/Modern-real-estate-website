@@ -9,7 +9,7 @@ import { mainNav, primaryCta } from "@/lib/constants/site";
 import { cn } from "@/lib/utils/cn";
 import { isActive } from "@/lib/utils/nav";
 import { MobileNavigation } from "./MobileNavigation";
-import { useSmoothScroll } from "./SmoothScroll";
+import { useSmoothScroll } from "@/lib/context/smooth-scroll";
 import { Wordmark } from "./Wordmark";
 
 /**

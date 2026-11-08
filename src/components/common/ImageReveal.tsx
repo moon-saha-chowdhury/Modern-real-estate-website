@@ -1,28 +1,20 @@
 "use client";
 
 import { motion } from "motion/react";
-import Image, { type ImageProps } from "next/image";
+import Image from "next/image";
 import { DURATION, EASE_MERIDIAN } from "@/lib/animations/eases";
+import {
+  CLIP_HIDDEN,
+  CLIP_VISIBLE,
+  IMAGE_SETTLE_SCALE,
+  VIEWPORT_IMAGE,
+} from "@/lib/animations/presets";
 import { cn } from "@/lib/utils/cn";
-
-interface ImageRevealProps extends Omit<ImageProps, "className"> {
-  /** Wrapper classes — set the aspect ratio / size here (e.g. "aspect-[4/5]"). */
-  className?: string;
-  imageClassName?: string;
-  /** Direction the mask opens from. */
-  from?: "bottom" | "left" | "right";
-  delay?: number;
-}
-
-const hidden = {
-  bottom: "inset(100% 0% 0% 0%)",
-  left: "inset(0% 100% 0% 0%)",
-  right: "inset(0% 0% 0% 100%)",
-};
+import type { ImageRevealProps } from "@/types/ui";
 
 /**
  * Architectural image mask reveal: the frame opens while the photograph settles from a slight scale.
- * Always uses next/image with `fill` — the wrapper controls cropping.
+ * Always uses next/image with `fill`; the wrapper controls cropping.
  */
 export function ImageReveal({
   className,
@@ -34,21 +26,20 @@ export function ImageReveal({
   ...imageProps
 }: ImageRevealProps) {
   const transition = { duration: DURATION.hero, ease: EASE_MERIDIAN, delay };
-  const viewport = { once: true, margin: "0px 0px -15% 0px" } as const;
 
   return (
     <motion.div
       className={cn("relative overflow-hidden bg-charcoal", className)}
-      initial={{ clipPath: hidden[from] }}
-      whileInView={{ clipPath: "inset(0% 0% 0% 0%)" }}
-      viewport={viewport}
+      initial={{ clipPath: CLIP_HIDDEN[from] }}
+      whileInView={{ clipPath: CLIP_VISIBLE }}
+      viewport={VIEWPORT_IMAGE}
       transition={transition}
     >
       <motion.div
         className="absolute inset-0"
-        initial={{ scale: 1.12 }}
+        initial={{ scale: IMAGE_SETTLE_SCALE }}
         whileInView={{ scale: 1 }}
-        viewport={viewport}
+        viewport={VIEWPORT_IMAGE}
         transition={{ ...transition, duration: DURATION.hero * 1.4 }}
       >
         <Image

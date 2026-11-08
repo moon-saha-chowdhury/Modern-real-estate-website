@@ -1,17 +1,9 @@
 "use client";
 
 import { motion } from "motion/react";
-import type { ReactNode } from "react";
 import { DURATION, EASE_MERIDIAN } from "@/lib/animations/eases";
-
-interface RevealProps {
-  children: ReactNode;
-  className?: string;
-  delay?: number;
-  /** Distance in px to travel upward. */
-  y?: number;
-  immediate?: boolean;
-}
+import { VIEWPORT_BLOCK } from "@/lib/animations/presets";
+import type { RevealProps } from "@/types/ui";
 
 /** Quiet fade-and-rise for supporting content (paragraphs, CTAs, metadata). */
 export function Reveal({ children, className, delay = 0, y = 24, immediate = false }: RevealProps) {
@@ -23,7 +15,7 @@ export function Reveal({ children, className, delay = 0, y = 24, immediate = fal
         ? { animate: { opacity: 1, y: 0 } }
         : {
             whileInView: { opacity: 1, y: 0 },
-            viewport: { once: true, margin: "0px 0px -10% 0px" },
+            viewport: VIEWPORT_BLOCK,
           })}
       transition={{ duration: DURATION.reveal, ease: EASE_MERIDIAN, delay }}
     >

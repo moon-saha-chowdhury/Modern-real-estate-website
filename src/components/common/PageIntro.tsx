@@ -1,17 +1,9 @@
-import type { ReactNode } from "react";
 import { Container } from "./Container";
 import { Eyebrow } from "./Eyebrow";
 import { Reveal } from "./Reveal";
 import { Section } from "./Section";
 import { TextReveal } from "./TextReveal";
-
-interface PageIntroProps {
-  eyebrow: string;
-  index?: string;
-  title: ReactNode[];
-  intro?: ReactNode;
-  children?: ReactNode;
-}
+import type { PageIntroProps } from "@/types/ui";
 
 /** Editorial page opener used by inner pages (About, Projects, Expertise, Contact …). */
 export function PageIntro({ eyebrow, index, title, intro, children }: PageIntroProps) {

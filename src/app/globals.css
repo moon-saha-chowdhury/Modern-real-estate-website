@@ -65,11 +65,21 @@
   font-weight: 500;
 }
 
-/* Display serif with optical tweaks */
+/* Display: Google Sans Flex, light weight, optical sizing on */
 @utility font-display {
   font-family: var(--font-display);
-  font-weight: 400;
+  font-weight: var(--display-weight);
+  font-optical-sizing: auto;
   font-feature-settings: "kern", "liga";
+}
+
+/* Editorial emphasis inside display type: slant axis (no italic in this family) */
+@layer base {
+  .font-display em {
+    font-style: normal;
+    font-weight: var(--display-weight-em);
+    font-variation-settings: "slnt" -10;
+  }
 }
 
 /* 4 / 8 / 12-column editorial grid */
