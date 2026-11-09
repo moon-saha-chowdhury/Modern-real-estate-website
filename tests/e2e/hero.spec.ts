@@ -1,66 +1,74 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
-const videoTime = (page: import("@playwright/test").Page) =>
-  page.locator("[data-hero-root] video").evaluate((v: HTMLVideoElement) => v.currentTime);
+/** Counts canvas draws so tests can see the image sequence updating. */
+async function trackDraws(page: Page) {
+  await page.addInitScript(() => {
+    const w = window as unknown as { __draws: number };
+    w.__draws = 0;
+    const original = CanvasRenderingContext2D.prototype.drawImage as (...a: unknown[]) => void;
+    CanvasRenderingContext2D.prototype.drawImage = function (
+      this: CanvasRenderingContext2D,
+      ...args: unknown[]
+    ) {
+      w.__draws++;
+      return original.apply(this, args);
+    } as typeof CanvasRenderingContext2D.prototype.drawImage;
+  });
+}
 
-test.describe("hero building transformation", () => {
+const draws = (page: Page) =>
+  page.evaluate(() => (window as unknown as { __draws: number }).__draws);
+
+test.describe("hero building transformation (image sequence)", () => {
   test.use({ viewport: { width: 1440, height: 900 } });
 
-  test("scroll scrubs the video forward and back, title fades, stage advances", async ({
-    page,
-  }) => {
+  test("scroll advances and reverses the build; title stays put", async ({ page }) => {
+    await trackDraws(page);
     await page.goto("/", { waitUntil: "networkidle" });
-    const video = page.locator("[data-hero-root] video");
-    await expect
-      .poll(() => video.evaluate((v: HTMLVideoElement) => v.readyState), { timeout: 15000 })
-      .toBeGreaterThanOrEqual(1);
+    const label = page.locator("[data-stage-label]");
+    await expect(label).toHaveText("Foundation");
+    await expect.poll(() => draws(page), { timeout: 10000 }).toBeGreaterThan(0);
 
-    expect(await videoTime(page)).toBeLessThan(0.1);
-    await expect(page.locator("#hero-title")).toBeVisible();
+    const title = page.locator("#hero-title");
+    const titleTop = await title.evaluate((el) => el.getBoundingClientRect().top);
 
-    // Scroll deep into the pinned sequence.
-    for (let i = 0; i < 12; i++) {
+    for (let i = 0; i < 8; i++) {
       await page.mouse.wheel(0, 180);
       await page.waitForTimeout(60);
     }
-    await expect.poll(() => videoTime(page), { timeout: 10000 }).toBeGreaterThan(2);
-    // Faded visually, but the h1 stays exposed to assistive tech.
-    await expect
-      .poll(() =>
-        page.locator("[data-hero-copy]").evaluate((el) => Number(getComputedStyle(el).opacity)),
-      )
-      .toBeLessThan(0.05);
-    await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
-    await expect(page.locator("[data-stage-label]")).not.toHaveText("Foundation");
-    const forward = await videoTime(page);
+    await expect(label).not.toHaveText("Foundation", { timeout: 10000 });
+    const drawsForward = await draws(page);
+    expect(drawsForward).toBeGreaterThan(5);
 
-    // Scrolling back up reverses the build.
-    for (let i = 0; i < 6; i++) {
+    // Still inside the pin (1440px of 2160px): the title does not move or fade.
+    expect(await title.evaluate((el) => el.getBoundingClientRect().top)).toBeCloseTo(titleTop, 0);
+    expect(await title.evaluate((el) => Number(getComputedStyle(el).opacity))).toBe(1);
+
+    for (let i = 0; i < 8; i++) {
       await page.mouse.wheel(0, -180);
       await page.waitForTimeout(60);
     }
-    await expect.poll(() => videoTime(page), { timeout: 10000 }).toBeLessThan(forward - 0.5);
+    await expect(label).toHaveText("Foundation", { timeout: 10000 });
+    expect(await draws(page)).toBeGreaterThan(drawsForward);
   });
 
-  test("the video is silent and never autoplays", async ({ page }) => {
-    await page.goto("/", { waitUntil: "networkidle" });
-    const state = await page
-      .locator("[data-hero-root] video")
-      .evaluate((v: HTMLVideoElement) => ({ muted: v.muted, autoplay: v.autoplay, loop: v.loop }));
-    expect(state).toEqual({ muted: true, autoplay: false, loop: false });
+  test("uses a canvas, not a video", async ({ page }) => {
+    await page.goto("/");
+    await expect(page.locator("[data-hero-root] canvas")).toHaveCount(1);
+    await expect(page.locator("[data-hero-root] video")).toHaveCount(0);
   });
 });
 
 test.describe("hero with reduced motion", () => {
   test.use({ viewport: { width: 1440, height: 900 }, reducedMotion: "reduce" });
 
-  test("shows the finished building as a still image and keeps the title", async ({ page }) => {
+  test("draws the finished building once and does not pin", async ({ page }) => {
+    await trackDraws(page);
     await page.goto("/", { waitUntil: "networkidle" });
-    await expect(page.locator("[data-hero-root] video")).toBeHidden();
-    await expect(page.locator("[data-hero-root] img")).toBeVisible();
+    await expect.poll(() => draws(page), { timeout: 10000 }).toBeGreaterThan(0);
+    await expect(page.locator("#hero-title")).toBeVisible();
     await page.mouse.wheel(0, 900);
     await page.waitForTimeout(400);
-    // No pin under reduced motion: the page scrolls past the hero normally.
     const top = await page
       .locator("[data-hero-root] section")
       .evaluate((s) => s.getBoundingClientRect().top);

@@ -14,7 +14,7 @@
 
 ## Decisions
 
-- **Hero (M3):** full-bleed scroll-scrubbed video, no zoom. Source: start.mp4 + end.mp4 (3D CGI blue-hour glass tower, client-supplied), retimed and joined by scripts/encode-hero.mjs at higher quality (CRF 24, 10 MB desktop / 4.7 MB mobile). Earlier sources (final1/final2, optionA) retired. The hero is a "blue" surface (white text) on an otherwise light site.
+- **Hero (M3):** full-bleed scroll-scrubbed **image sequence on a canvas** (183 WebP frames, 15 fps; desktop 1600px 13.5 MB, mobile tall crop 608x1080 7.4 MB, loaded progressively). Replaced the <video> approach, which stuttered because every seek waits on the decoder. Source: start.mp4 + end.mp4 (3D CGI blue-hour glass tower). Static zoom-out (86% desktop / 94% mobile) with feathered edges over a blurred copy of the final frame; no zoom animation; the title never moves (left of the tower on desktop). The hero is a "blue" surface on an otherwise light site.
 - **Theme:** the whole site moved from dark (Midnight Forest) to a light theme at the client's request. Components use semantic colour tokens (text-fg, text-accent, border-rule, bg-surface) that resolve per surface.
 
 - **Fonts:** Google Sans Flex (display, replaced Instrument Serif at the client's request), Manrope (body) and IBM Plex Mono (labels).

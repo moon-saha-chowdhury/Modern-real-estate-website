@@ -4,34 +4,50 @@ import Image from "next/image";
 import { useRef } from "react";
 import { Eyebrow } from "@/components/common/Eyebrow";
 import { TextReveal } from "@/components/common/TextReveal";
+import {
+  computeFrameRect,
+  createFrameLoader,
+  type FrameLoader,
+} from "@/lib/animations/frame-sequence";
 import { gsap, ScrollTrigger, useGSAP } from "@/lib/animations/gsap";
-import { HERO_MEDIA, HERO_SCROLL, HERO_STAGES } from "@/lib/constants/hero";
+import {
+  HERO_FRAME_SCALE,
+  HERO_MAX_DPR,
+  HERO_MEDIA,
+  HERO_SCROLL,
+  HERO_STAGES,
+} from "@/lib/constants/hero";
+import { HERO_SEQUENCE } from "@/lib/constants/hero-sequence";
 import { displayIndex } from "@/lib/utils/projects";
-import type { BuildingTransformationProps } from "@/types/sections";
+import type { BuildingTransformationProps, HeroFrameSet } from "@/types/sections";
 
 /**
  * 01 — Signature hero: full-bleed, scroll-scrubbed building transformation.
- * A "blue" surface (white text over the twilight video) on an otherwise light-theme site.
+ * A "blue" surface (white text over the twilight scene) on an otherwise light-theme site.
  *
- * One pinned ScrollTrigger timeline. Video time follows scroll from the first movement;
- * scrolling up reverses the build; the final frame holds. No zoom. The title fades early so the
- * whole tower is revealed.
+ * Rendering: a pre-extracted IMAGE SEQUENCE drawn on a <canvas>, not a <video>. Video scrubbing
+ * waits on the decoder for every seek (~10–15 fps, jerky); drawing decoded frames is instant, so
+ * scrolling stays at the display's frame rate.
  *
- * Performance: scroll writes only to refs/DOM. A single callback on GSAP's shared ticker
- * seeks the video, and only when the previous seek has finished. No React state per frame.
- * Fallbacks: reduced motion or a failed video → static final frame, no pin.
- * Mobile: the browser picks the 720p file via <source media>, no JS involved.
+ * - The frame is drawn at HERO_FRAME_SCALE of the covering size (static zoom-out) with feathered
+ *   edges over a sky → horizon → water backdrop sampled from the frames themselves.
+ * - The title and stage indicator stay put; only the building changes.
+ * - Frames load progressively (every 8th first); until a frame arrives the nearest one is drawn.
+ * - Phones use a tall centre crop of the tower at full source resolution.
+ * - Reduced motion: only the final frame is loaded and shown; nothing is pinned.
  */
 export function BuildingTransformation({ eyebrow, title }: BuildingTransformationProps) {
   const root = useRef<HTMLElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useGSAP(
     () => {
       const section = root.current;
-      const video = videoRef.current;
-      if (!section || !video) return;
+      const canvas = canvasRef.current;
+      const ctx = canvas?.getContext("2d");
+      if (!section || !canvas || !ctx) return;
 
+      const { count } = HERO_SEQUENCE;
       const stageItems = gsap.utils.toArray<HTMLElement>("[data-stage]", section);
       const stageLabel = section.querySelector<HTMLElement>("[data-stage-label]");
       const stageIndex = section.querySelector<HTMLElement>("[data-stage-index]");
@@ -48,90 +64,112 @@ export function BuildingTransformation({ eyebrow, title }: BuildingTransformatio
         if (progressLine) gsap.set(progressLine, { scaleX: t });
       };
 
-      const onError = () => (section.dataset.videoFailed = "true");
-      video.addEventListener("error", onError);
+      /** Sets up loading, layout and drawing for one frame set; returns a cleanup. */
+      const mount = (set: HeroFrameSet, scale: number, indices?: number[]) => {
+        let frame = indices ? indices[0] : 0;
+        let drawn: HTMLImageElement | null = null;
+
+        const draw = (force = false) => {
+          const img = loader.nearest(frame);
+          if (!img || (img === drawn && !force)) return;
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          drawn = img;
+        };
+
+        const layout = () => {
+          const rect = computeFrameRect(
+            section.clientWidth,
+            section.clientHeight,
+            set.width,
+            set.height,
+            scale,
+          );
+          const dpr = Math.min(window.devicePixelRatio || 1, HERO_MAX_DPR);
+          Object.assign(canvas.style, {
+            left: `${rect.x}px`,
+            top: `${rect.y}px`,
+            width: `${rect.width}px`,
+            height: `${rect.height}px`,
+          });
+          canvas.width = Math.round(rect.width * dpr);
+          canvas.height = Math.round(rect.height * dpr);
+          ctx.imageSmoothingQuality = "high";
+          draw(true);
+        };
+
+        const loader: FrameLoader = createFrameLoader(set, count, () => draw(), indices);
+
+        const observer = new ResizeObserver(layout);
+        observer.observe(section);
+        layout();
+
+        return {
+          setFrame: (index: number) => {
+            if (index === frame) return;
+            frame = index;
+            draw();
+          },
+          cleanup: () => {
+            observer.disconnect();
+            loader.cancel();
+          },
+        };
+      };
 
       const mm = gsap.matchMedia();
+
       mm.add(
         {
           desktop: "(min-width: 768px) and (prefers-reduced-motion: no-preference)",
-          mobile: "(max-width: 767px) and (prefers-reduced-motion: no-preference)",
+          mobile: `${HERO_MEDIA.mobileQuery} and (prefers-reduced-motion: no-preference)`,
         },
-        (ctx) => {
-          const desktop = Boolean(ctx.conditions?.desktop);
+        (ctxMedia) => {
+          const desktop = Boolean(ctxMedia.conditions?.desktop);
+          const view = mount(
+            desktop ? HERO_SEQUENCE.desktop : HERO_SEQUENCE.mobile,
+            desktop ? HERO_FRAME_SCALE.desktop : HERO_FRAME_SCALE.mobile,
+          );
           const state = { t: 0 };
-          let duration = 0;
-          let target = 0;
 
-          const onMetadata = () => {
-            duration = video.duration;
-            video.pause();
-            ScrollTrigger.refresh();
-          };
-          if (video.readyState >= 1) onMetadata();
-          else video.addEventListener("loadedmetadata", onMetadata, { once: true });
-
-          // iOS Safari only decodes frames for seeking after the video has played once.
-          const unlock = () => {
-            video
-              .play()
-              .then(() => video.pause())
-              .catch(() => undefined);
-          };
-          window.addEventListener("touchstart", unlock, { once: true, passive: true });
-
-          const seek = () => {
-            if (!duration || video.seeking) return;
-            const time = Math.min(duration - 0.04, target * duration);
-            if (Math.abs(video.currentTime - time) > HERO_SCROLL.seekThreshold) {
-              video.currentTime = time;
-            }
-          };
-          gsap.ticker.add(seek);
-
-          const timeline = gsap.timeline({
-            defaults: { ease: "none" },
-            scrollTrigger: {
-              trigger: section,
-              start: "top top",
-              end: desktop ? HERO_SCROLL.pinDesktop : HERO_SCROLL.pinMobile,
-              pin: true,
-              scrub: HERO_SCROLL.scrub,
-              anticipatePin: 1,
-            },
-          });
-
-          timeline
-            // Opacity only (not autoAlpha): the h1 must stay in the accessibility tree.
-            .to("[data-hero-copy]", { opacity: 0, y: -40, duration: HERO_SCROLL.titleOut }, 0)
-            .fromTo("[data-hero-hud]", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.05 }, 0.04)
-            .to(
-              state,
-              {
-                t: 1,
-                duration: 1,
-                onUpdate: () => {
-                  target = state.t;
-                  setStage(state.t);
-                },
+          gsap
+            .timeline({
+              defaults: { ease: "none" },
+              scrollTrigger: {
+                trigger: section,
+                start: "top top",
+                end: desktop ? HERO_SCROLL.pinDesktop : HERO_SCROLL.pinMobile,
+                pin: true,
+                scrub: HERO_SCROLL.scrub,
+                anticipatePin: 1,
+                onRefresh: () => ScrollTrigger.update(),
               },
-              0,
-            );
+            })
+            .to(state, {
+              t: 1,
+              duration: 1,
+              onUpdate: () => {
+                view.setFrame(Math.round(state.t * (count - 1)));
+                setStage(state.t);
+              },
+            });
 
           setStage(0);
-
-          return () => {
-            gsap.ticker.remove(seek);
-            video.removeEventListener("loadedmetadata", onMetadata);
-            window.removeEventListener("touchstart", unlock);
-          };
+          return () => view.cleanup();
         },
       );
 
-      return () => {
-        mm.revert();
-        video.removeEventListener("error", onError);
-      };
+      // Reduced motion: the finished building only, no pin, no scrubbing.
+      mm.add("(prefers-reduced-motion: reduce)", () => {
+        const mobile = window.matchMedia(HERO_MEDIA.mobileQuery).matches;
+        const view = mount(
+          mobile ? HERO_SEQUENCE.mobile : HERO_SEQUENCE.desktop,
+          mobile ? HERO_FRAME_SCALE.mobile : HERO_FRAME_SCALE.desktop,
+          [count - 1],
+        );
+        return () => view.cleanup();
+      });
+
+      return () => mm.revert();
     },
     { scope: root },
   );
@@ -144,32 +182,20 @@ export function BuildingTransformation({ eyebrow, title }: BuildingTransformatio
         ref={root}
         data-surface="blue"
         aria-labelledby="hero-title"
-        className="group/hero relative isolate h-svh overflow-hidden bg-twilight text-fg"
+        className="group/hero relative isolate h-svh overflow-hidden bg-twilight hero-backdrop text-fg"
       >
-        {/* Media layer */}
-        <div aria-hidden="true" className="absolute inset-0 -z-10">
-          <video
-            ref={videoRef}
-            muted
-            playsInline
-            preload="auto"
-            disablePictureInPicture
-            tabIndex={-1}
-            poster={HERO_MEDIA.posterStart}
-            className="absolute inset-0 h-full w-full object-cover group-data-[video-failed=true]/hero:hidden motion-reduce:hidden"
-          >
-            <source src={HERO_MEDIA.mobile} media={HERO_MEDIA.mobileQuery} type="video/mp4" />
-            <source src={HERO_MEDIA.desktop} type="video/mp4" />
-          </video>
-          {/* Static final frame: reduced motion or video failure */}
+        {/* Backdrop: the final frame, blurred. Sky, skyline and water never change during the build,
+            so the feathered canvas edges melt into exactly matching colour. */}
+        <div aria-hidden="true" className="absolute inset-0 -z-20 overflow-hidden">
           <Image
             src={HERO_MEDIA.posterEnd}
             alt=""
             fill
-            sizes="100vw"
-            className="hidden object-cover group-data-[video-failed=true]/hero:block motion-reduce:block"
+            sizes="50vw"
+            className="scale-110 object-cover blur-2xl"
           />
         </div>
+        <canvas ref={canvasRef} aria-hidden="true" className="absolute -z-10 hero-feather" />
 
         {/* Legibility: soft shade under the navbar and behind the stage indicator */}
         <div
@@ -186,10 +212,10 @@ export function BuildingTransformation({ eyebrow, title }: BuildingTransformatio
           concrete frame rises, the blue glass facade is installed, and the lights come on.
         </p>
 
-        {/* Copy: centred in the sky */}
+        {/* Copy: stays in place over the sky */}
         <div
           data-hero-copy
-          className="pointer-events-none absolute inset-x-0 top-[calc(var(--spacing-nav)+clamp(1.5rem,6vh,5rem))] flex flex-col items-center gap-6 px-gutter text-center"
+          className="pointer-events-none absolute inset-x-0 top-[calc(var(--spacing-nav)+clamp(1.5rem,6vh,5rem))] flex flex-col items-center gap-6 px-gutter text-center [text-shadow:0_2px_28px_rgb(0_0_0/0.35)] lg:top-[calc(var(--spacing-nav)+clamp(3rem,14vh,9rem))] lg:items-start lg:text-left"
         >
           <Eyebrow index="01" className="text-accent">
             {eyebrow}
@@ -199,16 +225,15 @@ export function BuildingTransformation({ eyebrow, title }: BuildingTransformatio
             id="hero-title"
             immediate
             delay={0.15}
-            className="font-display text-display-xl"
+            className="font-display text-display-hero"
             lines={title}
           />
         </div>
 
-        {/* HUD: construction stage + progress (appears once the build starts) */}
+        {/* Construction stage + progress */}
         <div
-          data-hero-hud
           aria-hidden="true"
-          className="invisible absolute inset-x-0 bottom-6 flex items-end justify-between gap-6 px-gutter text-fg-muted motion-reduce:hidden"
+          className="absolute inset-x-0 bottom-6 flex items-end justify-between gap-6 px-gutter text-fg-muted motion-reduce:hidden"
         >
           <div className="flex w-full max-w-xs flex-col gap-3">
             <p className="flex items-baseline gap-3 label-mono">
@@ -219,7 +244,7 @@ export function BuildingTransformation({ eyebrow, title }: BuildingTransformatio
                 {HERO_STAGES[0].label}
               </span>
             </p>
-            <div className="relative h-px w-full bg-fg/15">
+            <div className="relative h-px w-full bg-fg/25">
               <span data-progress className="absolute inset-0 origin-left scale-x-0 bg-accent" />
             </div>
             <ol className="flex justify-between label-mono text-[0.625rem]">

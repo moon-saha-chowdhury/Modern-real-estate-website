@@ -8,7 +8,7 @@ export function HeroSection() {
   return (
     <BuildingTransformation
       eyebrow="Architecture-led development"
-      title={["Building spaces.", "Shaping *tomorrow.*"]}
+      title={["Building spaces.", "Shaping", "*tomorrow.*"]}
     />
   );
 }

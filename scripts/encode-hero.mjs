@@ -1,26 +1,30 @@
 #!/usr/bin/env node
 /**
- * Encodes the hero building-transformation video for scroll scrubbing.
+ * Builds the hero building-transformation IMAGE SEQUENCE for scroll scrubbing.
  *
  *   npm run media:hero
  *
- * Input  (not committed): references/hero/  (see SEGMENTS)
- * Output (committed):     public/media/hero/
- *   hero-1080.mp4   desktop, H.264, keyframe every 4 frames (smooth reverse seeking)
- *   hero-720.mp4    mobile
- *   poster-start.webp / poster-end.webp (+ -1280 variants)
+ * Why frames instead of a video: scrubbing a <video> means seeking, and every seek waits for the
+ * decoder, so playback lands at ~10–15 fps and feels jerky. Pre-extracted frames drawn on a
+ * <canvas> update every animation frame (up to 60 fps).
  *
- * SEGMENTS lists the source clips in order. Each segment can be trimmed and sped up, so slow
- * passages don't waste scroll distance. Audio is always removed.
+ * Input  (not committed): references/hero/  (see SEGMENTS)
+ * Output (committed):
+ *   public/media/hero/frames/desktop/0001.webp …  full frame, 1600 px wide
+ *   public/media/hero/frames/mobile/0001.webp  …  centre crop 608×1080 (the tower, full height)
+ *   public/media/hero/poster-start.webp / poster-end.webp (+ -1280)
+ *   src/lib/constants/hero-sequence.ts            generated: frame count, sizes, paths
  */
 import { execFileSync } from "node:child_process";
-import { mkdirSync, rmSync, statSync } from "node:fs";
+import { mkdirSync, readdirSync, rmSync, statSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import ffmpeg from "ffmpeg-static";
 
 const SRC = "references/hero";
 const OUT = "public/media/hero";
-const FPS = 24;
+const FPS = 24; // working frame rate of the joined intermediate
+const SEQ_FPS = 15; // frames per second of the delivered sequence
+const QUALITY = 74; // WebP quality
 
 /**
  * Current source: start.mp4 + end.mp4 (blue-hour glass tower, 3D CGI, chosen by the client).
@@ -34,8 +38,15 @@ const SEGMENTS = [
   { file: "end.mp4", start: 5.5, end: null, speed: 4 },
 ];
 
-mkdirSync(OUT, { recursive: true });
+const SETS = {
+  desktop: { vf: "scale=1600:-2:flags=lanczos", width: 1600, height: 900 },
+  // The tower sits in the centre of the frame: a full-height 9:16 crop is exactly what a phone
+  // shows, at full source resolution (sharper than scaling the whole frame).
+  mobile: { vf: "crop=608:1080:(iw-608)/2:0", width: 608, height: 1080 },
+};
+
 const run = (args) => execFileSync(ffmpeg, ["-hide_banner", "-loglevel", "error", "-y", ...args]);
+mkdirSync(OUT, { recursive: true });
 
 // 1. Trim / retime / join into a high-quality intermediate.
 const files = [...new Set(SEGMENTS.map((s) => s.file))];
@@ -47,34 +58,90 @@ const chains = SEGMENTS.map((s, i) => {
 });
 const labels = SEGMENTS.map((_, i) => `[s${i}]`).join("");
 const filter = `${chains.join(";")};${labels}concat=n=${SEGMENTS.length}:v=1:a=0,fps=${FPS},format=yuv420p[v]`;
-
 const joined = path.join(OUT, ".joined.mp4");
-run([...inputs, "-filter_complex", filter, "-map", "[v]", "-an", "-c:v", "libx264", "-crf", "12", "-preset", "medium", joined]);
+run([
+  ...inputs,
+  "-filter_complex",
+  filter,
+  "-map",
+  "[v]",
+  "-an",
+  "-c:v",
+  "libx264",
+  "-crf",
+  "10",
+  "-preset",
+  "medium",
+  joined,
+]);
 
-// 2. Web encodes: dense keyframes so seeking backwards never decodes long GOPs.
-const encode = (height, crf, file) =>
+// 2. Frame sequences.
+const summary = {};
+for (const [name, set] of Object.entries(SETS)) {
+  const dir = path.join(OUT, "frames", name);
+  rmSync(dir, { recursive: true, force: true });
+  mkdirSync(dir, { recursive: true });
   run([
-    "-i", joined,
-    "-vf", `scale=-2:${height}:flags=lanczos`,
-    "-an",
-    "-c:v", "libx264", "-profile:v", "high", "-pix_fmt", "yuv420p",
-    "-crf", String(crf), "-preset", "slow",
-    "-g", "4", "-keyint_min", "1", "-sc_threshold", "0", "-bf", "0",
-    "-movflags", "+faststart",
-    path.join(OUT, file),
+    "-i",
+    joined,
+    "-vf",
+    `fps=${SEQ_FPS},${set.vf}`,
+    "-c:v",
+    "libwebp",
+    "-quality",
+    String(QUALITY),
+    path.join(dir, "%04d.webp"),
   ]);
-encode(1080, 24, "hero-1080.mp4");
-encode(720, 25, "hero-720.mp4");
+  const frames = readdirSync(dir).filter((f) => f.endsWith(".webp"));
+  const kb = frames.reduce((sum, f) => sum + statSync(path.join(dir, f)).size, 0) / 1024;
+  summary[name] = { count: frames.length, kb: Math.round(kb) };
+}
 
 // 3. Posters (first and last frame).
-for (const [width, suffix] of [[1920, ""], [1280, "-1280"]]) {
-  run(["-i", joined, "-frames:v", "1", "-vf", `scale=${width}:-2`, "-q:v", "68", path.join(OUT, `poster-start${suffix}.webp`)]);
-  run(["-sseof", "-0.2", "-i", joined, "-update", "1", "-vf", `scale=${width}:-2`, "-q:v", "68", path.join(OUT, `poster-end${suffix}.webp`)]);
+for (const [width, suffix] of [
+  [1920, ""],
+  [1280, "-1280"],
+]) {
+  run([
+    "-i",
+    joined,
+    "-frames:v",
+    "1",
+    "-vf",
+    `scale=${width}:-2`,
+    "-q:v",
+    "72",
+    path.join(OUT, `poster-start${suffix}.webp`),
+  ]);
+  run([
+    "-sseof",
+    "-0.2",
+    "-i",
+    joined,
+    "-update",
+    "1",
+    "-vf",
+    `scale=${width}:-2`,
+    "-q:v",
+    "72",
+    path.join(OUT, `poster-end${suffix}.webp`),
+  ]);
 }
-
 rmSync(joined);
 
-for (const file of ["hero-1080.mp4", "hero-720.mp4", "poster-start.webp", "poster-end.webp"]) {
-  const kb = Math.round(statSync(path.join(OUT, file)).size / 1024);
-  console.log(`${file.padEnd(20)} ${kb} KB`);
-}
+// 4. Generated constants (frame counts must match the files on disk).
+if (summary.desktop.count !== summary.mobile.count) throw new Error("Frame counts differ");
+const ts = `// GENERATED by scripts/encode-hero.mjs — do not edit by hand. Re-run \`npm run media:hero\`.
+import type { HeroSequence } from "@/types/sections";
+
+export const HERO_SEQUENCE: HeroSequence = {
+  count: ${summary.desktop.count},
+  fps: ${SEQ_FPS},
+  desktop: { dir: "/media/hero/frames/desktop", width: ${SETS.desktop.width}, height: ${SETS.desktop.height} },
+  mobile: { dir: "/media/hero/frames/mobile", width: ${SETS.mobile.width}, height: ${SETS.mobile.height} },
+};
+`;
+writeFileSync("src/lib/constants/hero-sequence.ts", ts);
+
+for (const [name, s] of Object.entries(summary))
+  console.log(`${name.padEnd(8)} ${s.count} frames, ${s.kb} KB`);

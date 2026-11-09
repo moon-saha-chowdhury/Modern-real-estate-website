@@ -43,7 +43,11 @@ useGSAP(
 - `useGSAP` handles cleanup. Use `gsap.matchMedia` for breakpoint and reduced-motion branches.
 - Call `ScrollTrigger.refresh()` after images or video metadata load if layout height changes.
 
-## Video scrub (hero building transformation)
+## Hero building transformation: image sequence (current implementation)
+
+The hero no longer scrubs a <video>: seeking waited on the decoder and stuttered (~10-15 fps). It draws pre-extracted WebP frames on a <canvas> (see src/components/home/BuildingTransformation.tsx and src/lib/animations/frame-sequence.ts): progressive loading (strides 8/4/2/1), nearest-loaded-frame fallback, draw only when the frame index changes, DPR capped at 2. Rebuild frames with npm run media:hero.
+
+## Video scrub (legacy notes)
 
 1. `<video muted playsInline preload="auto" poster>`. Never `autoplay` and never `loop`.
 2. Wait for `loadedmetadata` before reading `duration`.

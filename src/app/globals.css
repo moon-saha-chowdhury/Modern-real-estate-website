@@ -143,6 +143,26 @@
   }
 }
 
+/*
+ * Hero: continues the frame beyond its edges with the frame's own sky, horizon and water colours,
+ * and feathers the frame so the seam disappears (static zoom-out).
+ */
+@utility hero-backdrop {
+  background-image: linear-gradient(
+    to bottom,
+    var(--color-hero-sky) 0%,
+    var(--color-hero-horizon) 62%,
+    var(--color-hero-water) 100%
+  );
+}
+
+@utility hero-feather {
+  mask-image:
+    linear-gradient(to right, transparent, #000 7%, #000 93%, transparent),
+    linear-gradient(to bottom, transparent, #000 8%, #000 92%, transparent);
+  mask-composite: intersect;
+}
+
 /* Hairline rule that draws in from the left */
 @utility rule-draw {
   transform-origin: left center;

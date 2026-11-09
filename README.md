@@ -25,16 +25,16 @@ npm install
 npm run dev          # http://localhost:3000
 ```
 
-| Script                        | Purpose                                                                    |
-| ----------------------------- | -------------------------------------------------------------------------- |
-| `npm run dev`                 | Development server                                                         |
-| `npm run build` / `npm start` | Production build / serve                                                   |
-| `npm run lint`                | ESLint (Next core-web-vitals + TypeScript)                                 |
-| `npm run typecheck`           | `tsc --noEmit`                                                             |
-| `npm run format`              | Prettier, with Tailwind class sorting                                      |
-| `npm run test:e2e`            | Playwright behavioural tests (run `npm run build` first)                   |
-| `npm run qa:screens`          | Writes visual QA screenshots to `.artifacts/screenshots/`                  |
-| `npm run media:hero`          | Re-encode the hero video from `references/hero/` into `public/media/hero/` |
+| Script                        | Purpose                                                                                                                                          |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `npm run dev`                 | Development server                                                                                                                               |
+| `npm run build` / `npm start` | Production build / serve                                                                                                                         |
+| `npm run lint`                | ESLint (Next core-web-vitals + TypeScript)                                                                                                       |
+| `npm run typecheck`           | `tsc --noEmit`                                                                                                                                   |
+| `npm run format`              | Prettier, with Tailwind class sorting                                                                                                            |
+| `npm run test:e2e`            | Playwright behavioural tests (run `npm run build` first)                                                                                         |
+| `npm run qa:screens`          | Writes visual QA screenshots to `.artifacts/screenshots/`                                                                                        |
+| `npm run media:hero`          | Rebuild the hero image sequence from `references/hero/` into `public/media/hero/frames/` (also regenerates `src/lib/constants/hero-sequence.ts`) |
 
 Playwright uses the locally installed Google Chrome (`channel: "chrome"`). To use the bundled Chromium instead, run `npx playwright install chromium` and set `PW_CHANNEL=""`.
 

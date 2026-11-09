@@ -12,6 +12,7 @@ const twMerge = extendTailwindMerge({
             "display-lg",
             "display-md",
             "display-sm",
+            "display-hero",
             "lead",
             "body",
             "small",

@@ -57,6 +57,28 @@ export interface HeroStage {
   label: string;
 }
 
+export interface HeroFrameSet {
+  /** Public directory holding 0001.webp … */
+  dir: string;
+  width: number;
+  height: number;
+}
+
+export interface HeroSequence {
+  count: number;
+  fps: number;
+  desktop: HeroFrameSet;
+  mobile: HeroFrameSet;
+}
+
+/** Where the scaled frame sits inside the hero, in CSS pixels. */
+export interface FrameRect {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
 export interface BuildingTransformationProps {
   eyebrow: string;
   /** One string per line; *asterisks* mark emphasis. */
