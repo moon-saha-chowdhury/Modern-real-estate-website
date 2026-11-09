@@ -23,13 +23,15 @@ const OUT = "public/media/hero";
 const FPS = 24;
 
 /**
- * Current source: optionA.mp4 (brick-and-concrete mid-rise, chosen by the client).
- * 0–6 s: structure → envelope → greenery at natural speed.
- * 6 s–end: lights switching on; played 1.6× so the finale doesn't drag.
+ * Current source: start.mp4 + end.mp4 (blue-hour glass tower, 3D CGI, chosen by the client).
+ * Each clip builds actively for ~5.5 s, then holds nearly still: the still tails play 4x.
+ * end.mp4's first frame duplicates start.mp4's last frame, so it is skipped (1/FPS s).
  */
 const SEGMENTS = [
-  { file: "optionA.mp4", start: 0, end: 6, speed: 1 },
-  { file: "optionA.mp4", start: 6, end: null, speed: 1.6 },
+  { file: "start.mp4", start: 0, end: 5.5, speed: 1 },
+  { file: "start.mp4", start: 5.5, end: null, speed: 4 },
+  { file: "end.mp4", start: 1 / 24, end: 5.5, speed: 1 },
+  { file: "end.mp4", start: 5.5, end: null, speed: 4 },
 ];
 
 mkdirSync(OUT, { recursive: true });
@@ -61,8 +63,8 @@ const encode = (height, crf, file) =>
     "-movflags", "+faststart",
     path.join(OUT, file),
   ]);
-encode(1080, 27, "hero-1080.mp4");
-encode(720, 28, "hero-720.mp4");
+encode(1080, 24, "hero-1080.mp4");
+encode(720, 25, "hero-720.mp4");
 
 // 3. Posters (first and last frame).
 for (const [width, suffix] of [[1920, ""], [1280, "-1280"]]) {

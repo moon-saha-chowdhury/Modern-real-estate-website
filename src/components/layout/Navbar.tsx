@@ -24,8 +24,12 @@ export function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
   const smoothScroll = useSmoothScroll();
+  const updateRef = useRef<() => void>(() => undefined);
 
-  // Scroll-driven appearance, rAF-throttled.
+  // Scroll-driven appearance, rAF-throttled. Written to data-attributes (no re-render):
+  //   data-surface  blue while over the full-bleed hero (white text), light everywhere else
+  //   data-solid    paper background once scrolled, except over the hero
+  //   data-hidden   hides on scroll down, returns on scroll up
   useEffect(() => {
     const el = headerRef.current;
     if (!el) return;
@@ -35,8 +39,13 @@ export function Navbar() {
     const update = () => {
       frame = 0;
       const y = window.scrollY;
-      el.dataset.scrolled = String(y > 24);
-      if (el.dataset.menu !== "open") {
+      const menuOpen = el.dataset.menu === "open";
+      const hero = document.querySelector<HTMLElement>("[data-hero-root]");
+      const overHero = Boolean(hero) && hero!.getBoundingClientRect().bottom > el.offsetHeight;
+
+      el.dataset.surface = overHero && !menuOpen ? "blue" : "light";
+      el.dataset.solid = String(y > 24 && !overHero && !menuOpen);
+      if (!menuOpen) {
         if (y > lastY + 4 && y > window.innerHeight * 0.6) el.dataset.hidden = "true";
         else if (y < lastY - 4 || y <= 24) el.dataset.hidden = "false";
       }
@@ -46,16 +55,18 @@ export function Navbar() {
       if (!frame) frame = requestAnimationFrame(update);
     };
 
+    updateRef.current = update;
     update();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => {
       window.removeEventListener("scroll", onScroll);
       cancelAnimationFrame(frame);
     };
-  }, []);
+  }, [pathname]);
 
-  // Lock page scroll while the mobile menu is open.
+  // Lock page scroll while the mobile menu is open; re-evaluate the header surface.
   useEffect(() => {
+    updateRef.current();
     if (!menuOpen) return;
     smoothScroll.lock();
     return () => smoothScroll.unlock();
@@ -99,12 +110,11 @@ export function Navbar() {
     <header
       ref={headerRef}
       data-menu={menuOpen ? "open" : "closed"}
-      data-surface="light"
       onKeyDown={onKeyDown}
       className={cn(
         "fixed inset-x-0 top-0 z-50 border-b border-transparent text-fg",
-        "transition-[background-color,border-color,translate] duration-500 ease-meridian",
-        "data-[scrolled=true]:border-rule/70 data-[scrolled=true]:bg-surface/95",
+        "transition-[background-color,border-color,color,translate] duration-500 ease-meridian",
+        "data-[solid=true]:border-rule data-[solid=true]:bg-paper/95",
         "data-[hidden=true]:-translate-y-full",
         "data-[menu=open]:border-transparent data-[menu=open]:bg-transparent",
       )}

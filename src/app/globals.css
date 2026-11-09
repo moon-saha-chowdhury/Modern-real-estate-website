@@ -32,6 +32,16 @@
     --surface: var(--color-paper);
   }
 
+  /* The blue hero: white text over the twilight sky and water */
+  [data-surface="blue"] {
+    --fg: var(--color-white);
+    --fg-muted: var(--color-sky-mist);
+    --accent: var(--color-champagne-light);
+    --rule: color-mix(in oklab, var(--color-white) 30%, transparent);
+    --danger: var(--color-danger-light);
+    --focus: var(--color-champagne-light);
+  }
+
   [data-surface="dark"] {
     --fg: var(--color-ivory);
     --fg-muted: var(--color-mist);

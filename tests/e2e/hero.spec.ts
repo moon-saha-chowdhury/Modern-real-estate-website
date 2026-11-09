@@ -31,7 +31,7 @@ test.describe("hero building transformation", () => {
       )
       .toBeLessThan(0.05);
     await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
-    await expect(page.locator("[data-stage-label]")).not.toHaveText("Structure");
+    await expect(page.locator("[data-stage-label]")).not.toHaveText("Foundation");
     const forward = await videoTime(page);
 
     // Scrolling back up reverses the build.

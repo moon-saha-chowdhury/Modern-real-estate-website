@@ -40,7 +40,7 @@ Source of truth: [`src/styles/tokens.css`](../src/styles/tokens.css). Live refer
 | `bg-surface`              | the section's own background | the section's own background |
 | `text-danger`             | danger-ink                   | danger-light                 |
 
-They resolve from the nearest `data-surface` ("light" by default). `Section` sets it from its `tone`,
+They resolve from the nearest `data-surface` ("light" by default; "dark" and "blue" also exist). The **blue** surface is the hero: white text, `sky-mist` #D6E2F0 muted text and `champagne-light` #EAE3CF accents, all at least 4.9:1 over the video. The navbar switches to blue while over the hero. `Section` sets it from its `tone`,
 so components never hard-code a theme.
 
 ### Contrast rules (computed, WCAG 2.2)
@@ -58,18 +58,18 @@ so components never hard-code a theme.
 
 ### Section sequence (homepage)
 
-| Section      | Tone                                          |
-| ------------ | --------------------------------------------- |
-| Hero         | full-bleed video, paper wash behind the title |
-| Intro        | paper                                         |
-| Projects     | white                                         |
-| Expertise    | stone                                         |
-| Stats        | paper                                         |
-| Process      | white                                         |
-| Why Meridian | stone                                         |
-| Testimonials | paper                                         |
-| Contact      | stone (form on a white panel)                 |
-| Footer       | paper, with a top rule                        |
+| Section      | Tone                                                      |
+| ------------ | --------------------------------------------------------- |
+| Hero         | full-bleed blue video, `data-surface="blue"` (white text) |
+| Intro        | paper                                                     |
+| Projects     | white                                                     |
+| Expertise    | stone                                                     |
+| Stats        | paper                                                     |
+| Process      | white                                                     |
+| Why Meridian | stone                                                     |
+| Testimonials | paper                                                     |
+| Contact      | stone (form on a white panel)                             |
+| Footer       | paper, with a top rule                                    |
 
 ## Typography
 

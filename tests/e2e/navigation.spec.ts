@@ -37,9 +37,9 @@ test.describe("desktop navigation", () => {
   test("header gains a solid background after scrolling", async ({ page }) => {
     await page.goto("/styleguide");
     const header = page.locator("header").first();
-    await expect(header).toHaveAttribute("data-scrolled", "false");
+    await expect(header).toHaveAttribute("data-solid", "false");
     await page.mouse.wheel(0, 600);
-    await expect(header).toHaveAttribute("data-scrolled", "true");
+    await expect(header).toHaveAttribute("data-solid", "true");
   });
 
   test("skip link moves focus to main content", async ({ page }) => {

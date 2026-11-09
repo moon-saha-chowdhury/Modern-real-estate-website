@@ -46,6 +46,11 @@
   --color-mist: #a5aaa1;
   --color-line-dark: #303a32;
 
+  /* Hero */
+  --color-twilight: #0e5ab1; /* sky of the hero video: background behind it */
+  --color-champagne-light: #eae3cf; /* accent on blue: 5.3 sky / 5.1 water */
+  --color-sky-mist: #d6e2f0; /* muted text on blue: 5.1 sky / 4.9 water */
+
   /* Status */
   --color-danger-ink: #9e3626; /* errors on light */
   --color-danger-light: #d97a6c; /* errors on dark */

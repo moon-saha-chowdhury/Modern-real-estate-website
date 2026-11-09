@@ -22,13 +22,15 @@ export const BUTTON_VARIANT_CLASSES: Record<ButtonVariant, Record<Surface, strin
     light: "bg-ink text-paper hover:bg-forest",
     dark: "bg-ivory text-ink hover:bg-champagne",
   },
+  // Outline and text buttons follow the semantic colours, so they adapt to whatever surface
+  // they sit on (e.g. the navbar CTA over the blue hero and over paper).
   outline: {
-    light: "border border-ink/25 text-ink hover:border-ink/80",
-    dark: "border border-ivory/25 text-ivory hover:border-ivory/80",
+    light: "border border-fg/30 text-fg hover:border-fg/80",
+    dark: "border border-fg/30 text-fg hover:border-fg/80",
   },
   text: {
-    light: "text-ink",
-    dark: "text-ivory",
+    light: "text-fg",
+    dark: "text-fg",
   },
 };
 

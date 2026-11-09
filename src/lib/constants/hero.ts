@@ -1,6 +1,6 @@
 import type { HeroStage } from "@/types/sections";
 
-/** Encoded by scripts/encode-hero.mjs from references/hero/optionA.mp4. */
+/** Encoded by scripts/encode-hero.mjs from references/hero/start.mp4 + end.mp4 (blue glass tower). */
 export const HERO_MEDIA = {
   desktop: "/media/hero/hero-1080.mp4",
   mobile: "/media/hero/hero-720.mp4",
@@ -12,7 +12,7 @@ export const HERO_MEDIA = {
 
 /**
  * Scroll choreography, as fractions of the pinned timeline.
- * 0 → titleOut: title and its paper wash fade. Video time follows the whole timeline (0 → 1).
+ * 0 → titleOut: the title fades. Video time follows the whole timeline (0 → 1). No zoom.
  */
 export const HERO_SCROLL = {
   pinDesktop: "+=240%",
@@ -25,12 +25,12 @@ export const HERO_SCROLL = {
 } as const;
 
 /**
- * Construction phases of optionA (8.5 s after retiming), keyed to video progress (0–1).
- * 0–3.5 s concrete frame · 3.5–5 s brick facade · 5–6 s planting · 6 s+ lights on.
+ * Construction phases of the blue tower (12.2 s after retiming), keyed to video progress (0–1).
+ * 0–1 s foundation · 1–6 s concrete frame · 6–9 s glass facade · 9 s+ lights on.
  */
 export const HERO_STAGES: HeroStage[] = [
-  { at: 0, label: "Structure" },
-  { at: 0.4, label: "Facade" },
-  { at: 0.58, label: "Greenery" },
-  { at: 0.7, label: "Lights on" },
+  { at: 0, label: "Foundation" },
+  { at: 0.08, label: "Structure" },
+  { at: 0.5, label: "Glass facade" },
+  { at: 0.75, label: "Lights on" },
 ];

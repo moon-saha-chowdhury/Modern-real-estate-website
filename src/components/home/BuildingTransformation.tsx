@@ -10,11 +10,12 @@ import { displayIndex } from "@/lib/utils/projects";
 import type { BuildingTransformationProps } from "@/types/sections";
 
 /**
- * 01 — Signature hero: full-bleed, scroll-scrubbed building transformation (light theme).
+ * 01 — Signature hero: full-bleed, scroll-scrubbed building transformation.
+ * A "blue" surface (white text over the twilight video) on an otherwise light-theme site.
  *
  * One pinned ScrollTrigger timeline. Video time follows scroll from the first movement;
- * scrolling up reverses the build; the final frame holds. The title and its soft paper wash
- * fade early so the whole building is revealed.
+ * scrolling up reverses the build; the final frame holds. No zoom. The title fades early so the
+ * whole tower is revealed.
  *
  * Performance: scroll writes only to refs/DOM. A single callback on GSAP's shared ticker
  * seeks the video, and only when the previous seek has finished. No React state per frame.
@@ -103,7 +104,6 @@ export function BuildingTransformation({ eyebrow, title }: BuildingTransformatio
           timeline
             // Opacity only (not autoAlpha): the h1 must stay in the accessibility tree.
             .to("[data-hero-copy]", { opacity: 0, y: -40, duration: HERO_SCROLL.titleOut }, 0)
-            .to("[data-hero-wash]", { opacity: 0, duration: HERO_SCROLL.titleOut }, 0)
             .fromTo("[data-hero-hud]", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.05 }, 0.04)
             .to(
               state,
@@ -142,10 +142,9 @@ export function BuildingTransformation({ eyebrow, title }: BuildingTransformatio
     <div data-hero-root>
       <section
         ref={root}
-        data-surface="light"
-        data-tone="paper"
+        data-surface="blue"
         aria-labelledby="hero-title"
-        className="group/hero relative isolate h-svh overflow-hidden bg-paper text-fg"
+        className="group/hero relative isolate h-svh overflow-hidden bg-twilight text-fg"
       >
         {/* Media layer */}
         <div aria-hidden="true" className="absolute inset-0 -z-10">
@@ -172,21 +171,19 @@ export function BuildingTransformation({ eyebrow, title }: BuildingTransformatio
           />
         </div>
 
-        {/* Soft paper wash behind the title; fades with it to reveal the full building */}
+        {/* Legibility: soft shade under the navbar and behind the stage indicator */}
         <div
-          data-hero-wash
           aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[62%] bg-linear-to-b from-paper via-paper/70 to-transparent"
+          className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-40 bg-linear-to-b from-ink/30 to-transparent"
         />
-        {/* Fade into the page below */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-36 bg-linear-to-t from-paper to-transparent"
+          className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-40 bg-linear-to-t from-ink/45 to-transparent"
         />
 
         <p className="sr-only">
-          As you scroll, a brick-and-concrete residential building is constructed: the concrete
-          frame rises, the brick facade and planting are added, and the lights come on.
+          As you scroll, a glass residential tower beside the water is built floor by floor: the
+          concrete frame rises, the blue glass facade is installed, and the lights come on.
         </p>
 
         {/* Copy: centred in the sky */}
@@ -223,14 +220,14 @@ export function BuildingTransformation({ eyebrow, title }: BuildingTransformatio
               </span>
             </p>
             <div className="relative h-px w-full bg-fg/15">
-              <span data-progress className="absolute inset-0 origin-left scale-x-0 bg-brand" />
+              <span data-progress className="absolute inset-0 origin-left scale-x-0 bg-accent" />
             </div>
             <ol className="flex justify-between label-mono text-[0.625rem]">
               {HERO_STAGES.map((stage) => (
                 <li
                   key={stage.label}
                   data-stage
-                  className="text-fg/45 transition-colors duration-300 data-[active=true]:text-fg"
+                  className="text-fg-muted transition-colors duration-300 data-[active=true]:text-fg"
                 >
                   {stage.label}
                 </li>
