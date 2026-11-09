@@ -23,13 +23,7 @@ export function WhyChooseUs() {
             <TextReveal
               id="why-title"
               className="font-display text-display-md"
-              lines={[
-                "Built to be",
-                "lived in,",
-                <>
-                  <em className="text-champagne">for decades.</em>
-                </>,
-              ]}
+              lines={["Built to be", "lived in,", "*for decades.*"]}
             />
             <SampleBadge label="Draft — to be confirmed" className="self-start text-mist" />
           </div>

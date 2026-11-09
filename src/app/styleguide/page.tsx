@@ -26,12 +26,7 @@ export default function StyleguidePage() {
             size="lg"
             eyebrow="Midnight Forest — Design system"
             index="00"
-            title={[
-              "Architectural",
-              <>
-                <em className="text-champagne">luxury</em>, quietly.
-              </>,
-            ]}
+            title={["Architectural", "*luxury*, quietly."]}
             intro={
               <p>
                 Tokens, typography and components for Meridian Developments. Internal reference.

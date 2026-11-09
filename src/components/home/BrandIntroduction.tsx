@@ -25,13 +25,12 @@ export function BrandIntroduction() {
 
         <TextReveal
           id="intro-title"
+          flowBelowLg
           className="col-span-full font-display text-display-md lg:col-span-8 lg:row-start-2"
           lines={[
             "We believe every building",
             "begins with a promise —",
-            <>
-              of thoughtful design, <em className="text-sage">lasting</em>
-            </>,
+            "of thoughtful design, *lasting*",
             "quality, and spaces that",
             "become part of people's lives.",
           ]}

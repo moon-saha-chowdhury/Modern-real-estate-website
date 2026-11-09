@@ -60,8 +60,8 @@ export interface EyebrowProps {
 export interface SectionHeadingProps {
   eyebrow: string;
   index?: string;
-  /** Controlled line breaks: one entry per line. */
-  title: ReactNode[];
+  /** Controlled line breaks: one string per line; *asterisks* mark emphasis. */
+  title: string[];
   intro?: ReactNode;
   size?: "md" | "lg";
   as?: "h1" | "h2";
@@ -73,7 +73,8 @@ export interface SectionHeadingProps {
 export interface PageIntroProps {
   eyebrow: string;
   index?: string;
-  title: ReactNode[];
+  /** One string per line; *asterisks* mark emphasis. */
+  title: string[];
   intro?: ReactNode;
   children?: ReactNode;
 }
@@ -86,8 +87,8 @@ export interface SampleBadgeProps {
 /* ---------- Motion primitives ---------- */
 
 export interface TextRevealProps {
-  /** Each entry is one deliberately controlled line. Supports inline markup (e.g. <em>). */
-  lines: ReactNode[];
+  /** One string per deliberately controlled line. Wrap words in *asterisks* for emphasis. */
+  lines: string[];
   as?: ElementType;
   className?: string;
   lineClassName?: string;
@@ -95,6 +96,17 @@ export interface TextRevealProps {
   /** Animate on mount instead of when scrolled into view (hero). */
   immediate?: boolean;
   id?: string;
+  /**
+   * Long statements: below `lg`, let the lines flow as one paragraph (no forced breaks, no line
+   * masks) so desktop line breaks don't create ragged fragments on narrow screens.
+   */
+  flowBelowLg?: boolean;
+}
+
+/** A run of text inside a display line, emphasised or not. */
+export interface TextPart {
+  text: string;
+  emphasis: boolean;
 }
 
 export interface RevealProps {

@@ -19,12 +19,7 @@ export function ExpertiseSection() {
         <TextReveal
           id="expertise-title"
           className="max-w-[18ch] font-display text-display-md"
-          lines={[
-            "From land",
-            <>
-              to <em className="text-champagne">landmark.</em>
-            </>,
-          ]}
+          lines={["From land", "to *landmark.*"]}
         />
         <ExpertiseList items={expertise} />
       </Container>

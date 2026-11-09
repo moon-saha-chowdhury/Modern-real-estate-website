@@ -40,13 +40,7 @@ export function ContactSection() {
             <TextReveal
               id="contact-title"
               className="font-display text-display-lg"
-              lines={[
-                "Let's build",
-                "something",
-                <>
-                  <em className="text-champagne">meaningful.</em>
-                </>,
-              ]}
+              lines={["Let's build", "something", "*meaningful.*"]}
             />
             <p className="max-w-sm text-lead text-mist">
               Buying a home, visiting a site or bringing land to the table: tell us what you have in

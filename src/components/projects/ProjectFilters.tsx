@@ -13,7 +13,7 @@ export function ProjectFilters({ active, counts, onChange, labelledBy }: Project
     <div
       role="group"
       aria-labelledby={labelledBy}
-      className="-mx-gutter flex [scrollbar-width:none] gap-x-8 overflow-x-auto border-b border-line px-gutter md:mx-0 md:flex-wrap md:px-0"
+      className="flex flex-wrap gap-x-6 border-b border-line md:gap-x-8"
     >
       {PROJECT_FILTERS.map((filter) => {
         const isActive = filter.key === active;

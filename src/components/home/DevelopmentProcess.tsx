@@ -16,12 +16,7 @@ export function DevelopmentProcess() {
           index="06"
           eyebrow="Our approach"
           titleId="process-title"
-          title={[
-            "Six stages,",
-            <>
-              one <em className="text-sage">standard.</em>
-            </>,
-          ]}
+          title={["Six stages,", "one *standard.*"]}
           intro={
             <p>
               Every Meridian building follows the same disciplined path, from the first look at a

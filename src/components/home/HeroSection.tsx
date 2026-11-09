@@ -34,12 +34,7 @@ export function HeroSection() {
             delay={0.15}
             className="font-display text-display-xl"
             id="hero-title"
-            lines={[
-              "Building spaces.",
-              <>
-                Shaping <em className="text-champagne">tomorrow.</em>
-              </>,
-            ]}
+            lines={["Building spaces.", "Shaping *tomorrow.*"]}
           />
           <Reveal immediate delay={0.55} className="flex max-w-md flex-col gap-10">
             <p className="text-lead text-mist">
@@ -66,16 +61,18 @@ export function HeroSection() {
         </Reveal>
       </Container>
 
-      {/* Scroll cue */}
-      <div
+      {/* Scroll cue: bottom of the text column, clear of the building frame */}
+      <Container
         aria-hidden="true"
-        className="pointer-events-none absolute bottom-8 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-3 text-mist lg:flex"
+        className="pointer-events-none absolute inset-x-0 bottom-8 hidden text-mist lg:block"
       >
-        <span className="label-mono">Scroll</span>
-        <span className="relative block h-10 w-px overflow-hidden bg-line">
-          <span className="absolute inset-x-0 top-0 h-1/2 animate-[scroll-cue_2.4s_var(--ease-meridian-in-out)_infinite] bg-champagne motion-reduce:hidden" />
-        </span>
-      </div>
+        <div className="flex items-end gap-3">
+          <span className="relative block h-10 w-px overflow-hidden bg-line">
+            <span className="absolute inset-x-0 top-0 h-1/2 animate-[scroll-cue_2.4s_var(--ease-meridian-in-out)_infinite] bg-champagne motion-reduce:hidden" />
+          </span>
+          <span className="label-mono">Scroll</span>
+        </div>
+      </Container>
     </Section>
   );
 }

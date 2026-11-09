@@ -37,7 +37,7 @@ export function CompanyStats() {
               <dt className="label-mono text-mist">{metric.label}</dt>
               <dd className="font-display text-display-lg text-champagne tabular-nums">
                 {metric.value === null ? (
-                  <span className="block pt-6 label-mono text-ivory/35 lg:pt-8">
+                  <span className="block pt-6 label-mono text-mist lg:pt-8">
                     Awaiting verified figure
                   </span>
                 ) : (

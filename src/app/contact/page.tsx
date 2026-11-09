@@ -9,12 +9,7 @@ export default function Page() {
     <PageIntro
       eyebrow="Contact"
       index="04"
-      title={[
-        "Let’s build something",
-        <>
-          <em className="text-champagne">meaningful</em>.
-        </>,
-      ]}
+      title={["Let’s build something", "*meaningful*."]}
       intro={<p>Project enquiries, site visits and landowner partnerships.</p>}
     >
       <SampleBadge className="text-mist" label="In development — Milestone 7" />

@@ -18,12 +18,7 @@ export async function FeaturedProjects() {
           index="03"
           eyebrow="Selected work"
           titleId="projects-title"
-          title={[
-            "Places in",
-            <>
-              the <em className="text-champagne">making.</em>
-            </>,
-          ]}
+          title={["Places in", "the *making.*"]}
           intro={
             <p>
               Residential and commercial buildings at every stage, from land in assessment to homes

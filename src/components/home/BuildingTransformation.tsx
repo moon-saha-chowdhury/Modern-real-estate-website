@@ -9,7 +9,7 @@ export function BuildingTransformation() {
       <span className="absolute top-6 left-6 label-mono text-champagne">Fig. 01 — Elevation</span>
       <figcaption className="absolute inset-x-6 bottom-6 flex items-end justify-between gap-4 text-mist">
         <span className="label-mono">Building transformation</span>
-        <span className="label-mono">Video pending</span>
+        <span className="hidden label-mono sm:inline">Video pending</span>
       </figcaption>
     </figure>
   );

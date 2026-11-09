@@ -33,13 +33,9 @@ export function Testimonials() {
           <div className="col-span-full flex flex-col gap-8 lg:col-span-9 lg:col-start-3">
             <TextReveal
               as="p"
+              flowBelowLg
               className="font-display text-display-md text-ivory/90"
-              lines={[
-                "We publish what our clients say",
-                <>
-                  only with <em className="text-champagne">their permission.</em>
-                </>,
-              ]}
+              lines={["We publish what our clients say", "only with *their permission.*"]}
             />
             <p className="max-w-md text-mist">
               Testimonials from Meridian homeowners and partners will appear here as they are shared
@@ -66,7 +62,7 @@ export function Testimonials() {
               {Array.from({ length: PARTNER_PLACEHOLDER_SLOTS }, (_, i) => (
                 <li
                   key={i}
-                  className="flex h-24 items-center justify-center bg-forest label-mono text-ivory/30"
+                  className="flex h-24 items-center justify-center bg-forest label-mono text-mist"
                 >
                   Partner {i + 1}
                 </li>

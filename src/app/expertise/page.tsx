@@ -9,12 +9,7 @@ export default function Page() {
     <PageIntro
       eyebrow="Expertise"
       index="03"
-      title={[
-        "From land to",
-        <>
-          <em className="text-champagne">landmark</em>.
-        </>,
-      ]}
+      title={["From land to", "*landmark*."]}
       intro={<p>Development, architecture, engineering and partnership — under one discipline.</p>}
     >
       <SampleBadge className="text-mist" label="In development — Milestone 7" />

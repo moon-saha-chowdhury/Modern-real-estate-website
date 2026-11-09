@@ -46,7 +46,7 @@ export function Footer() {
 
         <nav aria-label="Footer" className="col-span-2 lg:col-span-2 lg:col-start-7">
           <FooterColumn title="Navigate">
-            <ul className="flex flex-col gap-3">
+            <ul className="flex flex-col gap-1">
               {mainNav.map((item) => (
                 <li key={item.href}>
                   <Link href={item.href} className={linkClass}>
@@ -60,7 +60,7 @@ export function Footer() {
 
         <div className="col-span-2 lg:col-span-2">
           <FooterColumn title="Portfolio">
-            <ul className="flex flex-col gap-3">
+            <ul className="flex flex-col gap-1">
               {portfolioNav.map((item) => (
                 <li key={item.href}>
                   <Link href={item.href} className={linkClass}>
@@ -119,9 +119,11 @@ export function Footer() {
       {/* Oversized wordmark, cropped by the page edge */}
       <div aria-hidden="true" className="pointer-events-none select-none">
         <Container>
-          <p className="translate-y-[0.22em] font-display text-[clamp(5.5rem,25vw,23rem)] leading-[0.8] tracking-[-0.03em] text-ivory/6">
-            Meridian
-          </p>
+          {/* Drawn via a pseudo-element: purely decorative, so it is not exposed as text */}
+          <p
+            data-wordmark="Meridian"
+            className="translate-y-[0.22em] font-display text-[clamp(5.5rem,25vw,23rem)] leading-[0.8] tracking-[-0.03em] text-ivory/6 before:content-[attr(data-wordmark)]"
+          />
         </Container>
       </div>
 
@@ -133,7 +135,10 @@ export function Footer() {
           <ul className="flex gap-6">
             {legalNav.map((item) => (
               <li key={item.href}>
-                <Link href={item.href} className="label-mono transition-colors hover:text-ivory">
+                <Link
+                  href={item.href}
+                  className="inline-block py-1.5 label-mono transition-colors hover:text-ivory"
+                >
                   {item.label}
                 </Link>
               </li>

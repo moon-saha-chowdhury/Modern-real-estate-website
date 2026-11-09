@@ -26,9 +26,12 @@ export const BUTTON_VARIANT_CLASSES: Record<ButtonVariant, Record<Surface, strin
   },
 };
 
+/** Emphasis inside display lines: champagne on dark surfaces, sage on ivory. */
+export const EMPHASIS_CLASS = "text-champagne in-data-[surface=light]:text-sage";
+
 /** Footer link styling, shared across footer columns. */
 export const FOOTER_LINK_CLASS =
-  "text-small text-ivory/70 transition-colors duration-300 hover:text-ivory focus-visible:text-ivory";
+  "inline-block py-1 text-small text-ivory/70 transition-colors duration-300 hover:text-ivory focus-visible:text-ivory";
 
 /** Placeholder slots shown until real partner logos are supplied. */
 export const PARTNER_PLACEHOLDER_SLOTS = 5;
