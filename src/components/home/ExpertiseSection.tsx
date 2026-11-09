@@ -11,9 +11,9 @@ import { ExpertiseList } from "./ExpertiseList";
  */
 export function ExpertiseSection() {
   return (
-    <Section tone="forest" aria-labelledby="expertise-title">
+    <Section tone="stone" aria-labelledby="expertise-title">
       <Container className="flex flex-col gap-14">
-        <Eyebrow index="04" className="text-champagne">
+        <Eyebrow index="04" className="text-accent">
           Expertise
         </Eyebrow>
         <TextReveal

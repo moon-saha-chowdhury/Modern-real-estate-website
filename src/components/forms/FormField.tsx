@@ -10,17 +10,17 @@ export function FormField({ id, label, error, hint, optional, children }: FormFi
     <div className="flex flex-col gap-1">
       <label
         htmlFor={id}
-        className="flex items-baseline justify-between gap-4 label-mono text-mist"
+        className="flex items-baseline justify-between gap-4 label-mono text-fg-muted"
       >
         <span>{label}</span>
-        {optional && <span className="tracking-normal text-ivory/40 normal-case">Optional</span>}
+        {optional && <span className="tracking-normal text-fg-muted normal-case">Optional</span>}
       </label>
       {children}
       {message && (
         <p
           id={`${id}-message`}
           role={error ? "alert" : undefined}
-          className={error ? "pt-1 text-small text-danger" : "pt-1 text-small text-mist"}
+          className={error ? "pt-1 text-small text-danger" : "pt-1 text-small text-fg-muted"}
         >
           {message}
         </p>

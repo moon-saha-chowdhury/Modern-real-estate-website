@@ -13,7 +13,7 @@ export function ProjectFilters({ active, counts, onChange, labelledBy }: Project
     <div
       role="group"
       aria-labelledby={labelledBy}
-      className="flex flex-wrap gap-x-6 border-b border-line md:gap-x-8"
+      className="flex flex-wrap gap-x-6 border-b border-rule md:gap-x-8"
     >
       {PROJECT_FILTERS.map((filter) => {
         const isActive = filter.key === active;
@@ -28,15 +28,15 @@ export function ProjectFilters({ active, counts, onChange, labelledBy }: Project
             className={cn(
               "relative flex shrink-0 items-start gap-1 py-4 label-mono transition-colors duration-300",
               "disabled:cursor-not-allowed disabled:opacity-35",
-              isActive ? "text-ivory" : "text-mist hover:text-ivory",
+              isActive ? "text-fg" : "text-fg-muted hover:text-fg",
             )}
           >
             {filter.label}
-            <sup className="text-[0.5625rem] text-champagne tabular-nums">{count}</sup>
+            <sup className="text-[0.5625rem] text-accent tabular-nums">{count}</sup>
             <span
               aria-hidden="true"
               className={cn(
-                "absolute inset-x-0 -bottom-px h-px origin-left bg-champagne transition-transform duration-500 ease-meridian",
+                "absolute inset-x-0 -bottom-px h-px origin-left bg-accent transition-transform duration-500 ease-meridian",
                 isActive ? "scale-x-100" : "scale-x-0",
               )}
             />

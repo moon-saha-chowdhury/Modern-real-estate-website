@@ -14,7 +14,9 @@ export function Wordmark({ className, onClick }: WordmarkProps) {
       className={cn("group inline-flex items-baseline gap-2.5 leading-none", className)}
     >
       <span className="font-display text-[1.625rem] tracking-[-0.01em]">Meridian</span>
-      <span className="hidden label-mono text-[0.625rem] text-mist sm:inline">Developments</span>
+      <span className="hidden label-mono text-[0.625rem] text-fg-muted sm:inline">
+        Developments
+      </span>
     </Link>
   );
 }

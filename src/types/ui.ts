@@ -5,7 +5,7 @@ import type { ComponentPropsWithoutRef, ElementType, ReactNode } from "react";
 
 /* ---------- Surfaces ---------- */
 
-export type SectionTone = "obsidian" | "forest" | "charcoal" | "ivory";
+export type SectionTone = "paper" | "stone" | "white" | "forest";
 export type Surface = "dark" | "light";
 export type SectionSpacing = "default" | "compact" | "none";
 

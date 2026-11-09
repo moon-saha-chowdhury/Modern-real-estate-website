@@ -12,7 +12,7 @@ export default function Page() {
       title={["A practice built on", "*intention*."]}
       intro={<p>Our story, vision and the people behind every Meridian building.</p>}
     >
-      <SampleBadge className="text-mist" label="In development — Milestone 7" />
+      <SampleBadge className="text-fg-muted" label="In development — Milestone 7" />
     </PageIntro>
   );
 }

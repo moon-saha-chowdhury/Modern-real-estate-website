@@ -18,10 +18,7 @@ export function SectionHeading({
 }: SectionHeadingProps) {
   return (
     <header className={cn("grid-editorial gap-y-8", className)}>
-      <Eyebrow
-        index={index}
-        className="col-span-full text-champagne in-data-[surface=light]:text-ink-soft"
-      >
+      <Eyebrow index={index} className="col-span-full text-accent">
         {eyebrow}
       </Eyebrow>
       <TextReveal
@@ -34,7 +31,7 @@ export function SectionHeading({
         )}
       />
       {intro && (
-        <div className="col-span-full text-lead text-mist in-data-[surface=light]:text-ink-soft md:col-span-5 md:col-start-4 lg:col-span-4 lg:col-start-9 lg:self-end">
+        <div className="col-span-full text-lead text-fg-muted md:col-span-5 md:col-start-4 lg:col-span-4 lg:col-start-9 lg:self-end">
           {intro}
         </div>
       )}

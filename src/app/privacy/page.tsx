@@ -11,7 +11,7 @@ export default function Page() {
       title={["Privacy policy"]}
       intro={<p>The privacy policy will be published once supplied by Meridian Developments.</p>}
     >
-      <SampleBadge className="text-mist" label="In development — awaiting legal copy" />
+      <SampleBadge className="text-fg-muted" label="In development — awaiting legal copy" />
     </PageIntro>
   );
 }

@@ -21,8 +21,8 @@ export const rootMetadata: Metadata = {
 };
 
 export const rootViewport: Viewport = {
-  themeColor: "#101713",
-  colorScheme: "dark",
+  themeColor: "#f1efe7",
+  colorScheme: "light",
 };
 
 export const pageMetadata = {

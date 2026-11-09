@@ -13,7 +13,7 @@ import type {
 
 export function buttonClasses(
   variant: ButtonVariant = "primary",
-  surface: Surface = "dark",
+  surface: Surface = "light",
   className?: string,
 ) {
   return cn(
@@ -67,7 +67,7 @@ export function Button(props: ButtonProps) {
   const {
     children,
     variant = "primary",
-    surface = "dark",
+    surface = "light",
     icon = false,
     className,
     ...rest

@@ -1,37 +1,54 @@
 /*
- * MIDNIGHT FOREST — design tokens
+ * MERIDIAN — design tokens (light theme)
  * Single source of truth for colour, type, spacing and motion.
- * Exposed to Tailwind via @theme (bg-obsidian, text-champagne, ease-meridian, text-display-xl …).
  *
- * Contrast notes (WCAG 2.2, computed):
- *   on obsidian: ivory 15.8 · champagne 9.3 · mist 7.7 · danger 6.0  → body text OK
- *                sage 4.0 · brand 3.2                               → large text / non-text UI only
- *   on forest:   ivory 12.1 · champagne 7.1 · mist 5.9               → body text OK
- *                brand 2.4                                          → DO NOT use brand on forest
- *   on ivory:    obsidian 15.8 · ink-soft 7.0 · danger-ink 6.1 · brand 5.0 → OK
- *                sage 4.0                                           → large text only
+ * Two layers:
+ *   1. Palette — fixed brand colours (bg-paper, bg-stone, text-brand …).
+ *   2. Semantic — colours that resolve per surface (text-fg, text-fg-muted, text-accent,
+ *      border-rule, bg-surface). Components use these, so a section only has to declare
+ *      data-surface="light" | "dark" and everything inside adapts. Defined in globals.css.
+ *
+ * Contrast (WCAG 2.2, computed) on paper / stone / white:
+ *   ink 15.8 / 14.0 / 18.2 · ink-soft 7.0 / 6.2 / 8.1 · bronze 5.5 / 4.9 / 6.4  → body text OK
+ *   brand 5.0 / 4.4 / 5.8  → links on paper & white; marks only on stone
+ *   sage 4.0 / 3.5 / 4.6   → decorative / large type only
+ *   rule-strong 3.1 / 2.8 / 3.6 → form field underlines (use on white panels)
+ * Dark surfaces (photo overlays, optional dark bands): ivory 15.8 · champagne 9.3 · mist 7.7
  */
 
 @theme {
-  /* ---------- Colour ---------- */
+  /* ---------- Colour: palette ---------- */
   --color-*: initial;
   --color-transparent: transparent;
   --color-current: currentColor;
 
-  --color-obsidian: #101713; /* primary dark */
-  --color-forest: #1e3027; /* deep forest */
-  --color-charcoal: #141914; /* secondary dark */
-  --color-sage: #647c62; /* muted sage — decorative, large type */
-  --color-brand: #337418; /* brand green — deliberate accent */
-  --color-champagne: #c2b99f; /* editorial highlight */
-  --color-ivory: #f1efe7; /* warm ivory — light surfaces, text on dark */
-  --color-mist: #a5aaa1; /* secondary text on dark */
-  --color-line: #303a32; /* borders on dark */
-  --color-line-light: #d9d4c7; /* borders on ivory (derived) */
-  --color-ink-soft: #4a5249; /* secondary text on ivory (derived) */
-  --color-white: #ffffff;
-  --color-danger: #d97a6c; /* form errors on dark */
-  --color-danger-ink: #9e3626; /* form errors on ivory */
+  /* Light surfaces */
+  --color-paper: #f1efe7; /* primary background (warm ivory) */
+  --color-stone: #e7e1d5; /* alternate section background */
+  --color-white: #ffffff; /* panels, alternate sections */
+
+  /* Ink */
+  --color-ink: #101713; /* primary text */
+  --color-ink-soft: #4a5249; /* secondary text */
+  --color-bronze: #6e5d3b; /* deep champagne: eyebrows, emphasis */
+  --color-rule-light: #d6d0c2; /* hairlines on light */
+  --color-rule-strong: #8c877c; /* form field underlines (3:1 on white) */
+
+  /* Brand */
+  --color-brand: #337418; /* brand green: marks, progress, links */
+  --color-sage: #647c62; /* muted sage: decorative, large type */
+  --color-forest: #1e3027; /* deep forest: hover on dark buttons, optional dark bands */
+  --color-champagne: #c2b99f; /* editorial highlight on dark surfaces */
+
+  /* Dark (photo overlays, optional dark bands) */
+  --color-obsidian: #101713;
+  --color-ivory: #f1efe7;
+  --color-mist: #a5aaa1;
+  --color-line-dark: #303a32;
+
+  /* Status */
+  --color-danger-ink: #9e3626; /* errors on light */
+  --color-danger-light: #d97a6c; /* errors on dark */
 
   /* ---------- Typography ---------- */
   --font-display: var(--font-google-sans-flex), ui-sans-serif, system-ui, sans-serif;

@@ -80,10 +80,10 @@ export function EnquiryForm({ defaultType = "project" }: EnquiryFormProps) {
           exit={{ opacity: 0 }}
           transition={{ duration: DURATION.ui, ease: EASE_MERIDIAN }}
         >
-          <span aria-hidden="true" className="h-px w-16 bg-champagne" />
+          <span aria-hidden="true" className="h-px w-16 bg-accent" />
           <p className="font-display text-display-sm">Thank you. Your enquiry has been received.</p>
           {!result.delivered && (
-            <p className="max-w-md text-small text-mist">
+            <p className="max-w-md text-small text-fg-muted">
               This preview site isn&apos;t connected to Meridian&apos;s inbox yet, so your message
               hasn&apos;t been forwarded to the team.
             </p>
@@ -109,8 +109,8 @@ export function EnquiryForm({ defaultType = "project" }: EnquiryFormProps) {
           </h3>
 
           <fieldset className="flex flex-col gap-4">
-            <legend className="mb-4 label-mono text-mist">I&apos;m enquiring about</legend>
-            <div className="grid grid-cols-2 gap-px border border-line bg-line">
+            <legend className="mb-4 label-mono text-fg-muted">I&apos;m enquiring about</legend>
+            <div className="grid grid-cols-2 gap-px border border-rule bg-rule">
               {ENQUIRY_TOPICS.map((option) => (
                 <label
                   key={option.value}
@@ -118,8 +118,8 @@ export function EnquiryForm({ defaultType = "project" }: EnquiryFormProps) {
                     "flex min-h-14 cursor-pointer items-center gap-3 px-4 py-3 text-small transition-colors duration-300",
                     "has-[:focus-visible]:outline-2 has-[:focus-visible]:-outline-offset-2 has-[:focus-visible]:outline-champagne",
                     selectedType === option.value
-                      ? "bg-ivory text-obsidian"
-                      : "bg-obsidian text-ivory/80 hover:bg-charcoal hover:text-ivory",
+                      ? "bg-ink text-paper"
+                      : "bg-white text-fg/80 hover:bg-stone hover:text-fg",
                   )}
                 >
                   <input
@@ -132,7 +132,7 @@ export function EnquiryForm({ defaultType = "project" }: EnquiryFormProps) {
                 </label>
               ))}
             </div>
-            {topic && <p className="text-small text-mist">{topic.description}</p>}
+            {topic && <p className="text-small text-fg-muted">{topic.description}</p>}
           </fieldset>
 
           <div className="grid gap-9 md:grid-cols-2">
@@ -204,7 +204,7 @@ export function EnquiryForm({ defaultType = "project" }: EnquiryFormProps) {
           )}
 
           <div className="flex flex-col-reverse items-start gap-6 sm:flex-row sm:items-center sm:justify-between">
-            <SampleBadge label="Inbox not yet connected" className="text-mist" />
+            <SampleBadge label="Inbox not yet connected" className="text-fg-muted" />
             <Button type="submit" icon disabled={pending} aria-busy={pending}>
               {pending ? "Sending…" : "Send enquiry"}
             </Button>

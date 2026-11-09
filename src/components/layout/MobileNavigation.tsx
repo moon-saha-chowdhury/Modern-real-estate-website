@@ -34,7 +34,7 @@ export function MobileNavigation({ open, pathname, onNavigate }: MobileNavigatio
           role="dialog"
           aria-modal="true"
           aria-label="Site navigation"
-          className="fixed inset-0 z-0 flex flex-col overflow-y-auto bg-obsidian pt-nav lg:hidden"
+          className="fixed inset-0 z-0 flex flex-col overflow-y-auto bg-surface pt-nav lg:hidden"
           initial={{ clipPath: "inset(0% 0% 100% 0%)" }}
           animate={{ clipPath: "inset(0% 0% 0% 0%)" }}
           exit={{ clipPath: "inset(0% 0% 100% 0%)" }}
@@ -42,11 +42,11 @@ export function MobileNavigation({ open, pathname, onNavigate }: MobileNavigatio
         >
           <Container className="flex flex-1 flex-col justify-between gap-12 pt-10 pb-8">
             <nav aria-label="Mobile">
-              <ul className="border-t border-line">
+              <ul className="border-t border-rule">
                 {mainNav.map((item, i) => {
                   const active = isActive(pathname, item.href);
                   return (
-                    <li key={item.href} className="overflow-hidden border-b border-line">
+                    <li key={item.href} className="overflow-hidden border-b border-rule">
                       <motion.div
                         initial={{ y: "100%" }}
                         animate={{ y: "0%" }}
@@ -67,13 +67,13 @@ export function MobileNavigation({ open, pathname, onNavigate }: MobileNavigatio
                           <span
                             className={cn(
                               "font-display text-[clamp(2.5rem,11vw,4rem)] leading-none transition-colors",
-                              active ? "text-ivory italic" : "text-ivory/80 group-hover:text-ivory",
+                              active ? "text-fg italic" : "text-fg/80 group-hover:text-fg",
                             )}
                           >
                             {item.label}
                           </span>
                           <span
-                            className={cn("label-mono", active ? "text-champagne" : "text-mist")}
+                            className={cn("label-mono", active ? "text-accent" : "text-fg-muted")}
                           >
                             {String(i + 1).padStart(2, "0")}
                           </span>
@@ -100,7 +100,7 @@ export function MobileNavigation({ open, pathname, onNavigate }: MobileNavigatio
               >
                 {primaryCta.label}
               </Button>
-              <p className="text-small text-mist">{company.description}</p>
+              <p className="text-small text-fg-muted">{company.description}</p>
             </motion.div>
           </Container>
         </motion.div>

@@ -9,11 +9,11 @@ export function SampleBadge({ className, label = "Sample content" }: SampleBadge
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-2 border border-current/30 px-2 py-1 label-mono text-[0.625rem] opacity-80",
+        "inline-flex items-center gap-2 border border-current/30 px-2 py-1 label-mono text-[0.625rem]",
         className,
       )}
     >
-      <span aria-hidden="true" className="size-1.5 bg-champagne" />
+      <span aria-hidden="true" className="size-1.5 bg-accent" />
       {label}
     </span>
   );

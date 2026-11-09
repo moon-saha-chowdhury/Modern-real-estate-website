@@ -64,7 +64,7 @@ export function ProcessTimeline({ stages }: ProcessTimelineProps) {
       {/* Track + drawn line */}
       <span
         aria-hidden="true"
-        className="absolute top-2 bottom-2 left-[5px] w-px bg-line-light lg:inset-x-0 lg:top-[5px] lg:bottom-auto lg:h-px lg:w-auto"
+        className="absolute top-2 bottom-2 left-[5px] w-px bg-rule lg:inset-x-0 lg:top-[5px] lg:bottom-auto lg:h-px lg:w-auto"
       />
       <span
         data-line
@@ -82,8 +82,8 @@ export function ProcessTimeline({ stages }: ProcessTimelineProps) {
           <span className="font-display text-display-sm text-sage tabular-nums">
             {displayIndex(i)}
           </span>
-          <h3 className="text-lead font-medium text-obsidian">{stage.title}</h3>
-          <p className="max-w-xs text-small text-ink-soft">{stage.description}</p>
+          <h3 className="text-lead font-medium text-fg">{stage.title}</h3>
+          <p className="max-w-xs text-small text-fg-muted">{stage.description}</p>
         </li>
       ))}
     </ol>

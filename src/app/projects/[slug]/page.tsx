@@ -36,8 +36,8 @@ export default async function ProjectPage({ params }: PageProps<"/projects/[slug
       intro={<p>{project.summary}</p>}
     >
       <div className="flex flex-wrap items-center gap-6">
-        {project.isPlaceholder && <SampleBadge label="Sample project" className="text-mist" />}
-        <SampleBadge label="Full details — Milestone 5" className="text-mist" />
+        {project.isPlaceholder && <SampleBadge label="Sample project" className="text-fg-muted" />}
+        <SampleBadge label="Full details — Milestone 5" className="text-fg-muted" />
         <Button href="/projects" variant="text">
           Back to projects
         </Button>

@@ -8,7 +8,7 @@ import type { SectionProps } from "@/types/ui";
  * Exposes `data-surface` (dark|light) and `data-tone` so children and the navbar can adapt.
  */
 export function Section({
-  tone = "obsidian",
+  tone = "paper",
   spacing = "default",
   className,
   ...props

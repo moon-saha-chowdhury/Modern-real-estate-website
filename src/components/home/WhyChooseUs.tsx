@@ -13,11 +13,11 @@ import { displayIndex } from "@/lib/utils/projects";
  */
 export function WhyChooseUs() {
   return (
-    <Section tone="charcoal" aria-labelledby="why-title">
+    <Section tone="stone" aria-labelledby="why-title">
       <Container grid className="gap-y-16">
         <div className="col-span-full flex flex-col gap-10 lg:col-span-5">
           <div className="flex flex-col gap-10 lg:sticky lg:top-[calc(var(--spacing-nav)+3rem)]">
-            <Eyebrow index="07" className="text-champagne">
+            <Eyebrow index="07" className="text-accent">
               Why Meridian
             </Eyebrow>
             <TextReveal
@@ -25,7 +25,7 @@ export function WhyChooseUs() {
               className="font-display text-display-md"
               lines={["Built to be", "lived in,", "*for decades.*"]}
             />
-            <SampleBadge label="Draft — to be confirmed" className="self-start text-mist" />
+            <SampleBadge label="Draft — to be confirmed" className="self-start text-fg-muted" />
           </div>
         </div>
 
@@ -34,11 +34,11 @@ export function WhyChooseUs() {
             <li key={strength.id}>
               <Reveal
                 delay={(i % 2) * 0.08}
-                className="flex flex-col gap-4 border-t border-line pt-6"
+                className="flex flex-col gap-4 border-t border-rule pt-6"
               >
-                <span className="label-mono text-champagne">{displayIndex(i)}</span>
-                <h3 className="text-lead font-medium text-ivory">{strength.title}</h3>
-                <p className="text-small text-mist">{strength.description}</p>
+                <span className="label-mono text-accent">{displayIndex(i)}</span>
+                <h3 className="text-lead font-medium text-fg">{strength.title}</h3>
+                <p className="text-small text-fg-muted">{strength.description}</p>
               </Reveal>
             </li>
           ))}

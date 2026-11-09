@@ -10,7 +10,7 @@ import { ProcessTimeline } from "./ProcessTimeline";
  */
 export function DevelopmentProcess() {
   return (
-    <Section tone="ivory" id="approach" aria-labelledby="process-title">
+    <Section tone="white" id="approach" aria-labelledby="process-title">
       <Container className="flex flex-col gap-20">
         <SectionHeading
           index="06"

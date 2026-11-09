@@ -1,9 +1,9 @@
 ---
 name: premium-ui-design
-description: Use when designing or building any visual section, page or component for the Meridian Developments site, so it follows the Midnight Forest art direction instead of generic template patterns.
+description: Use when designing or building any visual section, page or component for the Meridian Developments site, so it follows the Meridian light-theme art direction instead of generic template patterns.
 ---
 
-# Premium UI design — Meridian / Midnight Forest
+# Premium UI design — Meridian (light theme)
 
 Read `docs/DESIGN-SYSTEM.md` and `src/styles/tokens.css` first. Use the tokens and never hard-code hex values.
 
@@ -12,10 +12,10 @@ Read `docs/DESIGN-SYSTEM.md` and `src/styles/tokens.css` first. Use the tokens a
 1. **Asymmetry over symmetry.** Lay out on `grid-editorial` with uneven spans (7+4, 5+6 offset, 8 + 3 stacked). Use equal thirds only with a stated reason.
 2. **Each section gets its own composition.** Before building, write one sentence describing the layout and check it differs from the sections either side of it.
 3. **Image-led.** Photography carries the emotion. Crop deliberately: tall portrait (4:5, 3:4) against wide (16:9, 21:9). Let images bleed to one edge of the screen.
-4. **Hairlines, not boxes.** Separate content with `border-line` / `border-line-light` rules and whitespace. No rounded cards, shadows, glassmorphism or gradient fills.
-5. **Type does the work.** Use light Google Sans Flex display type with one slanted `<em>` emphasis in champagne, mono labels as annotations, and body text in mist / ink-soft.
-6. **Surface rhythm.** Follow the section sequence in DESIGN-SYSTEM.md. Two adjacent sections never share a tone.
-7. **Green is rare.** `brand` is only for active markers, progress lines and links on ivory. Never put brand on forest.
+4. **Hairlines, not boxes.** Separate content with `border-rule` hairlines and whitespace. No rounded cards, shadows, glassmorphism or gradient fills.
+5. **Type does the work.** Use light Google Sans Flex display type with one slanted emphasis (`*word*` in a line, rendered in bronze via `text-accent`), mono labels as annotations, and body text in `text-fg-muted`. Use the semantic colours (`text-fg`, `text-fg-muted`, `text-accent`, `border-rule`, `bg-surface`), never hard-coded theme colours.
+6. **Surface rhythm.** Follow the section sequence in DESIGN-SYSTEM.md. Tones are paper, stone and white; two adjacent sections never share a tone.
+7. **Green is rare.** `brand` is only for active markers, progress lines, focus and links on paper or white. Never as small text on stone (4.4:1).
 
 ## Banned patterns
 

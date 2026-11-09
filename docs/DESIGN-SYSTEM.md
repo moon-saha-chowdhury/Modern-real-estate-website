@@ -1,48 +1,75 @@
-# Midnight Forest — Design System
+# Meridian Design System (light theme)
 
-An architect's drawing set at night. Dark sections alternate with warm ivory "paper" sections.
+An architect's drawing set on warm paper. Light sections alternate between paper, stone and white.
 Fine 1px lines echo the drafting grid. Technical mono labels read like annotations on a drawing.
-**Green is used rarely**, like a surveyor's mark. **Champagne** is the editorial highlight.
-Photography carries the emotion and the interface stays quiet.
+**Green is used rarely**, like a surveyor's mark. **Bronze** (a deep champagne) is the editorial
+highlight. Photography carries the emotion and the interface stays quiet.
+
+The site switched from the original dark "Midnight Forest" scheme to this light theme at the
+client's request. The palette keeps the same brand colours; only the surfaces changed.
 
 Source of truth: [`src/styles/tokens.css`](../src/styles/tokens.css). Live reference: `/styleguide` (noindex).
 
 ## Colour
 
-| Token                    | Hex     | Use                                                           |
-| ------------------------ | ------- | ------------------------------------------------------------- |
-| `obsidian`               | #101713 | Primary dark: hero, projects, stats, contact                  |
-| `forest`                 | #1E3027 | Expertise, testimonials                                       |
-| `charcoal`               | #141914 | Footer, trust section, image placeholders                     |
-| `sage`                   | #647C62 | Decorative / large type only (4.0:1 on obsidian)              |
-| `brand`                  | #337418 | Accent: active marks, progress lines, focus on light surfaces |
-| `champagne`              | #C2B99F | Slanted emphasis, numerals, eyebrows on dark                  |
-| `ivory`                  | #F1EFE7 | Light sections; primary text on dark                          |
-| `mist`                   | #A5AAA1 | Secondary text on dark                                        |
-| `line`                   | #303A32 | Hairlines on dark                                             |
-| `line-light`, `ink-soft` | derived | Hairlines / secondary text on ivory                           |
+### Palette
+
+| Token                                    | Hex     | Use                                                          |
+| ---------------------------------------- | ------- | ------------------------------------------------------------ |
+| `paper`                                  | #F1EFE7 | Primary background                                           |
+| `stone`                                  | #E7E1D5 | Alternate sections                                           |
+| `white`                                  | #FFFFFF | Alternate sections, form panels                              |
+| `ink`                                    | #101713 | Primary text, primary buttons                                |
+| `ink-soft`                               | #4A5249 | Secondary text                                               |
+| `bronze`                                 | #6E5D3B | Eyebrows and emphasis (deep champagne)                       |
+| `brand`                                  | #337418 | Marks, progress lines, focus ring, links on paper/white      |
+| `sage`                                   | #647C62 | Decorative / large type only                                 |
+| `rule-light`                             | #D6D0C2 | Hairlines                                                    |
+| `rule-strong`                            | #8C877C | Form field underlines                                        |
+| `forest`                                 | #1E3027 | Primary button hover; optional dark band                     |
+| `champagne`, `ivory`, `mist`, `obsidian` |         | Dark surfaces only (labels over photos, optional dark bands) |
+
+### Semantic colours (use these in components)
+
+| Utility                   | Light surface                | Dark surface                 |
+| ------------------------- | ---------------------------- | ---------------------------- |
+| `text-fg`                 | ink                          | ivory                        |
+| `text-fg-muted`           | ink-soft                     | mist                         |
+| `text-accent`             | bronze                       | champagne                    |
+| `border-rule` / `bg-rule` | rule-light                   | line-dark                    |
+| `bg-surface`              | the section's own background | the section's own background |
+| `text-danger`             | danger-ink                   | danger-light                 |
+
+They resolve from the nearest `data-surface` ("light" by default). `Section` sets it from its `tone`,
+so components never hard-code a theme.
 
 ### Contrast rules (computed, WCAG 2.2)
 
-- Body text on dark surfaces uses ivory (15.8), champagne (9.3) or mist (7.7) only.
-- `brand` on obsidian is 3.2:1, which is fine for non-text marks and large type. **Never put `brand` on `forest` (2.4:1).**
-- `brand` on ivory is 5.0:1, which is fine for links and text.
-- The focus ring is brand green by default and champagne inside `[data-surface="dark"]`.
+| On    | ink  | ink-soft | bronze | brand   | sage |
+| ----- | ---- | -------- | ------ | ------- | ---- |
+| paper | 15.8 | 7.0      | 5.5    | 5.0     | 4.0  |
+| stone | 14.0 | 6.2      | 4.9    | **4.4** | 3.5  |
+| white | 18.2 | 8.1      | 6.4    | 5.8     | 4.6  |
+
+- Small text uses ink, ink-soft or bronze only. Never put small text at reduced opacity.
+- `brand` is not a text colour on stone (4.4:1). Use it there only for marks.
+- Form underlines use `rule-strong` on white panels (3.6:1, meets the 3:1 non-text rule).
+- Labels on photographs keep a dark chip (`bg-obsidian/75 text-ivory`), since photos vary.
 
 ### Section sequence (homepage)
 
-| Section      | Surface  |
-| ------------ | -------- |
-| Hero         | obsidian |
-| Intro        | ivory    |
-| Projects     | obsidian |
-| Expertise    | forest   |
-| Stats        | obsidian |
-| Process      | ivory    |
-| Why Meridian | charcoal |
-| Testimonials | forest   |
-| Contact      | obsidian |
-| Footer       | charcoal |
+| Section      | Tone                                          |
+| ------------ | --------------------------------------------- |
+| Hero         | full-bleed video, paper wash behind the title |
+| Intro        | paper                                         |
+| Projects     | white                                         |
+| Expertise    | stone                                         |
+| Stats        | paper                                         |
+| Process      | white                                         |
+| Why Meridian | stone                                         |
+| Testimonials | paper                                         |
+| Contact      | stone (form on a white panel)                 |
+| Footer       | paper, with a top rule                        |
 
 ## Typography
 
@@ -52,8 +79,8 @@ Source of truth: [`src/styles/tokens.css`](../src/styles/tokens.css). Live refer
 | Body    | Manrope (variable)                                      | `text-lead`, `text-body`, `text-small`          |
 | Labels  | IBM Plex Mono 400/500                                   | `label-mono` (11px, uppercase, 0.14em tracking) |
 
-- Emphasis is `<em>`: a −10° slant (`slnt` axis; the family has no italic) at weight 300, in champagne on dark. Use it at most once per heading.
-- Break heading lines deliberately: pass `lines={[…]}` to `TextReveal` / `SectionHeading`.
+- Emphasis is `<em>`: a −10° slant (`slnt` axis; the family has no italic) at weight 300, in bronze (`text-accent`). Use it at most once per heading.
+- Break heading lines deliberately: pass `lines={["Line one", "line *two*"]}` to `TextReveal` / `SectionHeading`. Asterisks mark the emphasised words.
 - Only the hero uses `display-xl`. Page openers use `display-lg` and section headings use `display-md`.
 - Cap body measure near 70ch (`max-w-prose`).
 

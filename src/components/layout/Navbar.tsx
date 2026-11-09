@@ -99,12 +99,12 @@ export function Navbar() {
     <header
       ref={headerRef}
       data-menu={menuOpen ? "open" : "closed"}
-      data-surface="dark"
+      data-surface="light"
       onKeyDown={onKeyDown}
       className={cn(
-        "fixed inset-x-0 top-0 z-50 border-b border-transparent text-ivory",
+        "fixed inset-x-0 top-0 z-50 border-b border-transparent text-fg",
         "transition-[background-color,border-color,translate] duration-500 ease-meridian",
-        "data-[scrolled=true]:border-line/70 data-[scrolled=true]:bg-obsidian/95",
+        "data-[scrolled=true]:border-rule/70 data-[scrolled=true]:bg-surface/95",
         "data-[hidden=true]:-translate-y-full",
         "data-[menu=open]:border-transparent data-[menu=open]:bg-transparent",
       )}
@@ -123,7 +123,7 @@ export function Navbar() {
                     aria-current={active ? "page" : undefined}
                     className={cn(
                       "group relative flex items-center gap-2 py-2 text-small transition-colors duration-300",
-                      active ? "text-ivory" : "text-ivory/65 hover:text-ivory",
+                      active ? "text-fg" : "text-fg/65 hover:text-fg",
                     )}
                   >
                     <span

@@ -17,7 +17,7 @@ async function CurrentYear() {
 function FooterColumn({ title, children }: FooterColumnProps) {
   return (
     <div className="flex flex-col gap-5">
-      <h2 className="label-mono text-champagne">{title}</h2>
+      <h2 className="label-mono text-accent">{title}</h2>
       {children}
     </div>
   );
@@ -29,18 +29,18 @@ export function Footer() {
 
   return (
     <footer
-      data-surface="dark"
-      className="relative overflow-hidden border-t border-line bg-charcoal text-ivory"
+      data-surface="light"
+      className="relative overflow-hidden border-t border-rule bg-surface text-fg"
     >
       <Container grid className="gap-y-14 pt-24 pb-16 md:pt-32">
         {/* Brand */}
         <div className="col-span-full flex flex-col gap-6 md:col-span-8 lg:col-span-5">
           <p className="max-w-[16ch] font-display text-display-sm">
-            Spaces built with <em className="text-champagne">intention</em>, made to endure.
+            Spaces built with <em className="text-accent">intention</em>, made to endure.
           </p>
-          <p className="max-w-prose text-small text-mist">{company.description}</p>
+          <p className="max-w-prose text-small text-fg-muted">{company.description}</p>
           {company.isPlaceholder && (
-            <SampleBadge className="self-start text-mist" label="Draft brand copy" />
+            <SampleBadge className="self-start text-fg-muted" label="Draft brand copy" />
           )}
         </div>
 
@@ -75,7 +75,7 @@ export function Footer() {
         <div className="col-span-full md:col-span-4 lg:col-span-2">
           <FooterColumn title="Contact">
             {hasContact ? (
-              <address className="flex flex-col gap-3 text-small text-ivory/70 not-italic">
+              <address className="flex flex-col gap-3 text-small text-fg/70 not-italic">
                 {contact.address?.map((line) => (
                   <span key={line}>{line}</span>
                 ))}
@@ -91,11 +91,11 @@ export function Footer() {
                 )}
               </address>
             ) : (
-              <p className="text-small text-mist">
+              <p className="text-small text-fg-muted">
                 Office details will be published shortly.{" "}
                 <Link
                   href="/contact"
-                  className="text-ivory underline decoration-ivory/30 underline-offset-4 hover:decoration-ivory"
+                  className="text-fg underline decoration-fg/30 underline-offset-4 hover:decoration-fg"
                 >
                   Send an enquiry
                 </Link>
@@ -122,13 +122,13 @@ export function Footer() {
           {/* Drawn via a pseudo-element: purely decorative, so it is not exposed as text */}
           <p
             data-wordmark="Meridian"
-            className="translate-y-[0.22em] font-display text-[clamp(5.5rem,25vw,23rem)] leading-[0.8] tracking-[-0.03em] text-ivory/6 before:content-[attr(data-wordmark)]"
+            className="translate-y-[0.22em] font-display text-[clamp(5.5rem,25vw,23rem)] leading-[0.8] tracking-[-0.03em] text-fg/6 before:content-[attr(data-wordmark)]"
           />
         </Container>
       </div>
 
-      <div className="relative border-t border-line bg-charcoal">
-        <Container className="flex flex-col gap-4 py-6 text-mist sm:flex-row sm:items-center sm:justify-between">
+      <div className="relative border-t border-rule bg-surface">
+        <Container className="flex flex-col gap-4 py-6 text-fg-muted sm:flex-row sm:items-center sm:justify-between">
           <p className="label-mono">
             © <CurrentYear /> {company.name}
           </p>
@@ -137,7 +137,7 @@ export function Footer() {
               <li key={item.href}>
                 <Link
                   href={item.href}
-                  className="inline-block py-1.5 label-mono transition-colors hover:text-ivory"
+                  className="inline-block py-1.5 label-mono transition-colors hover:text-fg"
                 >
                   {item.label}
                 </Link>

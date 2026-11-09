@@ -29,7 +29,7 @@ export function ImageReveal({
 
   return (
     <motion.div
-      className={cn("relative overflow-hidden bg-charcoal", className)}
+      className={cn("relative overflow-hidden bg-stone", className)}
       initial={{ clipPath: CLIP_HIDDEN[from] }}
       whileInView={{ clipPath: CLIP_VISIBLE }}
       viewport={VIEWPORT_IMAGE}

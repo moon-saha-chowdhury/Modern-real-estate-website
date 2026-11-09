@@ -13,14 +13,14 @@ export function CompanyStats() {
   const pending = metrics.every((metric) => metric.value === null);
 
   return (
-    <Section tone="obsidian" spacing="compact" aria-labelledby="stats-title">
+    <Section tone="paper" spacing="compact" aria-labelledby="stats-title">
       <Container className="flex flex-col gap-12">
         <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
-          <Eyebrow index="05" as="h2" className="text-champagne">
+          <Eyebrow index="05" as="h2" className="text-accent">
             <span id="stats-title">In numbers</span>
           </Eyebrow>
           {pending && (
-            <p className="max-w-sm text-small text-mist md:text-right">
+            <p className="max-w-sm text-small text-fg-muted md:text-right">
               Figures appear here once they have been verified by Meridian. We don&apos;t publish
               estimates.
             </p>
@@ -28,16 +28,16 @@ export function CompanyStats() {
         </div>
 
         {/* 1px gaps over the line colour draw the hairline grid */}
-        <dl className="grid grid-cols-2 gap-px border-y border-line bg-line lg:grid-cols-4">
+        <dl className="grid grid-cols-2 gap-px border-y border-rule bg-rule lg:grid-cols-4">
           {metrics.map((metric) => (
             <div
               key={metric.id}
-              className="flex flex-col-reverse justify-end gap-6 bg-obsidian py-10 pr-6 even:pl-6 lg:pl-8 lg:first:pl-0 lg:even:pl-8"
+              className="flex flex-col-reverse justify-end gap-6 bg-surface py-10 pr-6 even:pl-6 lg:pl-8 lg:first:pl-0 lg:even:pl-8"
             >
-              <dt className="label-mono text-mist">{metric.label}</dt>
-              <dd className="font-display text-display-lg text-champagne tabular-nums">
+              <dt className="label-mono text-fg">{metric.label}</dt>
+              <dd className="font-display text-display-lg text-accent tabular-nums">
                 {metric.value === null ? (
-                  <span className="block pt-6 label-mono text-mist lg:pt-8">
+                  <span className="block pt-6 label-mono text-fg-muted lg:pt-8">
                     Awaiting verified figure
                   </span>
                 ) : (

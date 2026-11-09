@@ -17,9 +17,9 @@ export function BrandIntroduction() {
   const image = media.brandIntro;
 
   return (
-    <Section tone="ivory" aria-labelledby="intro-title">
+    <Section tone="paper" aria-labelledby="intro-title">
       <Container grid className="gap-y-12 lg:gap-y-20">
-        <Eyebrow index="02" className="col-span-full text-ink-soft">
+        <Eyebrow index="02" className="col-span-full text-fg-muted">
           Who we are
         </Eyebrow>
 
@@ -43,12 +43,12 @@ export function BrandIntroduction() {
             sizes="(min-width: 1024px) 22vw, (min-width: 768px) 36vw, 75vw"
             className="aspect-[3/4] w-full"
           />
-          <PhotoCredit image={image} className="text-ink-soft" />
+          <PhotoCredit image={image} className="text-fg-muted" />
         </figure>
 
         <Reveal className="col-span-full flex flex-col gap-8 md:col-span-5 md:col-start-2 lg:col-span-4 lg:col-start-5 lg:row-start-3">
-          <span aria-hidden="true" className="h-px w-16 bg-obsidian/30" />
-          <p className="text-ink-soft">
+          <span aria-hidden="true" className="h-px w-16 bg-surface/30" />
+          <p className="text-fg-muted">
             Meridian develops residential and commercial buildings with an architect&apos;s
             discipline: every plan resolved for light, air and privacy before a single wall is
             built, and every detail made to last.

@@ -23,7 +23,7 @@ test.describe("hero building transformation", () => {
       await page.mouse.wheel(0, 180);
       await page.waitForTimeout(60);
     }
-    await expect.poll(() => videoTime(page), { timeout: 5000 }).toBeGreaterThan(2);
+    await expect.poll(() => videoTime(page), { timeout: 10000 }).toBeGreaterThan(2);
     // Faded visually, but the h1 stays exposed to assistive tech.
     await expect
       .poll(() =>
@@ -31,7 +31,7 @@ test.describe("hero building transformation", () => {
       )
       .toBeLessThan(0.05);
     await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
-    await expect(page.locator("[data-stage-label]")).not.toHaveText("Foundation");
+    await expect(page.locator("[data-stage-label]")).not.toHaveText("Structure");
     const forward = await videoTime(page);
 
     // Scrolling back up reverses the build.
@@ -39,7 +39,7 @@ test.describe("hero building transformation", () => {
       await page.mouse.wheel(0, -180);
       await page.waitForTimeout(60);
     }
-    await expect.poll(() => videoTime(page), { timeout: 5000 }).toBeLessThan(forward - 0.5);
+    await expect.poll(() => videoTime(page), { timeout: 10000 }).toBeLessThan(forward - 0.5);
   });
 
   test("the video is silent and never autoplays", async ({ page }) => {

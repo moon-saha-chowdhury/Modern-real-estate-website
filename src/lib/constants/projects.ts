@@ -12,11 +12,11 @@ export const STATUS_LABELS: Record<ProjectStatus, string> = {
   completed: "Completed",
 };
 
-/** Status marker colours (non-text marks, so brand green is acceptable on obsidian). */
+/** Status marker colours (small non-text marks). */
 export const STATUS_MARKER_CLASSES: Record<ProjectStatus, string> = {
-  upcoming: "bg-champagne",
+  upcoming: "bg-accent",
   ongoing: "bg-brand",
-  completed: "bg-ivory",
+  completed: "bg-ink",
 };
 
 export const PROJECT_FILTERS: ProjectFilter[] = [

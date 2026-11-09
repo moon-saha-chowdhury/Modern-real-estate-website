@@ -12,7 +12,7 @@ export default function Page() {
       title={["From land to", "*landmark*."]}
       intro={<p>Development, architecture, engineering and partnership — under one discipline.</p>}
     >
-      <SampleBadge className="text-mist" label="In development — Milestone 7" />
+      <SampleBadge className="text-fg-muted" label="In development — Milestone 7" />
     </PageIntro>
   );
 }

@@ -9,12 +9,12 @@ import type { PageIntroProps } from "@/types/ui";
 export function PageIntro({ eyebrow, index, title, intro, children }: PageIntroProps) {
   return (
     <Section
-      tone="obsidian"
+      tone="paper"
       spacing="none"
       className="pt-[calc(var(--spacing-nav)+clamp(4rem,10vw,9rem))] pb-section"
     >
       <Container grid className="gap-y-10">
-        <Eyebrow index={index} className="col-span-full text-champagne">
+        <Eyebrow index={index} className="col-span-full text-accent">
           {eyebrow}
         </Eyebrow>
         <TextReveal
@@ -27,7 +27,7 @@ export function PageIntro({ eyebrow, index, title, intro, children }: PageIntroP
           <Reveal
             immediate
             delay={0.3}
-            className="col-span-full text-lead text-mist md:col-span-6 lg:col-span-5 lg:col-start-7"
+            className="col-span-full text-lead text-fg-muted md:col-span-6 lg:col-span-5 lg:col-start-7"
           >
             {intro}
           </Reveal>

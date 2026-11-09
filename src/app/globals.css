@@ -2,18 +2,59 @@
 @import "../styles/tokens.css";
 @import "lenis/dist/lenis.css";
 
+/*
+ * ---------- Semantic colours ----------
+ * Resolve per surface. Light is the default for the whole site; any element marked
+ * data-surface="dark" (an image overlay, an optional dark band) flips everything inside it.
+ * --surface is set by each section tone (see SECTION_TONE_CLASSES) so inner panels can match.
+ */
+@theme inline {
+  --color-fg: var(--fg);
+  --color-fg-muted: var(--fg-muted);
+  --color-accent: var(--accent);
+  --color-rule: var(--rule);
+  --color-surface: var(--surface);
+  --color-danger: var(--danger);
+}
+
+@layer base {
+  :root,
+  [data-surface="light"] {
+    --fg: var(--color-ink);
+    --fg-muted: var(--color-ink-soft);
+    --accent: var(--color-bronze);
+    --rule: var(--color-rule-light);
+    --danger: var(--color-danger-ink);
+    --focus: var(--color-brand);
+  }
+
+  :root {
+    --surface: var(--color-paper);
+  }
+
+  [data-surface="dark"] {
+    --fg: var(--color-ivory);
+    --fg-muted: var(--color-mist);
+    --accent: var(--color-champagne);
+    --rule: var(--color-line-dark);
+    --danger: var(--color-danger-light);
+    --focus: var(--color-champagne);
+  }
+}
+
 /* ---------- Base ---------- */
 @layer base {
   html {
-    background-color: var(--color-obsidian);
-    color: var(--color-ivory);
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    color-scheme: light;
     -webkit-text-size-adjust: 100%;
     text-rendering: optimizeLegibility;
   }
 
   body {
     min-height: 100dvh;
-    background-color: var(--color-obsidian);
+    background-color: var(--color-paper);
     font-family: var(--font-sans);
     font-size: var(--text-body);
     line-height: var(--text-body--line-height);
@@ -23,16 +64,12 @@
 
   ::selection {
     background-color: var(--color-champagne);
-    color: var(--color-obsidian);
+    color: var(--color-ink);
   }
 
   :focus-visible {
-    outline: 2px solid var(--color-brand);
+    outline: 2px solid var(--focus);
     outline-offset: 3px;
-  }
-
-  [data-surface="dark"] :focus-visible {
-    outline-color: var(--color-champagne);
   }
 
   h1,
@@ -99,16 +136,6 @@
 /* Hairline rule that draws in from the left */
 @utility rule-draw {
   transform-origin: left center;
-}
-
-/* ---------- Keyframes ---------- */
-@keyframes scroll-cue {
-  0% {
-    translate: 0 -100%;
-  }
-  100% {
-    translate: 0 200%;
-  }
 }
 
 /* ---------- Reduced motion ---------- */

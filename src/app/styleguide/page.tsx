@@ -16,7 +16,7 @@ export default function StyleguidePage() {
   return (
     <>
       <Section
-        tone="obsidian"
+        tone="paper"
         spacing="none"
         className="pt-[calc(var(--spacing-nav)+6rem)] pb-section"
       >
@@ -37,19 +37,19 @@ export default function StyleguidePage() {
       </Section>
 
       {/* Colour */}
-      <Section tone="charcoal" spacing="compact">
+      <Section tone="stone" spacing="compact">
         <Container className="flex flex-col gap-12">
-          <Eyebrow index="01" className="text-champagne">
+          <Eyebrow index="01" className="text-accent">
             Colour
           </Eyebrow>
-          <ul className="grid grid-cols-2 gap-px border border-line bg-line md:grid-cols-3 lg:grid-cols-9">
+          <ul className="grid grid-cols-2 gap-px border border-rule bg-rule md:grid-cols-3 lg:grid-cols-9">
             {COLOUR_SWATCHES.map((c) => (
-              <li key={c.token} className="flex flex-col bg-charcoal">
+              <li key={c.token} className="flex flex-col bg-surface">
                 <div className={`${c.swatchClass} aspect-[3/4] lg:aspect-[1/2]`} />
                 <div className="flex flex-col gap-1 p-4">
-                  <span className="text-small text-ivory">{c.name}</span>
-                  <span className="label-mono text-mist">{c.hex}</span>
-                  <span className="text-[0.75rem] text-mist">{c.role}</span>
+                  <span className="text-small text-fg">{c.name}</span>
+                  <span className="label-mono text-fg-muted">{c.hex}</span>
+                  <span className="text-[0.75rem] text-fg-muted">{c.role}</span>
                 </div>
               </li>
             ))}
@@ -58,22 +58,24 @@ export default function StyleguidePage() {
       </Section>
 
       {/* Typography */}
-      <Section tone="obsidian" spacing="compact">
+      <Section tone="white" spacing="compact">
         <Container className="flex flex-col gap-12">
-          <Eyebrow index="02" className="text-champagne">
+          <Eyebrow index="02" className="text-accent">
             Typography — Google Sans Flex · Manrope · IBM Plex Mono
           </Eyebrow>
-          <div className="flex flex-col divide-y divide-line border-y border-line">
+          <div className="flex flex-col divide-y divide-rule border-y border-rule">
             {TYPE_SPECIMENS.map((t) => (
               <div key={t.label} className="grid-editorial items-baseline gap-y-3 py-8">
-                <span className="col-span-full label-mono text-mist lg:col-span-2">{t.label}</span>
+                <span className="col-span-full label-mono text-fg-muted lg:col-span-2">
+                  {t.label}
+                </span>
                 <p className={`col-span-full font-display lg:col-span-10 ${t.className}`}>
-                  {t.sample} <em className="text-champagne">{t.emphasis}</em>
+                  {t.sample} <em className="text-accent">{t.emphasis}</em>
                 </p>
               </div>
             ))}
             <div className="grid-editorial gap-y-3 py-8">
-              <span className="col-span-full label-mono text-mist lg:col-span-2">
+              <span className="col-span-full label-mono text-fg-muted lg:col-span-2">
                 Lead · Manrope
               </span>
               <p className="col-span-full max-w-2xl text-lead lg:col-span-8">
@@ -82,22 +84,22 @@ export default function StyleguidePage() {
               </p>
             </div>
             <div className="grid-editorial gap-y-3 py-8">
-              <span className="col-span-full label-mono text-mist lg:col-span-2">
+              <span className="col-span-full label-mono text-fg-muted lg:col-span-2">
                 Body · Manrope
               </span>
-              <p className="col-span-full max-w-prose text-mist lg:col-span-6">
+              <p className="col-span-full max-w-prose text-fg-muted lg:col-span-6">
                 Body copy is set generously, with a long measure capped near 70 characters.
                 Secondary text uses Mist on dark surfaces and a derived soft ink on Ivory.
               </p>
             </div>
             <div className="grid-editorial gap-y-3 py-8">
-              <span className="col-span-full label-mono text-mist lg:col-span-2">
+              <span className="col-span-full label-mono text-fg-muted lg:col-span-2">
                 Label · Plex Mono
               </span>
               <div className="col-span-full flex flex-wrap items-center gap-8 lg:col-span-10">
                 <Eyebrow index="03">Section annotation</Eyebrow>
-                <span className="label-mono text-champagne">Gulshan, Dhaka · Residential</span>
-                <SampleBadge className="text-mist" />
+                <span className="label-mono text-accent">Gulshan, Dhaka · Residential</span>
+                <SampleBadge className="text-fg-muted" />
               </div>
             </div>
           </div>
@@ -105,9 +107,9 @@ export default function StyleguidePage() {
       </Section>
 
       {/* Buttons & surfaces */}
-      <Section tone="obsidian" spacing="none" className="pb-section">
+      <Section tone="paper" spacing="none" className="pb-section">
         <Container className="flex flex-col gap-12">
-          <Eyebrow index="03" className="text-champagne">
+          <Eyebrow index="03" className="text-accent">
             Surfaces &amp; actions
           </Eyebrow>
         </Container>

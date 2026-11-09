@@ -12,7 +12,7 @@ export default function Page() {
       title={["Selected", "*developments*."]}
       intro={<p>Residential and commercial buildings — upcoming, ongoing and completed.</p>}
     >
-      <SampleBadge className="text-mist" label="In development — Milestone 4" />
+      <SampleBadge className="text-fg-muted" label="In development — Milestone 4" />
     </PageIntro>
   );
 }

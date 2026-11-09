@@ -23,7 +23,7 @@ export function ExpertiseList({ items }: ExpertiseListProps) {
     <div className="grid-editorial gap-y-10">
       <div className="hidden lg:col-span-4 lg:block">
         <div className="sticky top-[calc(var(--spacing-nav)+2rem)] flex flex-col gap-3">
-          <div className="relative aspect-[4/5] overflow-hidden bg-charcoal">
+          <div className="relative aspect-[4/5] overflow-hidden bg-paper">
             <AnimatePresence initial={false}>
               <motion.div
                 key={current.id}
@@ -46,15 +46,15 @@ export function ExpertiseList({ items }: ExpertiseListProps) {
               Fig. {displayIndex(active)}
             </span>
           </div>
-          <PhotoCredit image={current.image} className="text-mist" />
+          <PhotoCredit image={current.image} className="text-fg-muted" />
         </div>
       </div>
 
-      <ol className="col-span-full border-t border-ivory/15 lg:col-span-7 lg:col-start-6">
+      <ol className="col-span-full border-t border-fg/15 lg:col-span-7 lg:col-start-6">
         {items.map((item, i) => {
           const isActive = i === active;
           return (
-            <li key={item.id} className="border-b border-ivory/15">
+            <li key={item.id} className="border-b border-fg/15">
               <Link
                 href={`/expertise#${item.id}`}
                 onMouseEnter={() => setActive(i)}
@@ -64,7 +64,7 @@ export function ExpertiseList({ items }: ExpertiseListProps) {
                 <span
                   className={cn(
                     "label-mono transition-colors duration-300",
-                    isActive ? "text-champagne" : "text-mist",
+                    isActive ? "text-accent" : "text-fg-muted",
                   )}
                 >
                   {displayIndex(i)}
@@ -72,7 +72,7 @@ export function ExpertiseList({ items }: ExpertiseListProps) {
                 <span
                   className={cn(
                     "font-display text-display-sm transition-[color,translate] duration-500 ease-meridian",
-                    isActive ? "text-ivory lg:translate-x-2" : "text-ivory/70",
+                    isActive ? "text-fg lg:translate-x-2" : "text-fg/70",
                   )}
                 >
                   {item.title}
@@ -82,10 +82,12 @@ export function ExpertiseList({ items }: ExpertiseListProps) {
                   strokeWidth={1.5}
                   className={cn(
                     "size-5 self-center transition-[color,translate] duration-500 ease-meridian",
-                    isActive ? "text-champagne" : "text-ivory/30",
+                    isActive ? "text-accent" : "text-fg/30",
                   )}
                 />
-                <span className="col-start-2 max-w-xl text-small text-mist">{item.summary}</span>
+                <span className="col-start-2 max-w-xl text-small text-fg-muted">
+                  {item.summary}
+                </span>
               </Link>
             </li>
           );
