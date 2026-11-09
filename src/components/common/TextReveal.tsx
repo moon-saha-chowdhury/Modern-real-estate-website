@@ -17,9 +17,10 @@ export function TextReveal({
   lineClassName,
   delay = 0,
   immediate = false,
+  id,
 }: TextRevealProps) {
   return (
-    <Tag className={className}>
+    <Tag id={id} className={className}>
       {lines.map((line, i) => (
         <span
           key={i}

@@ -29,3 +29,10 @@ export const BUTTON_VARIANT_CLASSES: Record<ButtonVariant, Record<Surface, strin
 /** Footer link styling, shared across footer columns. */
 export const FOOTER_LINK_CLASS =
   "text-small text-ivory/70 transition-colors duration-300 hover:text-ivory focus-visible:text-ivory";
+
+/** Placeholder slots shown until real partner logos are supplied. */
+export const PARTNER_PLACEHOLDER_SLOTS = 5;
+
+/** Shared input styling: underline fields, no boxes. */
+export const FIELD_INPUT_CLASS =
+  "w-full border-0 border-b border-ivory/25 bg-transparent px-0 py-3 text-ivory placeholder:text-ivory/30 transition-colors duration-300 focus:border-champagne focus:outline-none aria-[invalid=true]:border-danger";

@@ -47,8 +47,13 @@ src/
     layout/               Navbar, MobileNavigation, Footer, Providers, SmoothScroll, Wordmark
     common/               Button, Container, Section, SectionHeading, Eyebrow, TextReveal,
                           Reveal, ImageReveal, PageIntro, SampleBadge
-    home/ projects/ virtual-tour/   (added in later milestones)
+    home/                 Homepage sections (Hero … Contact)
+    projects/             ProjectCard, ProjectFilters, ProjectShowcase (editorial mosaic)
+    forms/                EnquiryForm, FormField
+  actions/                Server Actions (enquiry.ts)
   data/                   Company + project content (typed). Placeholder content is flagged.
+  lib/data/               Cached data access (getProjects, getProject)
+  lib/validation/         Zod schemas shared by client and server
   lib/
     animations/           eases.ts (shared motion vocabulary), gsap.ts (registers plugins once)
     constants/            Site config and navigation

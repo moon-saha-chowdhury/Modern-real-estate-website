@@ -101,6 +101,16 @@
   transform-origin: left center;
 }
 
+/* ---------- Keyframes ---------- */
+@keyframes scroll-cue {
+  0% {
+    translate: 0 -100%;
+  }
+  100% {
+    translate: 0 200%;
+  }
+}
+
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
   *,

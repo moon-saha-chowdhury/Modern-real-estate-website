@@ -1,0 +1,119 @@
+import type { Project } from "@/types/project";
+import { media } from "./media";
+
+/**
+ * ⚠ SAMPLE PROJECTS: clearly identified mock data (master prompt §16).
+ * None of these are real Meridian developments. Names are placeholders, locations are
+ * deliberately unconfirmed, and imagery is Unsplash stock. Every record is `isPlaceholder: true`
+ * and the UI labels it "Sample project". Replace with real projects as they are supplied.
+ */
+export const projects: Project[] = [
+  {
+    id: "p-01",
+    slug: "sample-the-linden",
+    name: "The Linden",
+    location: "Location TBC",
+    category: "residential",
+    status: "ongoing",
+    summary: "Glass-fronted apartments arranged around deep, private balconies.",
+    description:
+      "A sample residential project used to demonstrate the portfolio layout. Real project details will replace this entry.",
+    heroImage: media.projectGlassBalconies,
+    gallery: [],
+    amenities: [],
+    floorPlans: [],
+    virtualTour: null,
+    featured: true,
+    isPlaceholder: true,
+  },
+  {
+    id: "p-02",
+    slug: "sample-northlight-tower",
+    name: "Northlight Tower",
+    location: "Location TBC",
+    category: "residential",
+    status: "completed",
+    summary: "A slender tower of stacked, light-filled homes.",
+    description:
+      "A sample residential project used to demonstrate the portfolio layout. Real project details will replace this entry.",
+    heroImage: media.projectNightTower,
+    gallery: [],
+    amenities: [],
+    floorPlans: [],
+    virtualTour: null,
+    featured: true,
+    isPlaceholder: true,
+  },
+  {
+    id: "p-03",
+    slug: "sample-corner-house",
+    name: "Corner House",
+    location: "Location TBC",
+    category: "residential",
+    status: "upcoming",
+    summary: "A precise concrete corner plot with a quiet, layered facade.",
+    description:
+      "A sample residential project used to demonstrate the portfolio layout. Real project details will replace this entry.",
+    heroImage: media.projectConcreteEdge,
+    gallery: [],
+    amenities: [],
+    floorPlans: [],
+    virtualTour: null,
+    featured: true,
+    isPlaceholder: true,
+  },
+  {
+    id: "p-04",
+    slug: "sample-concrete-terraces",
+    name: "Concrete Terraces",
+    location: "Location TBC",
+    category: "residential",
+    status: "completed",
+    summary: "Staggered balconies giving every home its own outdoor room.",
+    description:
+      "A sample residential project used to demonstrate the portfolio layout. Real project details will replace this entry.",
+    heroImage: media.projectConcreteBalconies,
+    gallery: [],
+    amenities: [],
+    floorPlans: [],
+    virtualTour: null,
+    featured: true,
+    isPlaceholder: true,
+  },
+  {
+    id: "p-05",
+    slug: "sample-exchange-court",
+    name: "Exchange Court",
+    location: "Location TBC",
+    category: "commercial",
+    status: "ongoing",
+    summary: "Workspace in glass and brick, with daylight on every floor plate.",
+    description:
+      "A sample commercial project used to demonstrate the portfolio layout. Real project details will replace this entry.",
+    heroImage: media.projectOfficeSunset,
+    gallery: [],
+    amenities: [],
+    floorPlans: [],
+    virtualTour: null,
+    featured: true,
+    isPlaceholder: true,
+  },
+  {
+    id: "p-06",
+    slug: "sample-facet-commons",
+    name: "Facet Commons",
+    location: "Location TBC",
+    category: "commercial",
+    status: "upcoming",
+    summary: "A faceted glass facade for a mixed-use commercial address.",
+    description:
+      "A sample commercial project used to demonstrate the portfolio layout. Real project details will replace this entry.",
+    heroImage: media.projectGeometricFacade,
+    gallery: [],
+    amenities: [],
+    floorPlans: [],
+    virtualTour: null,
+    featured: false,
+    isPlaceholder: true,
+  },
+];

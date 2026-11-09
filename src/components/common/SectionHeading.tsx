@@ -4,7 +4,7 @@ import { Eyebrow } from "./Eyebrow";
 import { TextReveal } from "./TextReveal";
 
 /**
- * Editorial heading block: annotation label, serif statement, optional intro offset to the right.
+ * Editorial heading block: annotation label, display statement, optional intro offset to the right.
  */
 export function SectionHeading({
   eyebrow,
@@ -14,6 +14,7 @@ export function SectionHeading({
   size = "md",
   as = "h2",
   className,
+  titleId,
 }: SectionHeadingProps) {
   return (
     <header className={cn("grid-editorial gap-y-8", className)}>
@@ -25,6 +26,7 @@ export function SectionHeading({
       </Eyebrow>
       <TextReveal
         as={as}
+        id={titleId}
         lines={title}
         className={cn(
           "col-span-full font-display lg:col-span-8",

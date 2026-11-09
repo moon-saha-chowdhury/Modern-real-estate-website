@@ -66,6 +66,8 @@ export interface SectionHeadingProps {
   size?: "md" | "lg";
   as?: "h1" | "h2";
   className?: string;
+  /** id for the heading element, so the section can be labelled by it. */
+  titleId?: string;
 }
 
 export interface PageIntroProps {
@@ -92,6 +94,7 @@ export interface TextRevealProps {
   delay?: number;
   /** Animate on mount instead of when scrolled into view (hero). */
   immediate?: boolean;
+  id?: string;
 }
 
 export interface RevealProps {
