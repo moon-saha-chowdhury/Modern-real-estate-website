@@ -17,7 +17,7 @@ for (const vp of widths) {
     await page.goto("/", { waitUntil: "networkidle" });
     await page.evaluate(() => document.fonts.ready);
 
-    const sections = page.locator("main > section, body > footer");
+    const sections = page.locator("main section, body > footer");
     const count = await sections.count();
     for (let i = 0; i < count; i++) {
       const section = sections.nth(i);

@@ -49,6 +49,20 @@ export interface PhotoCreditProps {
   className?: string;
 }
 
+/* ---------- Hero ---------- */
+
+export interface HeroStage {
+  /** Video progress (0–1) at which this phase begins. */
+  at: number;
+  label: string;
+}
+
+export interface BuildingTransformationProps {
+  eyebrow: string;
+  /** One string per line; *asterisks* mark emphasis. */
+  title: string[];
+}
+
 export interface FormFieldProps {
   id: string;
   label: string;

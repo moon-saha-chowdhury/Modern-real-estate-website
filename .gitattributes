@@ -1,0 +1,7 @@
+# Normalise line endings: LF in the repo and working tree (matches Prettier)
+* text=auto eol=lf
+*.mp4 binary
+*.webp binary
+*.png binary
+*.jpg binary
+*.ico binary
