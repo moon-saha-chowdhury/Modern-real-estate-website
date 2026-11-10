@@ -14,8 +14,13 @@ export const HERO_MEDIA = {
 
 /** Scroll choreography for the pinned hero. The title never moves. */
 export const HERO_SCROLL = {
-  pinDesktop: "+=440%",
-  pinMobile: "+=310%",
+  /**
+   * The scroll distance is reserved in CSS from the first paint: a tall track (1 screen of hero
+   * plus 4.4 screens of scroll on md+, 3.1 on phones) with the hero sticky inside it. A GSAP
+   * pin inserted its spacer only on hydration, shifting everything below the hero by thousands
+   * of pixels (and the targets of early clicks). Reduced motion: one screen, nothing sticks.
+   */
+  trackClass: "h-[410svh] md:h-[540svh] motion-reduce:h-auto",
   /** ScrollTrigger scrub smoothing (seconds): eases between frames on fast scrolls. */
   scrub: 0.5,
 } as const;
