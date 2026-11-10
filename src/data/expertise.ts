@@ -1,4 +1,5 @@
 import type { ExpertiseItem } from "@/types/content";
+import type { MediaImage } from "@/types/project";
 import { media } from "./media";
 
 /**
@@ -48,4 +49,15 @@ export const expertise: ExpertiseItem[] = [
       "Joint development with landowners on clear, documented terms, from feasibility through to shared handover.",
     image: media.expertiseLand,
   },
+];
+
+/**
+ * Photographs for the homepage "From land to landmark" section, in display order:
+ * wide, narrow, narrow, wide. Chosen from the sample registry for the site's cool, dusk palette.
+ */
+export const expertisePhotos: MediaImage[] = [
+  media.projectNightTower,
+  media.expertiseCommercial,
+  media.expertiseArchitecture,
+  media.projectGlassBalconies,
 ];

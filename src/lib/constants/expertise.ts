@@ -1,14 +1,14 @@
 /**
- * Homepage "From land to landmark" (lg+): the photographs scroll up over the pinned cards.
- * One entry per photograph, repeating: width and horizontal position within the container.
+ * Homepage "From land to landmark": four photographs, the first and last wide, the middle two
+ * narrow. From lg they scroll up over the pinned cards, laid out in flow with these widths,
+ * positions and overlaps (negative top margins keep the gaps tight). Below lg, and with reduced
+ * motion, they form a two-column collage: wide, narrow + narrow, wide.
  */
-export const EXPERTISE_FLOAT_CLASSES = [
-  "w-[34%] ml-0",
-  "w-[26%] ml-[66%]",
-  "w-[30%] ml-[30%]",
-  "w-[24%] ml-[4%]",
-  "w-[36%] ml-[58%]",
-  "w-[28%] ml-[22%]",
+export const EXPERTISE_PHOTO_CLASSES = [
+  { frame: "col-span-2 lg:w-[44%] lg:ml-0", image: "aspect-4/3" },
+  { frame: "lg:w-[25%] lg:ml-[71%] lg:-mt-[13%]", image: "aspect-4/5" },
+  { frame: "lg:w-[29%] lg:ml-[7%] lg:-mt-[9%]", image: "aspect-4/5" },
+  { frame: "col-span-2 lg:w-[46%] lg:ml-[50%] lg:-mt-[12%]", image: "aspect-4/3" },
 ] as const;
 
 /** Vertical stagger of the pinned cards, per column (three columns at lg). */

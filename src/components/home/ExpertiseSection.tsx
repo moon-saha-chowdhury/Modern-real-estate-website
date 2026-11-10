@@ -1,7 +1,7 @@
 import { Container } from "@/components/common/Container";
 import { Section } from "@/components/common/Section";
 import { TextReveal } from "@/components/common/TextReveal";
-import { expertise } from "@/data/expertise";
+import { expertise, expertisePhotos } from "@/data/expertise";
 import { ExpertiseList } from "./ExpertiseList";
 
 /**
@@ -17,7 +17,7 @@ export function ExpertiseSection() {
           className="max-w-[18ch] font-display text-display-lg lg:ml-[calc(100%/6)]"
           lines={["From land", "to *landmark.*"]}
         />
-        <ExpertiseList items={expertise} />
+        <ExpertiseList items={expertise} photos={expertisePhotos} />
       </Container>
     </Section>
   );

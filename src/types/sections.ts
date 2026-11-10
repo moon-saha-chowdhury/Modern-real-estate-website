@@ -13,6 +13,8 @@ export interface WorkCardProps {
 
 export interface ExpertiseListProps {
   items: ExpertiseItem[];
+  /** Photographs shown with the cards: four, in order wide, narrow, narrow, wide. */
+  photos: MediaImage[];
 }
 
 export interface ProcessTimelineProps {

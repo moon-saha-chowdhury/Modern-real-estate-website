@@ -5,9 +5,13 @@ import { gsap, useGSAP } from "@/lib/animations/gsap";
 import type { CursorLabelProps } from "@/types/ui";
 
 /**
- * A text label that follows the pointer while it is over the parent element (which must be
- * positioned and carry the `group/cursor` class). Shown on hover only; with a mouse it trails
- * the cursor, otherwise (and with reduced motion) it rests at the centre. Decorative.
+ * A text label that follows the pointer while it is over the host element (the wrapper's parent,
+ * which must be positioned and carry the `group/cursor` class). Shown on hover only; with a
+ * mouse it trails the cursor, otherwise (and with reduced motion) it rests at the centre.
+ *
+ * The pointer is tracked on the window, not the host: when the page scrolls under a resting
+ * cursor no pointer event fires on the newly hovered host, so the position is also recomputed
+ * on scroll. Decorative.
  */
 export function CursorLabel({ label }: CursorLabelProps) {
   const ref = useRef<HTMLSpanElement>(null);
@@ -22,21 +26,40 @@ export function CursorLabel({ label }: CursorLabelProps) {
     mm.add("(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)", () => {
       const xTo = gsap.quickTo(el, "x", { duration: 0.45, ease: "power3.out" });
       const yTo = gsap.quickTo(el, "y", { duration: 0.45, ease: "power3.out" });
-      const place = (e: PointerEvent, jump: boolean) => {
+      const pointer = { x: -1, y: -1 };
+      let inside = false;
+
+      /** `glide`: ease towards the pointer (mouse moved) instead of snapping (page scrolled). */
+      const place = (glide: boolean) => {
         const r = host.getBoundingClientRect();
-        const x = e.clientX - r.left - r.width / 2;
-        const y = e.clientY - r.top - r.height / 2;
-        if (jump) gsap.set(el, { x, y });
+        const over =
+          pointer.x >= r.left &&
+          pointer.x <= r.right &&
+          pointer.y >= r.top &&
+          pointer.y <= r.bottom;
+        if (!over) {
+          inside = false;
+          return;
+        }
+        const x = pointer.x - r.left - r.width / 2;
+        const y = pointer.y - r.top - r.height / 2;
+        if (!inside || !glide) gsap.set(el, { x, y });
         xTo(x);
         yTo(y);
+        inside = true;
       };
-      const onEnter = (e: PointerEvent) => place(e, true);
-      const onMove = (e: PointerEvent) => place(e, false);
-      host.addEventListener("pointerenter", onEnter);
-      host.addEventListener("pointermove", onMove);
+
+      const onMove = (e: PointerEvent) => {
+        pointer.x = e.clientX;
+        pointer.y = e.clientY;
+        place(true);
+      };
+      const onScroll = () => place(false);
+      window.addEventListener("pointermove", onMove, { passive: true });
+      window.addEventListener("scroll", onScroll, { passive: true });
       return () => {
-        host.removeEventListener("pointerenter", onEnter);
-        host.removeEventListener("pointermove", onMove);
+        window.removeEventListener("pointermove", onMove);
+        window.removeEventListener("scroll", onScroll);
         gsap.set(el, { clearProps: "x,y" });
       };
     });
@@ -46,6 +69,7 @@ export function CursorLabel({ label }: CursorLabelProps) {
   return (
     <span
       aria-hidden="true"
+      data-cursor-label
       className="pointer-events-none absolute top-1/2 left-1/2 z-10 -translate-1/2 opacity-0 transition-opacity duration-300 ease-meridian group-hover/cursor:opacity-100"
     >
       <span
