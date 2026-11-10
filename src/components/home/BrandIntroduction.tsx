@@ -44,13 +44,16 @@ export function BrandIntroduction() {
           className="object-cover"
         />
         <div className="absolute inset-0 bg-linear-to-b from-ink/10 via-transparent to-ink/45" />
+        {/* Frost: tint and blur on the backdrop itself (one surface with the image, no separate
+            plate). SkyVeil fades it in as the content arrives. */}
+        <div data-about-frost className="absolute inset-0 bg-ink/35 backdrop-blur-md" />
         <SkyVeil />
       </div>
 
-      {/* The content starts just below the fold, so it rises while the sky fades; it sits on a
-          full-screen translucent plate. The bottom padding shows the tower again afterwards. */}
+      {/* The content starts just below the fold, so it rises while the sky fades; the backdrop
+          frosts behind it. The bottom padding shows the tower again afterwards. */}
       <div className="pt-[100svh] pb-[40svh] motion-reduce:pt-[70svh]">
-        <div className="flex min-h-svh items-center bg-ink/35 py-section backdrop-blur-md">
+        <div className="flex min-h-svh items-center py-section">
           <Container className="grid-editorial gap-y-12 lg:gap-y-20">
             <TextReveal
               id="intro-title"

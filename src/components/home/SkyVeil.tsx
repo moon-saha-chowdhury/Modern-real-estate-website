@@ -43,7 +43,28 @@ export function SkyVeil() {
           scrollTrigger: { trigger: section, start: "top top", end: "+=45%", scrub: true },
         },
       );
-      return () => gsap.set(backdrop, { clearProps: "visibility" });
+      // The backdrop frosts (tint + blur) as the content rises over it.
+      const frost = backdrop.querySelector<HTMLElement>("[data-about-frost]");
+      if (frost) {
+        gsap.fromTo(
+          frost,
+          { opacity: 0 },
+          {
+            opacity: 1,
+            ease: "none",
+            // From 5% to 45% of a screen after the hand-over: frosted before the text is mid-screen.
+            scrollTrigger: {
+              trigger: section,
+              start: () => `top+=${window.innerHeight * 0.05} top`,
+              end: () => `+=${window.innerHeight * 0.4}`,
+              scrub: true,
+              invalidateOnRefresh: true,
+            },
+          },
+        );
+      }
+      return () =>
+        gsap.set([backdrop, frost].filter(Boolean), { clearProps: "visibility,opacity" });
     });
     return () => mm.revert();
   });
