@@ -22,6 +22,7 @@ import {
   HERO_STAGES,
 } from "@/lib/constants/hero";
 import { HERO_SEQUENCE } from "@/lib/constants/hero-sequence";
+import { cn } from "@/lib/utils/cn";
 import { displayIndex } from "@/lib/utils/projects";
 import type { BuildingTransformationProps, HeroFrameSet } from "@/types/sections";
 
@@ -43,7 +44,8 @@ import type { BuildingTransformationProps, HeroFrameSet } from "@/types/sections
  *   from the tower to the page below like the end of a film shot.
  * - Frames load progressively (every 8th first); until a frame arrives the nearest one is drawn.
  * - Phones use a tall centre crop of the tower at full source resolution.
- * - Reduced motion: only the finished-tower frame is loaded and shown; nothing is pinned.
+ * - Reduced motion: only the finished-tower frame is loaded and shown; the track collapses to one
+ *   screen and nothing sticks.
  */
 export function BuildingTransformation({ eyebrow, title }: BuildingTransformationProps) {
   const root = useRef<HTMLElement>(null);
@@ -228,13 +230,13 @@ export function BuildingTransformation({ eyebrow, title }: BuildingTransformatio
           gsap
             .timeline({
               defaults: { ease: "none" },
+              // The track (the section's parent) reserves the scroll distance in CSS; the
+              // section is sticky inside it, so progress runs over the track's full length.
               scrollTrigger: {
-                trigger: section,
+                trigger: section.parentElement ?? section,
                 start: "top top",
-                end: desktop ? HERO_SCROLL.pinDesktop : HERO_SCROLL.pinMobile,
-                pin: true,
+                end: "bottom bottom",
                 scrub: HERO_SCROLL.scrub,
-                anticipatePin: 1,
                 onRefresh: () => ScrollTrigger.update(),
               },
             })
@@ -258,7 +260,7 @@ export function BuildingTransformation({ eyebrow, title }: BuildingTransformatio
         },
       );
 
-      // Reduced motion: the finished building only, no pin, no scrubbing.
+      // Reduced motion: the finished building only, no sticky track, no scrubbing.
       mm.add("(prefers-reduced-motion: reduce)", () => {
         const mobile = window.matchMedia(HERO_MEDIA.mobileQuery).matches;
         const set = mobile ? HERO_SEQUENCE.mobile : HERO_SEQUENCE.desktop;
@@ -274,14 +276,14 @@ export function BuildingTransformation({ eyebrow, title }: BuildingTransformatio
   );
 
   return (
-    // React owns this wrapper; ScrollTrigger inserts its pin-spacer *inside* it, so unmounting
-    // on navigation never asks React to remove a node GSAP has moved.
-    <div data-hero-root>
+    // The track reserves the hero's scroll distance in CSS from the first paint; the section
+    // sticks to the top while it scrolls past (no GSAP pin spacer, no shift on hydration).
+    <div data-hero-root className={cn("relative", HERO_SCROLL.trackClass)}>
       <section
         ref={root}
         data-surface="blue"
         aria-labelledby="hero-title"
-        className="group/hero relative isolate h-svh overflow-hidden bg-twilight hero-backdrop text-fg"
+        className="group/hero sticky top-0 isolate h-svh overflow-hidden bg-twilight hero-backdrop text-fg motion-reduce:relative"
       >
         {/* Backdrop: the first frame, blurred (the same file as the poster below). Sky, skyline
             and water barely change during the build, so the feathered canvas edges melt into

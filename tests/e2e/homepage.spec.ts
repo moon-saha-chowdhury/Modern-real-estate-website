@@ -34,9 +34,6 @@ test.describe("homepage", () => {
 
   test("every sample project tile is labelled and links to its page", async ({ page }) => {
     await page.goto("/");
-    // The hero's pin spacer is inserted on hydration and pushes everything below it down by
-    // several screens; clicking a tile before that lands on the hero instead.
-    await page.locator("[data-hero-root] .pin-spacer").waitFor({ state: "attached" });
     const tile = page.locator("main article").first();
     await expect(tile.getByText("Sample project")).toBeVisible();
     await tile.getByRole("link").first().click();

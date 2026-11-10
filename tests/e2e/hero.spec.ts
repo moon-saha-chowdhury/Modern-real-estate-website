@@ -42,7 +42,7 @@ test.describe("hero building transformation (image sequence)", () => {
     await expect.poll(() => draws(page), { timeout: 10000 }).toBeGreaterThan(5);
     const drawsForward = await draws(page);
 
-    // Still inside the pin (1440px of 2160px): the title does not move or fade.
+    // Still inside the sticky track: the title does not move or fade.
     expect(await title.evaluate((el) => el.getBoundingClientRect().top)).toBeCloseTo(titleTop, 0);
     expect(await title.evaluate((el) => Number(getComputedStyle(el).opacity))).toBe(1);
 
