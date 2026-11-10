@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
+import { CursorLabel } from "@/components/common/CursorLabel";
 import { ImageReveal } from "@/components/common/ImageReveal";
 import { PhotoCredit } from "@/components/common/PhotoCredit";
 import { Reveal } from "@/components/common/Reveal";
@@ -21,7 +22,7 @@ export function WorkCard({ project }: WorkCardProps) {
       <Link
         href={`/projects/${project.slug}`}
         data-surface="blue"
-        className="group/work relative block aspect-4/5 overflow-hidden text-fg outline-offset-8 md:aspect-auto md:h-[min(680px,78svh)] md:min-h-104"
+        className="group/work group/cursor relative block aspect-4/5 overflow-hidden text-fg outline-offset-8 md:aspect-auto md:h-[min(680px,78svh)] md:min-h-104"
       >
         <ImageReveal
           src={project.heroImage.src}
@@ -58,6 +59,8 @@ export function WorkCard({ project }: WorkCardProps) {
           <p className="max-w-sm text-small text-fg-muted md:hidden">{project.summary}</p>
           <span className="sr-only">View project</span>
         </Reveal>
+
+        <CursorLabel label="View project" />
 
         <span
           aria-hidden="true"

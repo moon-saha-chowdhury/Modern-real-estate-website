@@ -49,6 +49,10 @@ export type ButtonProps = ButtonAsLink | ButtonAsButton;
 
 /* ---------- Typography & headings ---------- */
 
+export interface CursorLabelProps {
+  label: string;
+}
+
 export interface EyebrowProps {
   children: ReactNode;
   /** Optional drawing-set style index, e.g. "01". */
