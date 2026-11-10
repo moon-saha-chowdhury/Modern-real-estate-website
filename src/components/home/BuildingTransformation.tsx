@@ -411,7 +411,12 @@ export function BuildingTransformation({ eyebrow, title }: BuildingTransformatio
               ))}
             </ol>
           </div>
-          <span className="hidden label-mono text-fg md:block">Scroll to build</span>
+          {/* The tower and its callout figures are an illustrative concept (docs/ASSETS.md:
+              invented content is labelled) */}
+          <p className="hidden flex-col items-end gap-2 label-mono md:flex">
+            <span className="text-fg-muted">Illustrative concept</span>
+            <span className="text-fg">Scroll to build</span>
+          </p>
         </div>
       </section>
     </div>
