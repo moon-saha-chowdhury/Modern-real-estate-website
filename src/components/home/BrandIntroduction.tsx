@@ -6,20 +6,19 @@ import { PhotoCredit } from "@/components/common/PhotoCredit";
 import { Reveal } from "@/components/common/Reveal";
 import { TextReveal } from "@/components/common/TextReveal";
 import { media } from "@/data/media";
-import { frameUrl } from "@/lib/animations/frame-sequence";
-import { HERO_SEQUENCE } from "@/lib/constants/hero-sequence";
+import { HERO_MEDIA } from "@/lib/constants/hero";
+import { SkyVeil } from "./SkyVeil";
 
 /**
  * 02 — Brand introduction, continuing the hero's sky.
  *
  * The hero's camera rises into open sky; this section picks up from there like the reference
- * reel: the twilight scene stays fixed behind (the finished tower, heavily blurred, sticky for
- * the whole section) and the content scrolls up over it on a translucent, frosted plate.
+ * reel: the sky fades (SkyVeil) to the finished tower, which stays fixed behind for the whole
+ * section (sticky), and the content rises over it on a translucent plate.
  * A "blue" surface (white text), so the navbar stays blue over it too (data-nav-blue).
  */
 export function BrandIntroduction() {
   const image = media.brandIntro;
-  const backdrop = HERO_SEQUENCE.desktop;
 
   return (
     <section
@@ -34,18 +33,22 @@ export function BrandIntroduction() {
         className="pointer-events-none sticky top-0 -z-10 -mb-[100svh] h-svh overflow-hidden"
       >
         <Image
-          src={frameUrl(backdrop, backdrop.finishedFrame)}
+          src={HERO_MEDIA.towerFinished}
           alt=""
           fill
-          sizes="40vw"
-          className="scale-125 object-cover blur-3xl"
+          sizes="(max-width: 767px) 260vw, 100vw"
+          quality={90}
+          className="object-cover"
         />
-        <div className="absolute inset-0 bg-linear-to-b from-twilight/40 via-ink/30 to-ink/70" />
+        <div className="absolute inset-0 bg-linear-to-b from-ink/10 via-transparent to-ink/45" />
+        <SkyVeil />
       </div>
 
-      <div className="py-section">
+      {/* The top padding leaves the tower on screen (after the sky fades) before the content
+          rises over it; the bottom padding lets it show again before the next section. */}
+      <div className="pt-[125svh] pb-[45svh] motion-reduce:pt-[70svh]">
         <Container>
-          <div className="grid-editorial gap-y-12 rounded-sm bg-ink/25 p-6 ring-1 ring-fg/10 backdrop-blur-xl md:p-10 lg:gap-y-20 lg:p-16">
+          <div className="grid-editorial gap-y-12 rounded-sm bg-ink/35 p-6 ring-1 ring-fg/10 backdrop-blur-md md:p-10 lg:gap-y-20 lg:p-16">
             <TextReveal
               id="intro-title"
               flowBelowLg

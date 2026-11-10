@@ -7,6 +7,8 @@ export const HERO_MEDIA = {
   mobileQuery: "(max-width: 767px)",
   /** Last frame of the sequence: open twilight sky. Backdrop for the camera rise. */
   posterSky: "/media/hero/poster-sky.webp",
+  /** The client's finished-tower still (references/hero/end-frame.jpg): About backdrop. */
+  towerFinished: "/media/hero/tower-finished.webp",
   frameExtension: "webp",
   /** Frame files are numbered 0001, 0002 … */
   framePad: 4,
