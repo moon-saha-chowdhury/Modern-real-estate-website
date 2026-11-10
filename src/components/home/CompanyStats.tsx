@@ -1,6 +1,5 @@
 import { Container } from "@/components/common/Container";
 import { CountUp } from "@/components/common/CountUp";
-import { Eyebrow } from "@/components/common/Eyebrow";
 import { Section } from "@/components/common/Section";
 import { metrics } from "@/data/metrics";
 
@@ -16,9 +15,9 @@ export function CompanyStats() {
     <Section tone="paper" spacing="compact" aria-labelledby="stats-title">
       <Container className="flex flex-col gap-12">
         <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
-          <Eyebrow index="05" as="h2" className="text-accent">
-            <span id="stats-title">In numbers</span>
-          </Eyebrow>
+          <h2 id="stats-title" className="sr-only">
+            In numbers
+          </h2>
           {pending && (
             <p className="max-w-sm text-small text-fg-muted md:text-right">
               Figures appear here once they have been verified by Meridian. We don&apos;t publish

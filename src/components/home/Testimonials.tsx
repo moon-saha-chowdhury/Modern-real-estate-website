@@ -1,5 +1,4 @@
 import { Container } from "@/components/common/Container";
-import { Eyebrow } from "@/components/common/Eyebrow";
 import { Section } from "@/components/common/Section";
 import { TextReveal } from "@/components/common/TextReveal";
 import { partners, testimonials } from "@/data/testimonials";
@@ -16,9 +15,9 @@ export function Testimonials() {
   return (
     <Section tone="paper" aria-labelledby="voices-title">
       <Container grid className="gap-y-14">
-        <Eyebrow index="08" className="col-span-full text-accent">
-          <span id="voices-title">Client voices</span>
-        </Eyebrow>
+        <h2 id="voices-title" className="sr-only">
+          Client voices
+        </h2>
 
         {quote ? (
           <figure className="col-span-full flex flex-col gap-10 lg:col-span-9 lg:col-start-3">

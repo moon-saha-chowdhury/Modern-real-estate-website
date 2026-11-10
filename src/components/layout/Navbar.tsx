@@ -27,8 +27,9 @@ export function Navbar() {
   const updateRef = useRef<() => void>(() => undefined);
 
   // Scroll-driven appearance, rAF-throttled. Written to data-attributes (no re-render):
-  //   data-surface  blue while over the full-bleed hero (white text), light everywhere else
-  //   data-solid    paper background once scrolled, except over the hero
+  //   data-surface  blue over the blue zones (hero, About), light everywhere else
+  //   data-solid    paper background once scrolled, except over blue zones
+  //   data-glass    frosted dark background over blue zones whose content scrolls (About)
   //   data-hidden   hides on scroll down, returns on scroll up
   useEffect(() => {
     const el = headerRef.current;
@@ -40,8 +41,15 @@ export function Navbar() {
       frame = 0;
       const y = window.scrollY;
       const menuOpen = el.dataset.menu === "open";
-      const hero = document.querySelector<HTMLElement>("[data-hero-root]");
-      const overHero = Boolean(hero) && hero!.getBoundingClientRect().bottom > el.offsetHeight;
+      // Blue zones (the hero, the About section over the blurred sky) carry data-nav-blue.
+      const edge = el.offsetHeight;
+      const zone = [...document.querySelectorAll<HTMLElement>("[data-nav-blue]")].find((z) => {
+        const r = z.getBoundingClientRect();
+        return r.top <= edge && r.bottom > edge;
+      });
+      const overHero = Boolean(zone);
+      // Content scrolls under the bar in "glass" zones (About): frost it so it stays legible.
+      el.dataset.glass = String(zone?.dataset.navBlue === "glass" && !menuOpen);
 
       el.dataset.surface = overHero && !menuOpen ? "blue" : "light";
       el.dataset.solid = String(y > 24 && !overHero && !menuOpen);
@@ -115,6 +123,7 @@ export function Navbar() {
         "fixed inset-x-0 top-0 z-50 border-b border-transparent text-fg",
         "transition-[background-color,border-color,color,translate] duration-500 ease-meridian",
         "data-[solid=true]:border-rule data-[solid=true]:bg-paper/95",
+        "data-[glass=true]:border-fg/10 data-[glass=true]:bg-ink/40 data-[glass=true]:backdrop-blur-md",
         "data-[hidden=true]:-translate-y-full",
         "data-[menu=open]:border-transparent data-[menu=open]:bg-transparent",
       )}

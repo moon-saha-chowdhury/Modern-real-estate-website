@@ -1,5 +1,4 @@
 import { Container } from "@/components/common/Container";
-import { Eyebrow } from "@/components/common/Eyebrow";
 import { Reveal } from "@/components/common/Reveal";
 import { SampleBadge } from "@/components/common/SampleBadge";
 import { Section } from "@/components/common/Section";
@@ -17,9 +16,6 @@ export function WhyChooseUs() {
       <Container grid className="gap-y-16">
         <div className="col-span-full flex flex-col gap-10 lg:col-span-5">
           <div className="flex flex-col gap-10 lg:sticky lg:top-[calc(var(--spacing-nav)+3rem)]">
-            <Eyebrow index="07" className="text-accent">
-              Why Meridian
-            </Eyebrow>
             <TextReveal
               id="why-title"
               className="font-display text-display-md"

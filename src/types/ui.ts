@@ -58,7 +58,8 @@ export interface EyebrowProps {
 }
 
 export interface SectionHeadingProps {
-  eyebrow: string;
+  /** Optional annotation label above the title (the homepage uses none). */
+  eyebrow?: string;
   index?: string;
   /** Controlled line breaks: one string per line; *asterisks* mark emphasis. */
   title: string[];

@@ -1,5 +1,4 @@
 import { Container } from "@/components/common/Container";
-import { Eyebrow } from "@/components/common/Eyebrow";
 import { Section } from "@/components/common/Section";
 import { TextReveal } from "@/components/common/TextReveal";
 import { expertise } from "@/data/expertise";
@@ -13,9 +12,6 @@ export function ExpertiseSection() {
   return (
     <Section tone="stone" aria-labelledby="expertise-title">
       <Container className="flex flex-col gap-14">
-        <Eyebrow index="04" className="text-accent">
-          Expertise
-        </Eyebrow>
         <TextReveal
           id="expertise-title"
           className="max-w-[18ch] font-display text-display-md"

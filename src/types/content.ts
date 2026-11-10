@@ -1,4 +1,4 @@
-import type { MediaImage, ProjectCategory, ProjectStatus } from "./project";
+import type { MediaImage } from "./project";
 
 /** A Meridian capability (homepage Expertise, /expertise). */
 export interface ExpertiseItem {
@@ -46,17 +46,6 @@ export interface Partner {
   name: string;
   logo: MediaImage;
 }
-
-/** Filters shown above project grids. One active filter at a time. */
-export type ProjectFilterKey = "all" | ProjectCategory | ProjectStatus;
-
-export interface ProjectFilter {
-  key: ProjectFilterKey;
-  label: string;
-}
-
-/** Tile shapes in the editorial project mosaic. */
-export type ProjectTileVariant = "feature" | "support" | "tall" | "wide";
 
 /** Enquiry topics offered on the contact form. */
 export type EnquiryType = "project" | "visit" | "landowner" | "general";
