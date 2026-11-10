@@ -11,8 +11,8 @@
  * Input  (not committed): references/hero/  (see SEGMENTS)
  * Output (committed):
  *   public/media/hero/frames/desktop/0001.webp …  full frame, 1600 px wide
- *   public/media/hero/frames/mobile/0001.webp  …  centre crop 608×1080 (the tower, full height)
- *   public/media/hero/poster-start.webp / poster-end.webp / poster-sky.webp (+ -1280)
+ *   public/media/hero/frames/mobile/0001.webp  …  centre crop 604×1072 (the tower, full height)
+ *   public/media/hero/poster-end.webp / poster-sky.webp   blurred backdrops (finished tower, sky)
  *   src/lib/constants/hero-sequence.ts            generated: frame count, sizes, paths
  */
 import { execFileSync, spawnSync } from "node:child_process";
@@ -82,7 +82,11 @@ const chains = SEGMENTS.map((s, i) => {
   return `[${input}:v]trim=${range},setpts=(PTS-STARTPTS)/${s.speed}[s${i}]`;
 });
 const labels = SEGMENTS.map((_, i) => `[s${i}]`).join("");
-const filter = `${chains.join(";")};${labels}concat=n=${SEGMENTS.length}:v=1:a=0,fps=${FPS},format=yuv420p[v]`;
+// Deband: the AI footage is 8-bit H.264, so the twilight sky carries 16 px compression blocks and
+// banding that become obvious full screen. `deband` flattens the blocks, `gradfun` re-dithers the
+// gradient, before the WebP encode quantises it again.
+const DEBAND = "deband=1thr=0.03:2thr=0.03:3thr=0.03:range=24:blur=1,gradfun=strength=1:radius=16";
+const filter = `${chains.join(";")};${labels}concat=n=${SEGMENTS.length}:v=1:a=0,fps=${FPS},format=yuv420p,${DEBAND}[v]`;
 const joined = path.join(OUT, ".joined.mp4");
 run([
   ...inputs,
@@ -122,49 +126,34 @@ for (const [name, set] of Object.entries(SETS)) {
   summary[name] = { count: frames.length, kb: Math.round(kb) };
 }
 
-// 3. Posters: first frame, the finished tower, and the last frame (open sky).
-for (const [width, suffix] of [
-  [1920, ""],
-  [1280, "-1280"],
-]) {
-  run([
-    "-i",
-    joined,
-    "-frames:v",
-    "1",
-    "-vf",
-    `scale=${width}:-2`,
-    "-q:v",
-    "72",
-    path.join(OUT, `poster-start${suffix}.webp`),
-  ]);
-  run([
-    "-ss",
-    String(Math.max(0, finishedSeconds - 0.1)),
-    "-i",
-    joined,
-    "-frames:v",
-    "1",
-    "-vf",
-    `scale=${width}:-2`,
-    "-q:v",
-    "72",
-    path.join(OUT, `poster-end${suffix}.webp`),
-  ]);
-  run([
-    "-sseof",
-    "-0.2",
-    "-i",
-    joined,
-    "-update",
-    "1",
-    "-vf",
-    `scale=${width}:-2`,
-    "-q:v",
-    "72",
-    path.join(OUT, `poster-sky${suffix}.webp`),
-  ]);
-}
+// 3. Posters (blurred hero backdrops; next/image serves smaller sizes from these):
+//    the finished tower, and the last frame (open sky).
+run([
+  "-ss",
+  String(Math.max(0, finishedSeconds - 0.1)),
+  "-i",
+  joined,
+  "-frames:v",
+  "1",
+  "-vf",
+  "scale=1920:-2",
+  "-q:v",
+  "72",
+  path.join(OUT, "poster-end.webp"),
+]);
+run([
+  "-sseof",
+  "-0.2",
+  "-i",
+  joined,
+  "-update",
+  "1",
+  "-vf",
+  "scale=1920:-2",
+  "-q:v",
+  "72",
+  path.join(OUT, "poster-sky.webp"),
+]);
 rmSync(joined);
 
 // 4. Generated constants (frame counts must match the files on disk).

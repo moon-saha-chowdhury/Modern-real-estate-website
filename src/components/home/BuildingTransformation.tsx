@@ -18,6 +18,7 @@ import {
   HERO_MAX_DPR,
   HERO_MEDIA,
   HERO_SCROLL,
+  HERO_SKY_FINISH,
   HERO_STAGES,
 } from "@/lib/constants/hero";
 import { HERO_SEQUENCE } from "@/lib/constants/hero-sequence";
@@ -64,6 +65,8 @@ export function BuildingTransformation({ eyebrow, title }: BuildingTransformatio
       const stageIndex = section.querySelector<HTMLElement>("[data-stage-index]");
       const progressLine = section.querySelector<HTMLElement>("[data-progress]");
       const skyBackdrop = section.querySelector<HTMLElement>("[data-sky-backdrop]");
+      const skyFinish = section.querySelector<HTMLElement>("[data-sky-finish]");
+      const bottomShade = section.querySelector<HTMLElement>("[data-bottom-shade]");
 
       const setStage = (t: number) => {
         let current = 0;
@@ -179,6 +182,15 @@ export function BuildingTransformation({ eyebrow, title }: BuildingTransformatio
             if (skyBackdrop) {
               gsap.set(skyBackdrop, { opacity: gsap.utils.clamp(0, 1, (c - 0.2) / 0.6) });
             }
+            // Once the roofline has left the frame, a browser-drawn gradient takes over the sky
+            // (crisp at any size, no compression blocks), and the bottom shade lifts.
+            const finish = gsap.utils.clamp(
+              0,
+              1,
+              (c - HERO_SKY_FINISH.from) / HERO_SKY_FINISH.span,
+            );
+            if (skyFinish) gsap.set(skyFinish, { opacity: finish });
+            if (bottomShade) gsap.set(bottomShade, { opacity: 1 - finish });
           };
 
           gsap
@@ -209,7 +221,9 @@ export function BuildingTransformation({ eyebrow, title }: BuildingTransformatio
           return () => {
             view.cleanup();
             gsap.set([canvas, overlay], { clearProps: "transform" });
-            if (skyBackdrop) gsap.set(skyBackdrop, { clearProps: "opacity" });
+            gsap.set([skyBackdrop, skyFinish, bottomShade].filter(Boolean), {
+              clearProps: "opacity",
+            });
           };
         },
       );
@@ -262,6 +276,13 @@ export function BuildingTransformation({ eyebrow, title }: BuildingTransformatio
           </div>
         </div>
         <canvas ref={canvasRef} aria-hidden="true" className="absolute -z-10 hero-feather" />
+        {/* End of the camera rise: crisp browser-drawn sky (opacity set from scroll) */}
+        <div
+          data-sky-finish
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 -z-10 hero-sky-finish opacity-0"
+        />
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 hero-grain" />
 
         {/* Floor callouts, positioned in frame space (the overlay matches the canvas rect) */}
         <div
@@ -293,6 +314,7 @@ export function BuildingTransformation({ eyebrow, title }: BuildingTransformatio
           className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-40 bg-linear-to-b from-ink/30 to-transparent"
         />
         <div
+          data-bottom-shade
           aria-hidden="true"
           className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-40 bg-linear-to-t from-ink/45 to-transparent"
         />
