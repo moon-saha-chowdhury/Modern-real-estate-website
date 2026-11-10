@@ -33,3 +33,8 @@ Motion should be purposeful, controlled and quiet. It reveals the architecture a
 ## Primitives
 
 `TextReveal` (line masks), `ImageReveal` (clip-path open + settle), `Reveal` (fade-rise), `Button` (label roll).
+
+## Relationship to `awwwards-animations`
+Use `awwwards-animations` (devmartinese, @ c92d00b) as a technique reference: GSAP/ScrollTrigger, Lenis, image sequences and performance.
+Where it conflicts with this skill or the master prompt, **this skill wins**. Do not use its glitch, brutalist, bouncy/back easing, magnetic cursor or parallax-hero patterns on Meridian.
+Its Lenis + GSAP snippet removes the wrong ticker callback on cleanup. Keep `src/components/layout/SmoothScroll.tsx` as the integration.
