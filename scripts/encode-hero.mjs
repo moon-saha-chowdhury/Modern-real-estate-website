@@ -12,13 +12,16 @@
  * Output (committed):
  *   public/media/hero/frames/desktop/0001.webp …  full frame, 1600 px wide
  *   public/media/hero/frames/mobile/0001.webp  …  centre crop 608×1080 (the tower, full height)
- *   public/media/hero/poster-start.webp / poster-end.webp (+ -1280)
+ *   public/media/hero/poster-start.webp / poster-end.webp / poster-sky.webp (+ -1280)
  *   src/lib/constants/hero-sequence.ts            generated: frame count, sizes, paths
  */
-import { execFileSync } from "node:child_process";
-import { mkdirSync, readdirSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { execFileSync, spawnSync } from "node:child_process";
+import { existsSync, mkdirSync, readdirSync, rmSync, statSync, writeFileSync } from "node:fs";
 import path from "node:path";
-import ffmpeg from "ffmpeg-static";
+import ffmpegStatic from "ffmpeg-static";
+
+/** ffmpeg-static's binary is only present when its install script ran; else use ffmpeg on PATH. */
+const ffmpeg = ffmpegStatic && existsSync(ffmpegStatic) ? ffmpegStatic : "ffmpeg";
 
 const SRC = "references/hero";
 const OUT = "public/media/hero";
@@ -27,22 +30,44 @@ const SEQ_FPS = 15; // frames per second of the delivered sequence
 const QUALITY = 74; // WebP quality
 
 /**
- * Current source: start.mp4 + end.mp4 (blue-hour glass tower, 3D CGI, chosen by the client).
- * Each clip builds actively for ~5.5 s, then holds nearly still: the still tails play 4x.
- * end.mp4's first frame duplicates start.mp4's last frame, so it is skipped (1/FPS s).
+ * Current source: three AI-generated (Magnific · Seedance 2.5) start/end-frame clips, 1920×1072,
+ * built from the client's keyframes start-frame.jpg → middle-frame.jpg → end-frame.jpg:
+ *   build-structure.mp4  podium + core → full concrete frame, floor by floor (8 s)
+ *   build-facade.mp4     concrete frame → glass facade bottom-up → lobby + window lights (8 s)
+ *   camera-rise.mp4      from the facade clip's last frame (camera-start.jpg) to open sky
+ *                        (camera-end-sky.jpg): push-in and tilt up the facade into the sky (8 s)
+ * Each clip's first frame duplicates the previous clip's last frame, so it is skipped (1/24 s).
+ * `finished` marks the segment that ends on the completed, lit tower: its end becomes
+ * HERO_SEQUENCE.finishedFrame (reduced-motion still, poster-end) and the camera phase starts there.
  */
 const SEGMENTS = [
-  { file: "start.mp4", start: 0, end: 5.5, speed: 1 },
-  { file: "start.mp4", start: 5.5, end: null, speed: 4 },
-  { file: "end.mp4", start: 1 / 24, end: 5.5, speed: 1 },
-  { file: "end.mp4", start: 5.5, end: null, speed: 4 },
+  { file: "build-structure.mp4", start: 0, end: null, speed: 1 },
+  { file: "build-facade.mp4", start: 1 / 24, end: null, speed: 1, finished: true },
+  { file: "camera-rise.mp4", start: 1 / 24, end: null, speed: 1 },
 ];
 
+/** Duration of a source clip in seconds (parsed from ffmpeg's banner; it exits 1 without output). */
+const probeSeconds = (file) => {
+  const { stderr } = spawnSync(ffmpeg, ["-hide_banner", "-i", path.join(SRC, file)], {
+    encoding: "utf8",
+  });
+  const m = /Duration: (\d+):(\d+):([\d.]+)/.exec(stderr);
+  if (!m) throw new Error(`Cannot read duration of ${file}`);
+  return Number(m[1]) * 3600 + Number(m[2]) * 60 + Number(m[3]);
+};
+
+/** Seconds of joined footage up to the end of the `finished` segment. */
+let finishedSeconds = 0;
+for (const s of SEGMENTS) {
+  finishedSeconds += ((s.end ?? probeSeconds(s.file)) - s.start) / s.speed;
+  if (s.finished) break;
+}
+
 const SETS = {
-  desktop: { vf: "scale=1600:-2:flags=lanczos", width: 1600, height: 900 },
+  desktop: { vf: "scale=1600:-2:flags=lanczos", width: 1600, height: 894 },
   // The tower sits in the centre of the frame: a full-height 9:16 crop is exactly what a phone
   // shows, at full source resolution (sharper than scaling the whole frame).
-  mobile: { vf: "crop=608:1080:(iw-608)/2:0", width: 608, height: 1080 },
+  mobile: { vf: "crop=604:1072:(iw-604)/2:0", width: 604, height: 1072 },
 };
 
 const run = (args) => execFileSync(ffmpeg, ["-hide_banner", "-loglevel", "error", "-y", ...args]);
@@ -97,7 +122,7 @@ for (const [name, set] of Object.entries(SETS)) {
   summary[name] = { count: frames.length, kb: Math.round(kb) };
 }
 
-// 3. Posters (first and last frame).
+// 3. Posters: first frame, the finished tower, and the last frame (open sky).
 for (const [width, suffix] of [
   [1920, ""],
   [1280, "-1280"],
@@ -114,6 +139,19 @@ for (const [width, suffix] of [
     path.join(OUT, `poster-start${suffix}.webp`),
   ]);
   run([
+    "-ss",
+    String(Math.max(0, finishedSeconds - 0.1)),
+    "-i",
+    joined,
+    "-frames:v",
+    "1",
+    "-vf",
+    `scale=${width}:-2`,
+    "-q:v",
+    "72",
+    path.join(OUT, `poster-end${suffix}.webp`),
+  ]);
+  run([
     "-sseof",
     "-0.2",
     "-i",
@@ -124,7 +162,7 @@ for (const [width, suffix] of [
     `scale=${width}:-2`,
     "-q:v",
     "72",
-    path.join(OUT, `poster-end${suffix}.webp`),
+    path.join(OUT, `poster-sky${suffix}.webp`),
   ]);
 }
 rmSync(joined);
@@ -137,6 +175,7 @@ import type { HeroSequence } from "@/types/sections";
 export const HERO_SEQUENCE: HeroSequence = {
   count: ${summary.desktop.count},
   fps: ${SEQ_FPS},
+  finishedFrame: ${Math.min(summary.desktop.count - 1, Math.floor(finishedSeconds * SEQ_FPS))},
   desktop: { dir: "/media/hero/frames/desktop", width: ${SETS.desktop.width}, height: ${SETS.desktop.height} },
   mobile: { dir: "/media/hero/frames/mobile", width: ${SETS.mobile.width}, height: ${SETS.mobile.height} },
 };
