@@ -78,16 +78,22 @@ export const HERO_CALLOUT_X = 0.605;
  * each appears as that part of the tower is built. Structure callouts give way to finish callouts
  * so no more than three show at once, and all leave as the camera starts to move (their positions
  * are only valid for the locked-off shot).
+ *
+ * ILLUSTRATIVE content for a concept tower (labelled as such in the hero), matching what the
+ * footage shows: a two-storey podium, residential levels 2–20 and a glass sky pavilion on 21.
+ * Replace with the real project's programme when it is available.
  */
 export const HERO_CALLOUTS: HeroCallout[] = [
-  { tag: "Podium", label: "Lobby & amenities", y: 0.72, from: at(0.5), to: at(9) },
-  { tag: "Level 10", label: "Post-tensioned frame", y: 0.45, from: at(3.5), to: at(9) },
-  { tag: "Level 20", label: "Roof structure", y: 0.11, from: at(6.7), to: at(9) },
+  // Structure: the frame rises
+  { tag: "Podium", label: "Lobby, lounge & gym", y: 0.72, from: at(0.5), to: at(9) },
+  { tag: "Level 10", label: "One floor a week", y: 0.45, from: at(3.5), to: at(9) },
+  { tag: "Level 20", label: "Topping out", y: 0.11, from: at(6.7), to: at(9) },
+  // Finish: what the residents get
   { tag: "Ground", label: "Double-height lobby", y: 0.72, from: at(9.9), to: HERO_CAMERA_START },
-  { tag: "Facade", label: "Low-iron curtain wall", y: 0.45, from: at(11.2), to: HERO_CAMERA_START },
+  { tag: "L2–20", label: "84 homes, 1–3 bedrooms", y: 0.45, from: at(11.2), to: HERO_CAMERA_START },
   {
-    tag: "Rooftop",
-    label: "Sky pavilion & terrace",
+    tag: "Level 21",
+    label: "Sky pavilion & pool",
     y: 0.1,
     from: at(13.8),
     to: HERO_CAMERA_START,
