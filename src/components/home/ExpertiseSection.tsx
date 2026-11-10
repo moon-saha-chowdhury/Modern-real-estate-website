@@ -5,16 +5,16 @@ import { expertise } from "@/data/expertise";
 import { ExpertiseList } from "./ExpertiseList";
 
 /**
- * 04 — Expertise (forest). Sticky heading with a single photograph that changes with the
- * hovered row; full-width numbered rows rather than icon cards.
+ * 04 — Expertise. Heading, then capability cards that pin while their photographs scroll over
+ * them (see ExpertiseList).
  */
 export function ExpertiseSection() {
   return (
     <Section tone="stone" aria-labelledby="expertise-title">
-      <Container className="flex flex-col gap-14">
+      <Container className="flex flex-col gap-12 lg:gap-16">
         <TextReveal
           id="expertise-title"
-          className="max-w-[18ch] font-display text-display-md"
+          className="max-w-[18ch] font-display text-display-lg lg:ml-[calc(100%/6)]"
           lines={["From land", "to *landmark.*"]}
         />
         <ExpertiseList items={expertise} />
