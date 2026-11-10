@@ -24,7 +24,8 @@ test.describe("hero building transformation (image sequence)", () => {
 
   test("scroll advances and reverses the build; title stays put", async ({ page }) => {
     await trackDraws(page);
-    await page.goto("/", { waitUntil: "networkidle" });
+    // Not "networkidle": that waits for all ~360 hero frames; the draw polls below are the real signal.
+    await page.goto("/", { waitUntil: "load" });
     const label = page.locator("[data-stage-label]");
     await expect(label).toHaveText("Foundation");
     await expect.poll(() => draws(page), { timeout: 10000 }).toBeGreaterThan(0);
@@ -37,8 +38,9 @@ test.describe("hero building transformation (image sequence)", () => {
       await page.waitForTimeout(60);
     }
     await expect(label).not.toHaveText("Foundation", { timeout: 10000 });
+    // Frames stream in after the load event, so the canvas keeps catching up for a moment.
+    await expect.poll(() => draws(page), { timeout: 10000 }).toBeGreaterThan(5);
     const drawsForward = await draws(page);
-    expect(drawsForward).toBeGreaterThan(5);
 
     // Still inside the pin (1440px of 2160px): the title does not move or fade.
     expect(await title.evaluate((el) => el.getBoundingClientRect().top)).toBeCloseTo(titleTop, 0);
@@ -49,7 +51,7 @@ test.describe("hero building transformation (image sequence)", () => {
       await page.waitForTimeout(60);
     }
     await expect(label).toHaveText("Foundation", { timeout: 10000 });
-    expect(await draws(page)).toBeGreaterThan(drawsForward);
+    await expect.poll(() => draws(page), { timeout: 10000 }).toBeGreaterThan(drawsForward);
   });
 
   test("uses a canvas, not a video", async ({ page }) => {
@@ -64,7 +66,7 @@ test.describe("hero with reduced motion", () => {
 
   test("draws the finished building once and does not pin", async ({ page }) => {
     await trackDraws(page);
-    await page.goto("/", { waitUntil: "networkidle" });
+    await page.goto("/", { waitUntil: "load" });
     await expect.poll(() => draws(page), { timeout: 10000 }).toBeGreaterThan(0);
     await expect(page.locator("#hero-title")).toBeVisible();
     await page.mouse.wheel(0, 900);

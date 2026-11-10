@@ -1,16 +1,20 @@
 "use client";
 
-import Image from "next/image";
-import { useRef } from "react";
+import Image, { getImageProps } from "next/image";
+import { useRef, type CSSProperties } from "react";
 import { Eyebrow } from "@/components/common/Eyebrow";
 import { TextReveal } from "@/components/common/TextReveal";
 import {
   computeFrameRect,
   createFrameLoader,
+  frameUrl,
   type FrameLoader,
 } from "@/lib/animations/frame-sequence";
 import { gsap, ScrollTrigger, useGSAP } from "@/lib/animations/gsap";
 import {
+  HERO_CALLOUT_X,
+  HERO_CAMERA_START,
+  HERO_CALLOUTS,
   HERO_FRAME_SCALE,
   HERO_MAX_DPR,
   HERO_MEDIA,
@@ -32,26 +36,63 @@ import type { BuildingTransformationProps, HeroFrameSet } from "@/types/sections
  * - The frame is drawn at HERO_FRAME_SCALE of the covering size (static zoom-out) with feathered
  *   edges over a sky → horizon → water backdrop sampled from the frames themselves.
  * - The title and stage indicator stay put; only the building changes.
+ * - From 1024 px (lg): floor callouts (dot · leader line · chip) appear beside the tower as each part is
+ *   built. They live in an overlay sized exactly like the canvas, so they stay on the facade.
+ * - Camera rise (after the lights come on): the footage pushes in and tilts up into open sky,
+ *   the frame grows to full cover and the backdrop crossfades to sky, so the hero hands over
+ *   from the tower to the page below like the end of a film shot.
  * - Frames load progressively (every 8th first); until a frame arrives the nearest one is drawn.
  * - Phones use a tall centre crop of the tower at full source resolution.
- * - Reduced motion: only the final frame is loaded and shown; nothing is pinned.
+ * - Reduced motion: only the finished-tower frame is loaded and shown; nothing is pinned.
  */
 export function BuildingTransformation({ eyebrow, title }: BuildingTransformationProps) {
   const root = useRef<HTMLElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const posterRef = useRef<HTMLImageElement>(null);
+
+  // Server-rendered first frame (see the <picture> below). `unoptimized` serves the exact frame
+  // files, so the frame loader's first request is a cache hit.
+  const { desktop: desktopSet, mobile: mobileSet } = HERO_SEQUENCE;
+  const { props: posterProps } = getImageProps({
+    src: frameUrl(desktopSet, 0),
+    width: desktopSet.width,
+    height: desktopSet.height,
+    alt: "",
+    loading: "eager",
+    unoptimized: true,
+  });
+  const {
+    props: { src: posterMobileSrc },
+  } = getImageProps({
+    src: frameUrl(mobileSet, 0),
+    width: mobileSet.width,
+    height: mobileSet.height,
+    alt: "",
+    unoptimized: true,
+  });
+  const posterVars = {
+    "--frame-ar-d": `${desktopSet.width} / ${desktopSet.height}`,
+    "--frame-ar-m": `${mobileSet.width} / ${mobileSet.height}`,
+    "--frame-scale-d": HERO_FRAME_SCALE.desktop,
+    "--frame-scale-m": HERO_FRAME_SCALE.mobile,
+  } as CSSProperties;
 
   useGSAP(
     () => {
       const section = root.current;
       const canvas = canvasRef.current;
+      const overlay = overlayRef.current;
       const ctx = canvas?.getContext("2d");
-      if (!section || !canvas || !ctx) return;
+      if (!section || !canvas || !overlay || !ctx) return;
 
-      const { count } = HERO_SEQUENCE;
+      const poster = posterRef.current;
+      const callouts = gsap.utils.toArray<HTMLElement>("[data-callout]", section);
       const stageItems = gsap.utils.toArray<HTMLElement>("[data-stage]", section);
       const stageLabel = section.querySelector<HTMLElement>("[data-stage-label]");
       const stageIndex = section.querySelector<HTMLElement>("[data-stage-index]");
       const progressLine = section.querySelector<HTMLElement>("[data-progress]");
+      const skyBackdrop = section.querySelector<HTMLElement>("[data-sky-backdrop]");
 
       const setStage = (t: number) => {
         let current = 0;
@@ -62,18 +103,46 @@ export function BuildingTransformation({ eyebrow, title }: BuildingTransformatio
         if (stageLabel) stageLabel.textContent = HERO_STAGES[current].label;
         if (stageIndex) stageIndex.textContent = displayIndex(current);
         if (progressLine) gsap.set(progressLine, { scaleX: t });
+        callouts.forEach((item, i) => {
+          const { from, to } = HERO_CALLOUTS[i];
+          const active = String(t >= from && t < to);
+          if (item.dataset.active !== active) item.dataset.active = active;
+        });
       };
 
       /** Sets up loading, layout and drawing for one frame set; returns a cleanup. */
       const mount = (set: HeroFrameSet, scale: number, indices?: number[]) => {
-        let frame = indices ? indices[0] : 0;
-        let drawn: HTMLImageElement | null = null;
+        /** Fractional frame position: 12.4 = frame 12 with 40% of frame 13 blended over it. */
+        let position = indices ? indices[0] : 0;
+        let drawnKey = "";
+        let loader: FrameLoader | null = null;
 
+        // Sub-frame blending: the sequence has ~11 px of scroll per frame, so stepping whole
+        // frames reads as ~20 fps stutter under smooth scrolling. Cross-fading the two
+        // neighbouring frames makes every rendered frame different, so the build glides.
         const draw = (force = false) => {
-          const img = loader.nearest(frame);
-          if (!img || (img === drawn && !force)) return;
-          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-          drawn = img;
+          if (!loader) return;
+          const base = Math.floor(position);
+          const mix = position - base;
+          const a = loader.images[base];
+          const b = mix > 0.01 ? loader.images[base + 1] : null;
+          // Until both exact frames are loaded, fall back to the nearest loaded frame.
+          const first = a ?? loader.nearest(Math.round(position));
+          if (!first) return;
+          const blend = a && b ? mix : 0;
+          const key = `${first.src}|${blend.toFixed(2)}`;
+          if (key === drawnKey && !force) return;
+          ctx.globalAlpha = 1;
+          ctx.drawImage(first, 0, 0, canvas.width, canvas.height);
+          if (b && blend > 0) {
+            ctx.globalAlpha = blend;
+            ctx.drawImage(b, 0, 0, canvas.width, canvas.height);
+            ctx.globalAlpha = 1;
+          }
+          drawnKey = key;
+          // The server-rendered first frame sits under the canvas at the same geometry; once the
+          // canvas has painted, hide it so its feathered edges never show behind a later frame.
+          if (poster) poster.style.visibility = "hidden";
         };
 
         const layout = () => {
@@ -85,33 +154,45 @@ export function BuildingTransformation({ eyebrow, title }: BuildingTransformatio
             scale,
           );
           const dpr = Math.min(window.devicePixelRatio || 1, HERO_MAX_DPR);
-          Object.assign(canvas.style, {
+          const box = {
             left: `${rect.x}px`,
             top: `${rect.y}px`,
             width: `${rect.width}px`,
             height: `${rect.height}px`,
-          });
+          };
+          Object.assign(canvas.style, box);
+          Object.assign(overlay.style, box);
           canvas.width = Math.round(rect.width * dpr);
           canvas.height = Math.round(rect.height * dpr);
           ctx.imageSmoothingQuality = "high";
           draw(true);
         };
 
-        const loader: FrameLoader = createFrameLoader(set, count, () => draw(), indices);
+        // Start fetching frames only after the page's load event: images requested before it
+        // hold it back until the whole sequence has arrived (minutes on a slow connection).
+        // Until then the server-rendered first frame is on screen.
+        const start = () => {
+          loader = createFrameLoader(set, set.count, () => draw(), indices);
+        };
+        if (document.readyState === "complete") start();
+        else window.addEventListener("load", start, { once: true });
 
         const observer = new ResizeObserver(layout);
         observer.observe(section);
         layout();
 
         return {
-          setFrame: (index: number) => {
-            if (index === frame) return;
-            frame = index;
+          /** Scroll progress (0–1) → fractional frame position in this set. */
+          setProgress: (t: number) => {
+            const value = t * (set.count - 1);
+            if (value === position) return;
+            position = value;
             draw();
           },
           cleanup: () => {
+            window.removeEventListener("load", start);
             observer.disconnect();
-            loader.cancel();
+            loader?.cancel();
           },
         };
       };
@@ -131,6 +212,19 @@ export function BuildingTransformation({ eyebrow, title }: BuildingTransformatio
           );
           const state = { t: 0 };
 
+          // Camera rise: the frame grows from the static zoom-out to full cover (amplifying the
+          // push-in and hiding the feathered edges), while the backdrop turns from the blurred
+          // finished tower to blurred open sky, so the edges match what the camera now sees.
+          const coverScale = 1 / (desktop ? HERO_FRAME_SCALE.desktop : HERO_FRAME_SCALE.mobile);
+          const easeScale = gsap.parseEase("power2.inOut");
+          const setCamera = (t: number) => {
+            const c = gsap.utils.clamp(0, 1, (t - HERO_CAMERA_START) / (1 - HERO_CAMERA_START));
+            gsap.set([canvas, overlay], { scale: 1 + (coverScale - 1) * easeScale(c) });
+            if (skyBackdrop) {
+              gsap.set(skyBackdrop, { opacity: gsap.utils.clamp(0, 1, (c - 0.2) / 0.6) });
+            }
+          };
+
           gsap
             .timeline({
               defaults: { ease: "none" },
@@ -148,24 +242,29 @@ export function BuildingTransformation({ eyebrow, title }: BuildingTransformatio
               t: 1,
               duration: 1,
               onUpdate: () => {
-                view.setFrame(Math.round(state.t * (count - 1)));
+                view.setProgress(state.t);
                 setStage(state.t);
+                setCamera(state.t);
               },
             });
 
           setStage(0);
-          return () => view.cleanup();
+          setCamera(0);
+          return () => {
+            view.cleanup();
+            gsap.set([canvas, overlay], { clearProps: "transform" });
+            if (skyBackdrop) gsap.set(skyBackdrop, { clearProps: "opacity" });
+          };
         },
       );
 
       // Reduced motion: the finished building only, no pin, no scrubbing.
       mm.add("(prefers-reduced-motion: reduce)", () => {
         const mobile = window.matchMedia(HERO_MEDIA.mobileQuery).matches;
-        const view = mount(
-          mobile ? HERO_SEQUENCE.mobile : HERO_SEQUENCE.desktop,
-          mobile ? HERO_FRAME_SCALE.mobile : HERO_FRAME_SCALE.desktop,
-          [count - 1],
-        );
+        const set = mobile ? HERO_SEQUENCE.mobile : HERO_SEQUENCE.desktop;
+        const view = mount(set, mobile ? HERO_FRAME_SCALE.mobile : HERO_FRAME_SCALE.desktop, [
+          set.finishedFrame,
+        ]);
         return () => view.cleanup();
       });
 
@@ -184,18 +283,69 @@ export function BuildingTransformation({ eyebrow, title }: BuildingTransformatio
         aria-labelledby="hero-title"
         className="group/hero relative isolate h-svh overflow-hidden bg-twilight hero-backdrop text-fg"
       >
-        {/* Backdrop: the final frame, blurred. Sky, skyline and water never change during the build,
-            so the feathered canvas edges melt into exactly matching colour. */}
+        {/* Backdrop: the first frame, blurred (the same file as the poster below). Sky, skyline
+            and water barely change during the build, so the feathered canvas edges melt into
+            matching colour; unlike the finished tower it has no warm lobby reflection to bleed
+            through the bottom edge. The open-sky layer fades in during the camera rise. */}
         <div aria-hidden="true" className="absolute inset-0 -z-20 overflow-hidden">
           <Image
-            src={HERO_MEDIA.posterEnd}
+            src={frameUrl(desktopSet, 0)}
             alt=""
             fill
-            sizes="50vw"
+            sizes="25vw"
             className="scale-110 object-cover blur-2xl"
           />
+          <div data-sky-backdrop className="absolute inset-0 opacity-0">
+            <Image
+              src={HERO_MEDIA.posterSky}
+              alt=""
+              fill
+              sizes="25vw"
+              className="scale-110 object-cover blur-2xl"
+            />
+          </div>
         </div>
+        {/* First frame, server-rendered (art-directed: phone crop / desktop frame), so the
+            sharp podium is on screen before JavaScript runs. Same geometry as the canvas: sized
+            to the frame's aspect ratio to cover the hero, then scaled to HERO_FRAME_SCALE. It
+            is the very file the frame loader fetches first, so it is not downloaded twice. */}
+        <picture>
+          <source media={HERO_MEDIA.mobileQuery} srcSet={posterMobileSrc} />
+          <img
+            ref={posterRef}
+            {...posterProps}
+            alt=""
+            aria-hidden="true"
+            fetchPriority="high"
+            style={posterVars}
+            className="pointer-events-none absolute top-1/2 left-1/2 -z-10 aspect-(--frame-ar) w-[max(100%,calc(100svh*var(--frame-ar)))] max-w-none -translate-1/2 scale-(--frame-scale) hero-feather [--frame-ar:var(--frame-ar-m)] [--frame-scale:var(--frame-scale-m)] md:[--frame-ar:var(--frame-ar-d)] md:[--frame-scale:var(--frame-scale-d)]"
+          />
+        </picture>
         <canvas ref={canvasRef} aria-hidden="true" className="absolute -z-10 hero-feather" />
+
+        {/* Floor callouts, positioned in frame space (the overlay matches the canvas rect) */}
+        <div
+          ref={overlayRef}
+          aria-hidden="true"
+          className="pointer-events-none absolute hidden motion-reduce:hidden lg:block"
+        >
+          {HERO_CALLOUTS.map((callout) => (
+            <div
+              key={`${callout.tag}-${callout.label}`}
+              data-callout
+              data-active="false"
+              className="group/callout absolute flex -translate-y-1/2 items-center"
+              style={{ left: `${HERO_CALLOUT_X * 100}%`, top: `${callout.y * 100}%` }}
+            >
+              <span className="size-1.5 rounded-full bg-accent opacity-0 shadow-[0_0_0_4px_rgb(255_255_255/0.15)] transition-opacity duration-300 ease-meridian group-data-[active=true]/callout:opacity-100" />
+              <span className="h-px w-10 origin-left scale-x-0 bg-fg/60 transition-transform duration-500 ease-meridian group-data-[active=true]/callout:scale-x-100 lg:w-16" />
+              <span className="flex -translate-x-2 items-baseline gap-2 rounded-full border border-fg/20 bg-ink/35 px-3 py-1.5 whitespace-nowrap opacity-0 backdrop-blur-md transition-[opacity,translate] duration-500 ease-meridian group-data-[active=true]/callout:translate-x-0 group-data-[active=true]/callout:opacity-100 group-data-[active=true]/callout:delay-150">
+                <span className="label-mono text-accent">{callout.tag}</span>
+                <span className="label-mono text-fg">{callout.label}</span>
+              </span>
+            </div>
+          ))}
+        </div>
 
         {/* Legibility: soft shade under the navbar and behind the stage indicator */}
         <div
@@ -235,7 +385,7 @@ export function BuildingTransformation({ eyebrow, title }: BuildingTransformatio
           aria-hidden="true"
           className="absolute inset-x-0 bottom-6 flex items-end justify-between gap-6 px-gutter text-fg-muted motion-reduce:hidden"
         >
-          <div className="flex w-full max-w-xs flex-col gap-3">
+          <div className="flex w-full max-w-sm flex-col gap-3">
             <p className="flex items-baseline gap-3 label-mono">
               <span data-stage-index className="text-accent">
                 01
@@ -247,7 +397,7 @@ export function BuildingTransformation({ eyebrow, title }: BuildingTransformatio
             <div className="relative h-px w-full bg-fg/25">
               <span data-progress className="absolute inset-0 origin-left scale-x-0 bg-accent" />
             </div>
-            <ol className="flex justify-between label-mono text-[0.625rem]">
+            <ol className="flex justify-between gap-3 label-mono text-[0.625rem]">
               {HERO_STAGES.map((stage) => (
                 <li
                   key={stage.label}
