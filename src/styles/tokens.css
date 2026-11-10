@@ -51,8 +51,6 @@
   --color-hero-sky: #0556af; /* top edge of the hero frames */
   --color-hero-horizon: #294f84; /* horizon line of the hero frames (~62% down) */
   --color-hero-water: #3d6393; /* bottom edge of the hero frames */
-  --color-hero-zenith: #124c9b; /* open sky at the end of the camera rise: top */
-  --color-hero-sky-low: #145faf; /* … and bottom */
   --color-champagne-light: #eae3cf; /* accent on blue: 5.3 sky / 5.1 water */
   --color-sky-mist: #d6e2f0; /* muted text on blue: 5.1 sky / 4.9 water */
 

@@ -2,9 +2,22 @@
 import type { HeroSequence } from "@/types/sections";
 
 export const HERO_SEQUENCE: HeroSequence = {
-  count: 361,
-  fps: 15,
-  finishedFrame: 240,
-  desktop: { dir: "/media/hero/frames/desktop", width: 1600, height: 894 },
-  mobile: { dir: "/media/hero/frames/mobile", width: 604, height: 1072 },
+  seconds: 24.037,
+  finishedSeconds: 16.038,
+  desktop: {
+    dir: "/media/hero/frames/desktop",
+    width: 1600,
+    height: 894,
+    count: 361,
+    fps: 15,
+    finishedFrame: 240,
+  },
+  mobile: {
+    dir: "/media/hero/frames/mobile",
+    width: 604,
+    height: 1072,
+    count: 240,
+    fps: 10,
+    finishedFrame: 160,
+  },
 };

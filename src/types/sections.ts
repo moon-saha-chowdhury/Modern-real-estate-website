@@ -57,18 +57,23 @@ export interface HeroStage {
   label: string;
 }
 
+/** One encoded frame set (desktop or mobile). Each has its own frame rate and therefore count. */
 export interface HeroFrameSet {
   /** Public directory holding 0001.webp … */
   dir: string;
   width: number;
   height: number;
-}
-
-export interface HeroSequence {
   count: number;
   fps: number;
   /** Index of the finished, lit tower: the last frame before the camera starts to move. */
   finishedFrame: number;
+}
+
+export interface HeroSequence {
+  /** Length of the source footage in seconds. */
+  seconds: number;
+  /** Footage time at which the tower is finished and the camera rise begins. */
+  finishedSeconds: number;
   desktop: HeroFrameSet;
   mobile: HeroFrameSet;
 }

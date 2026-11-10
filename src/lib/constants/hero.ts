@@ -5,8 +5,6 @@ import { HERO_SEQUENCE } from "./hero-sequence";
 export const HERO_MEDIA = {
   /** Phones get the tall centre crop of the tower. */
   mobileQuery: "(max-width: 767px)",
-  /** The finished, lit tower (before the camera move). */
-  posterEnd: "/media/hero/poster-end.webp",
   /** Last frame of the sequence: open twilight sky. Backdrop for the camera rise. */
   posterSky: "/media/hero/poster-sky.webp",
   frameExtension: "webp",
@@ -38,11 +36,14 @@ export const HERO_MAX_DPR = 2;
  */
 export const HERO_LOAD_STRIDES = [8, 4, 2, 1] as const;
 
-/** Parallel image requests while loading the sequence. */
-export const HERO_LOAD_CONCURRENCY = 6;
+/**
+ * Parallel image requests while loading the sequence. Below Chrome's 6-connections-per-origin
+ * limit on HTTP/1.1, so a click's navigation request and other assets never queue behind frames.
+ */
+export const HERO_LOAD_CONCURRENCY = 4;
 
 /** Length of the sequence in seconds of source footage. */
-const SEQUENCE_SECONDS = (HERO_SEQUENCE.count - 1) / HERO_SEQUENCE.fps;
+const SEQUENCE_SECONDS = HERO_SEQUENCE.seconds;
 
 /** Converts a time in the source footage (seconds) to scroll progress (0–1). */
 const at = (seconds: number) => Math.min(1, seconds / SEQUENCE_SECONDS);
@@ -53,13 +54,7 @@ const at = (seconds: number) => Math.min(1, seconds / SEQUENCE_SECONDS);
  *   8.3–12.8 glass facade bottom-up · 13.6 rooftop pavilion · 14+ window lights ·
  *   16+ camera rise: push-in and tilt up the facade into open sky.
  */
-export const HERO_CAMERA_START = at(HERO_SEQUENCE.finishedFrame / HERO_SEQUENCE.fps);
-
-/**
- * Window of the camera rise (0–1 of that phase) in which the browser-drawn sky crossfades over
- * the footage. The roofline leaves the frame at ~0.85 (7 s into the 8 s clip).
- */
-export const HERO_SKY_FINISH = { from: 0.84, span: 0.12 } as const;
+export const HERO_CAMERA_START = at(HERO_SEQUENCE.finishedSeconds);
 
 /** Construction phases shown in the stage indicator, keyed to progress (0–1). */
 export const HERO_STAGES: HeroStage[] = [
@@ -74,9 +69,10 @@ export const HERO_STAGES: HeroStage[] = [
 export const HERO_CALLOUT_X = 0.605;
 
 /**
- * Floor callouts (desktop only), timed to the frames: each appears as that part of the tower is
- * built. Structure callouts give way to finish callouts so no more than three show at once, and
- * all leave as the camera starts to move (their positions are only valid for the locked-off shot).
+ * Floor callouts (lg+ only: on portrait tablets the chips run off the edge), timed to the frames:
+ * each appears as that part of the tower is built. Structure callouts give way to finish callouts
+ * so no more than three show at once, and all leave as the camera starts to move (their positions
+ * are only valid for the locked-off shot).
  */
 export const HERO_CALLOUTS: HeroCallout[] = [
   { tag: "Podium", label: "Lobby & amenities", y: 0.72, from: at(0.5), to: at(9) },

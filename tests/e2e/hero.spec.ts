@@ -38,8 +38,9 @@ test.describe("hero building transformation (image sequence)", () => {
       await page.waitForTimeout(60);
     }
     await expect(label).not.toHaveText("Foundation", { timeout: 10000 });
+    // Frames stream in after the load event, so the canvas keeps catching up for a moment.
+    await expect.poll(() => draws(page), { timeout: 10000 }).toBeGreaterThan(5);
     const drawsForward = await draws(page);
-    expect(drawsForward).toBeGreaterThan(5);
 
     // Still inside the pin (1440px of 2160px): the title does not move or fade.
     expect(await title.evaluate((el) => el.getBoundingClientRect().top)).toBeCloseTo(titleTop, 0);
@@ -50,7 +51,7 @@ test.describe("hero building transformation (image sequence)", () => {
       await page.waitForTimeout(60);
     }
     await expect(label).toHaveText("Foundation", { timeout: 10000 });
-    expect(await draws(page)).toBeGreaterThan(drawsForward);
+    await expect.poll(() => draws(page), { timeout: 10000 }).toBeGreaterThan(drawsForward);
   });
 
   test("uses a canvas, not a video", async ({ page }) => {
