@@ -1,5 +1,4 @@
 import { Container } from "@/components/common/Container";
-import { Eyebrow } from "@/components/common/Eyebrow";
 import { ImageReveal } from "@/components/common/ImageReveal";
 import { PhotoCredit } from "@/components/common/PhotoCredit";
 import { Section } from "@/components/common/Section";
@@ -21,9 +20,6 @@ export function ContactSection() {
     <Section tone="stone" id="enquire" aria-labelledby="contact-title">
       <Container grid className="gap-y-16">
         <div className="col-span-full flex flex-col gap-10 lg:col-span-5">
-          <Eyebrow index="09" className="text-accent">
-            Enquire
-          </Eyebrow>
           <TextReveal
             id="contact-title"
             className="font-display text-display-lg"

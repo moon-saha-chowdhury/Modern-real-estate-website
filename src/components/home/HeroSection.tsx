@@ -5,10 +5,5 @@ import { BuildingTransformation } from "./BuildingTransformation";
  * title over the sky. The split text/video layout from Milestone 2 has been retired.
  */
 export function HeroSection() {
-  return (
-    <BuildingTransformation
-      eyebrow="Architecture-led development"
-      title={["Building spaces.", "Shaping", "*tomorrow.*"]}
-    />
-  );
+  return <BuildingTransformation title={["Building spaces.", "Shaping", "*tomorrow.*"]} />;
 }

@@ -11,25 +11,13 @@ test.describe("homepage", () => {
     await expect(page.locator("#contact-title")).toContainText("meaningful");
   });
 
-  test("project filters narrow the mosaic and announce the count", async ({ page }) => {
+  test("selected work lists each featured project as a full-width card", async ({ page }) => {
     await page.goto("/");
-    const group = page.getByRole("group", { name: /Places in/ });
-    const tiles = page.locator("main article");
-
-    const all = await tiles.count();
-    expect(all).toBeGreaterThan(1);
-
-    await group.getByRole("button", { name: /Commercial/ }).click();
-    await expect(group.getByRole("button", { name: /Commercial/ })).toHaveAttribute(
-      "aria-pressed",
-      "true",
-    );
-    await expect(tiles).toHaveCount(1);
-    await expect(tiles.first()).toContainText("Commercial");
-    await expect(page.getByText(/1 project shown/)).toBeAttached();
-
-    await group.getByRole("button", { name: /^All/ }).click();
-    await expect(tiles).toHaveCount(all);
+    const list = page.getByRole("list", { name: "Featured projects" });
+    const cards = list.locator("article");
+    expect(await cards.count()).toBeGreaterThan(1);
+    await expect(cards.first().getByRole("heading", { level: 3 })).toBeVisible();
+    await expect(cards.first().getByText("Sample project")).toBeVisible();
   });
 
   test("every sample project tile is labelled and links to its page", async ({ page }) => {

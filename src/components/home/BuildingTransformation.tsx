@@ -2,7 +2,6 @@
 
 import Image, { getImageProps } from "next/image";
 import { useRef, type CSSProperties } from "react";
-import { Eyebrow } from "@/components/common/Eyebrow";
 import { TextReveal } from "@/components/common/TextReveal";
 import {
   computeFrameRect,
@@ -47,7 +46,7 @@ import type { BuildingTransformationProps, HeroFrameSet } from "@/types/sections
  * - Reduced motion: only the finished-tower frame is loaded and shown; the track collapses to one
  *   screen and nothing sticks.
  */
-export function BuildingTransformation({ eyebrow, title }: BuildingTransformationProps) {
+export function BuildingTransformation({ title }: BuildingTransformationProps) {
   const root = useRef<HTMLElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -95,6 +94,8 @@ export function BuildingTransformation({ eyebrow, title }: BuildingTransformatio
       const stageIndex = section.querySelector<HTMLElement>("[data-stage-index]");
       const progressLine = section.querySelector<HTMLElement>("[data-progress]");
       const skyBackdrop = section.querySelector<HTMLElement>("[data-sky-backdrop]");
+      const bottomShade = section.querySelector<HTMLElement>("[data-bottom-shade]");
+      const leaving = gsap.utils.toArray<HTMLElement>("[data-hero-copy], [data-hero-hud]", section);
 
       const setStage = (t: number) => {
         let current = 0;
@@ -225,6 +226,13 @@ export function BuildingTransformation({ eyebrow, title }: BuildingTransformatio
             if (skyBackdrop) {
               gsap.set(skyBackdrop, { opacity: gsap.utils.clamp(0, 1, (c - 0.2) / 0.6) });
             }
+            // Lift the bottom shade as the frame fills with sky, so the hero meets the About
+            // section (which continues the sky) without a dark band between them.
+            if (bottomShade) {
+              gsap.set(bottomShade, { opacity: 1 - gsap.utils.clamp(0, 1, (c - 0.75) / 0.25) });
+            }
+            // The title and stage indicator leave with the tower: About takes over on the sky.
+            gsap.set(leaving, { opacity: 1 - gsap.utils.clamp(0, 1, (c - 0.78) / 0.18) });
           };
 
           gsap
@@ -255,7 +263,9 @@ export function BuildingTransformation({ eyebrow, title }: BuildingTransformatio
           return () => {
             view.cleanup();
             gsap.set([canvas, overlay], { clearProps: "transform" });
-            if (skyBackdrop) gsap.set(skyBackdrop, { clearProps: "opacity" });
+            gsap.set([skyBackdrop, bottomShade, ...leaving].filter(Boolean), {
+              clearProps: "opacity",
+            });
           };
         },
       );
@@ -278,7 +288,7 @@ export function BuildingTransformation({ eyebrow, title }: BuildingTransformatio
   return (
     // The track reserves the hero's scroll distance in CSS from the first paint; the section
     // sticks to the top while it scrolls past (no GSAP pin spacer, no shift on hydration).
-    <div data-hero-root className={cn("relative", HERO_SCROLL.trackClass)}>
+    <div data-hero-root data-nav-blue className={cn("relative", HERO_SCROLL.trackClass)}>
       <section
         ref={root}
         data-surface="blue"
@@ -355,6 +365,7 @@ export function BuildingTransformation({ eyebrow, title }: BuildingTransformatio
           className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-40 bg-linear-to-b from-ink/30 to-transparent"
         />
         <div
+          data-bottom-shade
           aria-hidden="true"
           className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-40 bg-linear-to-t from-ink/45 to-transparent"
         />
@@ -369,9 +380,6 @@ export function BuildingTransformation({ eyebrow, title }: BuildingTransformatio
           data-hero-copy
           className="pointer-events-none absolute inset-x-0 top-[calc(var(--spacing-nav)+clamp(1.5rem,6vh,5rem))] flex flex-col items-center gap-6 px-gutter text-center [text-shadow:0_2px_28px_rgb(0_0_0/0.35)] lg:top-[calc(var(--spacing-nav)+clamp(3rem,14vh,9rem))] lg:items-start lg:text-left"
         >
-          <Eyebrow index="01" className="text-accent">
-            {eyebrow}
-          </Eyebrow>
           <TextReveal
             as="h1"
             id="hero-title"
@@ -384,6 +392,7 @@ export function BuildingTransformation({ eyebrow, title }: BuildingTransformatio
 
         {/* Construction stage + progress */}
         <div
+          data-hero-hud
           aria-hidden="true"
           className="absolute inset-x-0 bottom-6 flex items-end justify-between gap-6 px-gutter text-fg-muted motion-reduce:hidden"
         >

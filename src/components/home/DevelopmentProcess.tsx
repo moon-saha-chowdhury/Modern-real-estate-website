@@ -13,8 +13,6 @@ export function DevelopmentProcess() {
     <Section tone="white" id="approach" aria-labelledby="process-title">
       <Container className="flex flex-col gap-20">
         <SectionHeading
-          index="06"
-          eyebrow="Our approach"
           titleId="process-title"
           title={["Six stages,", "one *standard.*"]}
           intro={

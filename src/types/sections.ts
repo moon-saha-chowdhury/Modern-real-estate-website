@@ -1,27 +1,12 @@
 import type { ReactNode } from "react";
-import type { ExpertiseItem, Metric, ProcessStage, ProjectTileVariant } from "./content";
+import type { ExpertiseItem, Metric, ProcessStage } from "./content";
 import type { MediaImage, Project } from "./project";
 
 /* ---------- Projects ---------- */
 
-export interface ProjectCardProps {
+/** Full-width "selected work" card on the homepage. */
+export interface WorkCardProps {
   project: Project;
-  variant: ProjectTileVariant;
-  /** Display index, e.g. "01". */
-  index: string;
-}
-
-export interface ProjectShowcaseProps {
-  projects: Project[];
-  /** Heading level id the filter group is labelled by. */
-  labelledBy: string;
-}
-
-export interface ProjectFiltersProps {
-  active: string;
-  counts: Record<string, number>;
-  onChange: (key: string) => void;
-  labelledBy: string;
 }
 
 /* ---------- Home sections ---------- */
@@ -102,7 +87,6 @@ export interface FrameRect {
 }
 
 export interface BuildingTransformationProps {
-  eyebrow: string;
   /** One string per line; *asterisks* mark emphasis. */
   title: string[];
 }
