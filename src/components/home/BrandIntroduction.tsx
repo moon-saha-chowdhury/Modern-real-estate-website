@@ -13,8 +13,10 @@ import { SkyVeil } from "./SkyVeil";
  * 02 — Brand introduction, continuing the hero's sky.
  *
  * The hero's camera rises into open sky; this section picks up from there like the reference
- * reel: the sky fades (SkyVeil) to the finished tower, which stays fixed behind for the whole
- * section (sticky), and the content rises over it on a translucent plate.
+ * reel. The section overlaps the hero's last screen (negative margin), so the moment the hero
+ * ends on sky this takes over: the sky fades (SkyVeil) to the finished tower, which stays fixed
+ * behind for the whole section (sticky), while the content rises over it on a full-screen
+ * translucent plate.
  * A "blue" surface (white text), so the navbar stays blue over it too (data-nav-blue).
  */
 export function BrandIntroduction() {
@@ -25,12 +27,13 @@ export function BrandIntroduction() {
       data-surface="blue"
       data-nav-blue="glass"
       aria-labelledby="intro-title"
-      className="relative isolate bg-twilight text-fg"
+      className="relative isolate text-fg motion-safe:-mt-[100svh] motion-reduce:bg-twilight"
     >
-      {/* Fixed backdrop: sticks to the viewport while the content scrolls over it */}
+      {/* Fixed backdrop: sticks to the viewport while the content scrolls over it. Hidden until
+          the section reaches the top (SkyVeil switches it on), so it never covers the hero. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none sticky top-0 -z-10 -mb-[100svh] h-svh overflow-hidden"
+        className="pointer-events-none sticky top-0 -z-10 -mb-[100svh] h-svh overflow-hidden motion-safe:invisible"
       >
         <Image
           src={HERO_MEDIA.towerFinished}
@@ -44,11 +47,11 @@ export function BrandIntroduction() {
         <SkyVeil />
       </div>
 
-      {/* The top padding leaves the tower on screen (after the sky fades) before the content
-          rises over it; the bottom padding lets it show again before the next section. */}
-      <div className="pt-[125svh] pb-[45svh] motion-reduce:pt-[70svh]">
-        <Container>
-          <div className="grid-editorial gap-y-12 rounded-sm bg-ink/35 p-6 ring-1 ring-fg/10 backdrop-blur-md md:p-10 lg:gap-y-20 lg:p-16">
+      {/* The content starts just below the fold, so it rises while the sky fades; it sits on a
+          full-screen translucent plate. The bottom padding shows the tower again afterwards. */}
+      <div className="pt-[100svh] pb-[40svh] motion-reduce:pt-[70svh]">
+        <div className="flex min-h-svh items-center bg-ink/35 py-section backdrop-blur-md">
+          <Container className="grid-editorial gap-y-12 lg:gap-y-20">
             <TextReveal
               id="intro-title"
               flowBelowLg
@@ -83,8 +86,8 @@ export function BrandIntroduction() {
                 About Meridian
               </Button>
             </Reveal>
-          </div>
-        </Container>
+          </Container>
+        </div>
       </div>
     </section>
   );

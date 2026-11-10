@@ -95,6 +95,7 @@ export function BuildingTransformation({ title }: BuildingTransformationProps) {
       const progressLine = section.querySelector<HTMLElement>("[data-progress]");
       const skyBackdrop = section.querySelector<HTMLElement>("[data-sky-backdrop]");
       const bottomShade = section.querySelector<HTMLElement>("[data-bottom-shade]");
+      const leaving = gsap.utils.toArray<HTMLElement>("[data-hero-copy], [data-hero-hud]", section);
 
       const setStage = (t: number) => {
         let current = 0;
@@ -230,6 +231,8 @@ export function BuildingTransformation({ title }: BuildingTransformationProps) {
             if (bottomShade) {
               gsap.set(bottomShade, { opacity: 1 - gsap.utils.clamp(0, 1, (c - 0.75) / 0.25) });
             }
+            // The title and stage indicator leave with the tower: About takes over on the sky.
+            gsap.set(leaving, { opacity: 1 - gsap.utils.clamp(0, 1, (c - 0.78) / 0.18) });
           };
 
           gsap
@@ -260,7 +263,9 @@ export function BuildingTransformation({ title }: BuildingTransformationProps) {
           return () => {
             view.cleanup();
             gsap.set([canvas, overlay], { clearProps: "transform" });
-            gsap.set([skyBackdrop, bottomShade].filter(Boolean), { clearProps: "opacity" });
+            gsap.set([skyBackdrop, bottomShade, ...leaving].filter(Boolean), {
+              clearProps: "opacity",
+            });
           };
         },
       );
@@ -387,6 +392,7 @@ export function BuildingTransformation({ title }: BuildingTransformationProps) {
 
         {/* Construction stage + progress */}
         <div
+          data-hero-hud
           aria-hidden="true"
           className="absolute inset-x-0 bottom-6 flex items-end justify-between gap-6 px-gutter text-fg-muted motion-reduce:hidden"
         >
