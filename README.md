@@ -9,7 +9,7 @@ Premium architectural real-estate website for **Meridian Developments**. The vis
 | Language  | TypeScript 5 (strict)                                                                    |
 | Styling   | Tailwind CSS v4: tokens in [`src/styles/tokens.css`](src/styles/tokens.css)              |
 | Motion    | GSAP + ScrollTrigger (scroll storytelling), Motion for React (UI), Lenis (smooth scroll) |
-| 3D        | React Three Fiber / three.js, loaded only on demand for the room tour (Milestone 6)      |
+| 360° tour | Photo Sphere Viewer (three.js), loaded only when a visitor enters the tour               |
 | QA        | Playwright: behavioural tests and screenshots at 1440 / 1024 / 390 px                    |
 
 > **Next.js 16 note.** This version differs from older Next.js. Read the bundled docs in
@@ -34,6 +34,7 @@ npm run dev          # http://localhost:3000
 | `npm run format`              | Prettier, with Tailwind class sorting                                                                                                            |
 | `npm run test:e2e`            | Playwright behavioural tests (run `npm run build` first)                                                                                         |
 | `npm run qa:screens`          | Writes visual QA screenshots to `.artifacts/screenshots/`                                                                                        |
+| `npm run media:panorama`      | `-- <input.png> <out-dir> <name> [--seam]`: prepare a 2:1 panorama for the tour (4096 and 2048 px WebP; `--seam` makes AI-generated edges wrap)  |
 | `npm run media:hero`          | Rebuild the hero image sequence from `references/hero/` into `public/media/hero/frames/` (also regenerates `src/lib/constants/hero-sequence.ts`) |
 
 Playwright uses the locally installed Google Chrome (`channel: "chrome"`). To use the bundled Chromium instead, run `npx playwright install chromium` and set `PW_CHANNEL=""`.

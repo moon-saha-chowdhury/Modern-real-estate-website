@@ -1,8 +1,36 @@
 import type { ReactNode } from "react";
 import type { ExpertiseItem, Metric, ProcessStage } from "./content";
-import type { MediaImage, Project } from "./project";
+import type { MediaImage, PanoramaScene, Project } from "./project";
 
 /* ---------- Projects ---------- */
+
+/** A project detail section that needs only the project. */
+export interface ProjectSectionProps {
+  project: Project;
+}
+
+/** Closing band: enquire about this project, or go to the next one. */
+export interface ProjectCtaProps {
+  project: Project;
+  next?: Project;
+}
+
+/** The click-to-load panorama tour (poster first, viewer on demand). */
+export interface PanoramaTourProps {
+  scenes: PanoramaScene[];
+  /** Flat poster shown until the tour is entered. */
+  poster: MediaImage;
+  /** Accessible name, e.g. "The Linden, virtual tour". */
+  label: string;
+  isIllustrative?: boolean;
+}
+
+/** The viewer itself (loaded only after the visitor enters the tour). */
+export interface PanoramaViewerProps {
+  scenes: PanoramaScene[];
+  label: string;
+  onExit: () => void;
+}
 
 /** Full-width "selected work" card on the homepage. */
 export interface WorkCardProps {
