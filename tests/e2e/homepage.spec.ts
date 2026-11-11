@@ -33,7 +33,7 @@ test.describe("homepage", () => {
 
   test("sample statistics are labelled as samples", async ({ page }) => {
     await page.goto("/");
-    await expect(page.getByText("Sample figures")).toBeVisible();
+    await expect(page.getByText("Sample figures", { exact: true })).toBeVisible();
     await expect(page.getByText("Sample testimonials")).toBeVisible();
     await expect(page.getByText("Sample partners")).toBeVisible();
     await expect(page.getByText("Awaiting verified figure")).toHaveCount(0);

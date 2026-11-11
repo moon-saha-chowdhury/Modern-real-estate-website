@@ -19,7 +19,9 @@ async function trackDraws(page: Page) {
 const draws = (page: Page) =>
   page.evaluate(() => (window as unknown as { __draws: number }).__draws);
 
-test.describe("hero building transformation (image sequence)", () => {
+// The scroll hero is parked (HeroSection.tsx renders the tower explorer instead). These run again
+// when BuildingTransformation is switched back on.
+test.describe.skip("hero building transformation (image sequence)", () => {
   test.use({ viewport: { width: 1440, height: 900 } });
 
   test("scroll advances and reverses the build; title stays put", async ({ page }) => {
@@ -61,7 +63,7 @@ test.describe("hero building transformation (image sequence)", () => {
   });
 });
 
-test.describe("hero with reduced motion", () => {
+test.describe.skip("hero with reduced motion", () => {
   test.use({ viewport: { width: 1440, height: 900 }, reducedMotion: "reduce" });
 
   test("draws the finished building once and does not pin", async ({ page }) => {
