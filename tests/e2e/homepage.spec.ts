@@ -31,9 +31,12 @@ test.describe("homepage", () => {
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   });
 
-  test("statistics never show invented numbers", async ({ page }) => {
+  test("sample statistics are labelled as samples", async ({ page }) => {
     await page.goto("/");
-    await expect(page.getByText("Awaiting verified figure")).toHaveCount(4);
+    await expect(page.getByText("Sample figures")).toBeVisible();
+    await expect(page.getByText("Sample testimonials")).toBeVisible();
+    await expect(page.getByText("Sample partners")).toBeVisible();
+    await expect(page.getByText("Awaiting verified figure")).toHaveCount(0);
   });
 });
 

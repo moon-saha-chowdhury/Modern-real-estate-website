@@ -43,8 +43,8 @@ export function ProjectFloorPlans({ project }: ProjectSectionProps) {
               <div className="flex flex-col gap-3 md:col-span-6 md:col-start-7">
                 <h3 className="font-display text-display-sm">{plan.name}</h3>
                 <p className="label-mono text-fg-muted">
-                  {plan.bedrooms} bed · {plan.bathrooms} bath · {plan.areaSqft.toLocaleString("en")}{" "}
-                  sq ft
+                  {plan.bedrooms > 0 && `${plan.bedrooms} bed · ${plan.bathrooms} bath · `}
+                  {plan.areaSqft.toLocaleString("en")} sq ft
                 </p>
                 {plan.downloadUrl && (
                   <a

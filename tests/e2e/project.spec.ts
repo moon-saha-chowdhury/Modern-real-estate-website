@@ -21,10 +21,9 @@ test.describe("project page", () => {
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("Northlight Tower");
     await expect(page.getByRole("heading", { name: /About\s*the project/ })).toBeVisible();
     await expect(page.getByText("Sample project").first()).toBeVisible();
-    // The sample record has no tour, gallery, plans, amenities or location.
-    for (const name of [/Step inside/, /The\s*gallery/, /Floor\s*plans/, /amenities/, /location/]) {
-      await expect(page.getByRole("heading", { name })).toHaveCount(0);
-    }
+    // No tour data: the tour section is absent rather than empty.
+    await expect(page.getByRole("heading", { name: /Step inside/ })).toHaveCount(0);
+    await expect(page.getByRole("heading", { name: /The\s*gallery/ })).toHaveCount(1);
     await expect(page.getByRole("link", { name: /Enquire about this project/ })).toBeVisible();
     await expect(page.getByRole("link", { name: /Next project/ })).toBeVisible();
   });
