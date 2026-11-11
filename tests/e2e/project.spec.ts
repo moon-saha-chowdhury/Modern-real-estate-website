@@ -45,6 +45,7 @@ test.describe("project page", () => {
     expect(requested.some((url) => url.includes("/the-linden/living.webp"))).toBe(true);
 
     const rooms = page.getByRole("navigation", { name: "Rooms" });
+    await expect(rooms.getByRole("button")).toHaveCount(5);
     await expect(rooms.getByRole("button", { name: "Living room" })).toHaveAttribute(
       "aria-pressed",
       "true",
