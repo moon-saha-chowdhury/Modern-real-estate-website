@@ -9,9 +9,9 @@
  *      data-surface="light" | "dark" and everything inside adapts. Defined in globals.css.
  *
  * Contrast (WCAG 2.2, computed) on paper / stone / white:
- *   ink 15.8 / 14.0 / 18.2 · ink-soft 7.0 / 6.2 / 8.1 · bronze 5.5 / 4.9 / 6.4  → body text OK
- *   brand 5.0 / 4.4 / 5.8  → links on paper & white; marks only on stone
- *   sage 4.0 / 3.5 / 4.6   → decorative / large type only
+ *   ink 15.8 / 14.6 / 18.2 · ink-soft 7.0 / 6.5 / 8.1 · bronze 5.5 / 5.1 / 6.4  → body text OK
+ *   brand 5.0 / 4.6 / 5.8  → links on all three light surfaces
+ *   sage 4.0 / 3.7 / 4.6   → decorative / large type only
  *   rule-strong 3.1 / 2.8 / 3.6 → form field underlines (use on white panels)
  * Dark surfaces (photo overlays, optional dark bands): ivory 15.8 · champagne 9.3 · mist 7.7
  */
@@ -24,7 +24,7 @@
 
   /* Light surfaces */
   --color-paper: #f1efe7; /* primary background (warm ivory) */
-  --color-stone: #e7e1d5; /* alternate section background */
+  --color-stone: #e8e6de; /* alternate section background (neutral, concrete-like) */
   --color-white: #ffffff; /* panels, alternate sections */
 
   /* Ink */
