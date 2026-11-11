@@ -49,6 +49,12 @@ export const HERO_LOAD_STRIDES = [8, 4, 2, 1] as const;
  */
 export const HERO_LOAD_CONCURRENCY = 4;
 
+/**
+ * "Why Meridian" shows one tall frame of the build (our own footage, no stock): index into the
+ * mobile set, which is a full-height crop of the tower. 130 ≈ the glass facade half-way up.
+ */
+export const HERO_SHOWCASE_FRAME = 130;
+
 /** Length of the sequence in seconds of source footage. */
 const SEQUENCE_SECONDS = HERO_SEQUENCE.seconds;
 

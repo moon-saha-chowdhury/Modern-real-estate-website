@@ -21,7 +21,7 @@ export function Testimonials() {
 
         {quote ? (
           <figure className="col-span-full flex flex-col gap-10 lg:col-span-9 lg:col-start-3">
-            <blockquote className="font-display text-display-md">
+            <blockquote className="font-display text-display-lg">
               <p>&ldquo;{quote.quote}&rdquo;</p>
             </blockquote>
             <figcaption className="label-mono text-fg-muted">
@@ -33,8 +33,8 @@ export function Testimonials() {
             <TextReveal
               as="p"
               flowBelowLg
-              className="font-display text-display-md text-fg/90"
-              lines={["We publish what our clients say", "only with *their permission.*"]}
+              className="font-display text-display-lg"
+              lines={["We publish what our", "clients say only with", "*their permission.*"]}
             />
             <p className="max-w-md text-fg-muted">
               Testimonials from Meridian homeowners and partners will appear here as they are shared
@@ -56,14 +56,14 @@ export function Testimonials() {
           ) : (
             <ul
               aria-label="Partner logos to be added"
-              className="grid grid-cols-2 gap-px bg-fg/10 sm:grid-cols-3 lg:grid-cols-5"
+              className="grid grid-cols-2 gap-px bg-fg/10 sm:grid-cols-5"
             >
               {Array.from({ length: PARTNER_PLACEHOLDER_SLOTS }, (_, i) => (
                 <li
                   key={i}
-                  className="flex h-24 items-center justify-center bg-surface label-mono text-fg-muted"
+                  className="flex h-16 items-center justify-center bg-surface label-mono text-fg-muted last:col-span-2 sm:last:col-span-1"
                 >
-                  Partner {i + 1}
+                  Partner mark {i + 1}
                 </li>
               ))}
             </ul>
