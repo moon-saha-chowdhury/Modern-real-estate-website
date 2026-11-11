@@ -22,7 +22,36 @@ export const projects: Project[] = [
     gallery: [],
     amenities: [],
     floorPlans: [],
-    virtualTour: null,
+    // Pilot tour: AI-generated illustrative rooms (4096 px equirectangular, prepared with
+    // scripts/prepare-panorama.mjs). Replace with real renders or photographs when available.
+    virtualTour: {
+      kind: "panorama",
+      isIllustrative: true,
+      poster: {
+        src: "/media/tour/the-linden/poster.webp",
+        width: 1600,
+        height: 900,
+        alt: "An open-plan living room at dusk with floor-to-ceiling windows over the water",
+      },
+      scenes: [
+        {
+          id: "living",
+          label: "Living room",
+          src: "/media/tour/the-linden/living.webp",
+          srcMobile: "/media/tour/the-linden/living-2k.webp",
+          initialYaw: -8,
+          hotspots: [{ toSceneId: "dining", label: "Dining & terrace", yaw: 130, pitch: -16 }],
+        },
+        {
+          id: "dining",
+          label: "Dining & terrace",
+          src: "/media/tour/the-linden/dining.webp",
+          srcMobile: "/media/tour/the-linden/dining-2k.webp",
+          initialYaw: 7,
+          hotspots: [{ toSceneId: "living", label: "Living room", yaw: -63, pitch: -16 }],
+        },
+      ],
+    },
     featured: true,
     isPlaceholder: true,
   },

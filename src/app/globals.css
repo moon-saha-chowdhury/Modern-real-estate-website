@@ -179,3 +179,40 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* Panorama tour hotspots: Photo Sphere Viewer builds these outside React, so they are plain CSS. */
+@layer components {
+  .tour-hotspot {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.375rem 0.875rem 0.375rem 0.375rem;
+    border: 1px solid rgb(255 255 255 / 0.4);
+    border-radius: 9999px;
+    background: rgb(16 23 19 / 0.5);
+    backdrop-filter: blur(8px);
+    color: var(--color-white);
+    font-family: var(--font-mono);
+    font-size: var(--text-label);
+    letter-spacing: var(--text-label--letter-spacing);
+    text-transform: uppercase;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+      background-color 300ms,
+      border-color 300ms;
+  }
+  .tour-hotspot:hover {
+    background: rgb(16 23 19 / 0.75);
+    border-color: rgb(255 255 255 / 0.75);
+  }
+  .tour-hotspot__dot {
+    display: grid;
+    place-items: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 9999px;
+    background: var(--color-white);
+    color: var(--color-ink);
+  }
+}

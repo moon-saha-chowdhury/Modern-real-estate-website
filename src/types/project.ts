@@ -45,15 +45,35 @@ export type AmenityKey =
   | "generator"
   | "elevator";
 
+/** A "go to" marker inside a panorama. Angles are in degrees. */
+export interface PanoramaHotspot {
+  toSceneId: string;
+  label: string;
+  /** -180..180, 0 = the centre of the equirectangular image. */
+  yaw: number;
+  /** -90..90, 0 = the horizon, negative = below it. */
+  pitch: number;
+}
+
 export interface PanoramaScene {
   id: string;
   label: string; // "Living room"
-  src: string; // equirectangular 2:1 image
+  src: string; // equirectangular 2:1 image, 4096 px wide (scripts/prepare-panorama.mjs)
+  srcMobile?: string; // same, 2048 px wide, used on phones
+  /** Starting direction in degrees (0 = the centre of the image). */
   initialYaw?: number;
+  hotspots?: PanoramaHotspot[];
 }
 
 export type VirtualTour =
-  | { kind: "panorama"; scenes: PanoramaScene[] }
+  | {
+      kind: "panorama";
+      scenes: PanoramaScene[];
+      /** Ordinary (flat) still shown before the tour is entered. */
+      poster: MediaImage;
+      /** True when the rooms are illustrative renders, not the real building. */
+      isIllustrative?: boolean;
+    }
   | { kind: "model"; src: string; poster?: string } // GLB / glTF (Draco)
   | { kind: "matterport"; modelId: string };
 
