@@ -19,14 +19,109 @@ export const projects: Project[] = [
     description:
       "A sample residential project used to demonstrate the portfolio layout. Real project details will replace this entry.",
     heroImage: media.projectGlassBalconies,
-    gallery: [],
-    amenities: [],
-    floorPlans: [],
+    // Sample details (everything below is placeholder content for a sample project).
+    landArea: "0.9 acre",
+    totalFloors: 24,
+    totalUnits: 96,
+    apartmentSizes: "850 to 1,350 sq ft",
+    completionInformation: { label: "Sample: Q4 2027" },
+    gallery: [
+      {
+        src: "/media/tour/the-linden/poster.webp",
+        width: 1600,
+        height: 900,
+        alt: "The open-plan living room at dusk",
+        isIllustrative: true,
+        category: "interior",
+      },
+      {
+        src: "/media/tour/the-linden/gallery-dining.webp",
+        width: 1600,
+        height: 900,
+        alt: "The dining area beside the kitchen island",
+        isIllustrative: true,
+        category: "interior",
+      },
+      {
+        src: "/media/tour/the-linden/gallery-bedroom.webp",
+        width: 1600,
+        height: 900,
+        alt: "The main bedroom with a view over the water",
+        isIllustrative: true,
+        category: "interior",
+      },
+      {
+        src: "/media/tour/the-linden/gallery-bathroom.webp",
+        width: 1600,
+        height: 900,
+        alt: "The stone-lined en-suite bathroom",
+        isIllustrative: true,
+        category: "interior",
+      },
+      {
+        src: "/media/tour/the-linden/gallery-balcony.webp",
+        width: 1600,
+        height: 900,
+        alt: "The balcony facing the water at blue hour",
+        isIllustrative: true,
+        category: "exterior",
+      },
+    ],
+    amenities: ["gym", "swimming-pool", "rooftop-garden", "elevator", "security", "parking"],
+    floorPlans: [
+      {
+        id: "type-a",
+        name: "Type A",
+        bedrooms: 2,
+        bathrooms: 2,
+        areaSqft: 1350,
+        image: {
+          src: "/media/tour/the-linden/plan-a.svg",
+          width: 800,
+          height: 520,
+          alt: "Floor plan of the two-bedroom Type A apartment",
+        },
+      },
+      {
+        id: "type-b",
+        name: "Type B",
+        bedrooms: 1,
+        bathrooms: 1,
+        areaSqft: 850,
+        image: {
+          src: "/media/tour/the-linden/plan-b.svg",
+          width: 800,
+          height: 520,
+          alt: "Floor plan of the one-bedroom Type B apartment",
+        },
+      },
+    ],
+    mapLocation: {
+      address: ["Location to be confirmed"],
+      lat: 0,
+      lng: 0,
+      landmarks: [
+        { name: "Waterfront promenade", distance: "250 m" },
+        { name: "Metro station", distance: "600 m" },
+        { name: "International school", distance: "1.2 km" },
+      ],
+      transport: ["Metro", "Bus", "Ferry"],
+      highlights: [
+        "Quiet street, short walk to the water",
+        "Shops and cafés at the foot of the tower",
+      ],
+    },
     // Pilot tour: AI-generated illustrative rooms (4096 px equirectangular, prepared with
     // scripts/prepare-panorama.mjs). Replace with real renders or photographs when available.
     virtualTour: {
       kind: "panorama",
       isIllustrative: true,
+      plan: {
+        src: "/media/tour/the-linden/plan-a-map.svg",
+        width: 800,
+        height: 520,
+        alt: "Floor plan of the apartment",
+      },
       poster: {
         src: "/media/tour/the-linden/poster.webp",
         width: 1600,
@@ -36,6 +131,9 @@ export const projects: Project[] = [
       scenes: [
         {
           id: "living",
+          description:
+            "An open living room that looks over the water through floor-to-ceiling glass.",
+          mapPoint: { x: 17.5, y: 40 },
           label: "Living room",
           src: "/media/tour/the-linden/living.webp",
           srcMobile: "/media/tour/the-linden/living-2k.webp",
@@ -48,6 +146,9 @@ export const projects: Project[] = [
         },
         {
           id: "dining",
+          description:
+            "The dining table sits beside the kitchen island, with the terrace doors beyond.",
+          mapPoint: { x: 41, y: 40 },
           label: "Dining & terrace",
           src: "/media/tour/the-linden/dining.webp",
           srcMobile: "/media/tour/the-linden/dining-2k.webp",
@@ -59,6 +160,8 @@ export const projects: Project[] = [
         },
         {
           id: "bedroom",
+          description: "The main bedroom opens onto the balcony and connects to its own bathroom.",
+          mapPoint: { x: 75, y: 36 },
           label: "Bedroom",
           src: "/media/tour/the-linden/bedroom.webp",
           srcMobile: "/media/tour/the-linden/bedroom-2k.webp",
@@ -71,6 +174,8 @@ export const projects: Project[] = [
         },
         {
           id: "balcony",
+          description: "A glass-balustraded balcony facing the water, shared by the living room.",
+          mapPoint: { x: 27, y: 10 },
           label: "Balcony",
           src: "/media/tour/the-linden/balcony.webp",
           srcMobile: "/media/tour/the-linden/balcony-2k.webp",
@@ -79,6 +184,9 @@ export const projects: Project[] = [
         },
         {
           id: "bathroom",
+          description:
+            "A stone-lined en-suite bathroom with a freestanding bath and a walk-in shower.",
+          mapPoint: { x: 84, y: 75 },
           label: "Bathroom",
           src: "/media/tour/the-linden/bathroom.webp",
           srcMobile: "/media/tour/the-linden/bathroom-2k.webp",

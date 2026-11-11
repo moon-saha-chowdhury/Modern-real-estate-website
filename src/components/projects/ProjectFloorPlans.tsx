@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Container } from "@/components/common/Container";
+import { SampleBadge } from "@/components/common/SampleBadge";
 import { Section } from "@/components/common/Section";
 import { TextReveal } from "@/components/common/TextReveal";
 import type { ProjectSectionProps } from "@/types/sections";
@@ -17,6 +18,12 @@ export function ProjectFloorPlans({ project }: ProjectSectionProps) {
           className="font-display text-display-lg lg:ml-[calc(100%/6)]"
           lines={["Floor *plans.*"]}
         />
+        {project.isPlaceholder && (
+          <SampleBadge
+            label="Sample drawings"
+            className="self-start text-fg-muted lg:ml-[calc(100%/6)]"
+          />
+        )}
         <ul className="border-t border-rule">
           {project.floorPlans.map((plan) => (
             <li
@@ -29,6 +36,7 @@ export function ProjectFloorPlans({ project }: ProjectSectionProps) {
                   alt={plan.image.alt}
                   fill
                   sizes="(min-width: 768px) 40vw, 94vw"
+                  unoptimized={plan.image.src.endsWith(".svg")}
                   className="object-contain p-4"
                 />
               </div>

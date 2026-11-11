@@ -1,16 +1,16 @@
 # Roadmap
 
-| #   | Milestone                                       | Branch                              | Status                                                                   |
-| --- | ----------------------------------------------- | ----------------------------------- | ------------------------------------------------------------------------ |
-| 0   | Audit & plan                                    | n/a                                 | ✅ Approved                                                              |
-| 1   | Foundation & design system                      | `feature/project-foundation`        | ✅ Merged (PR #1)                                                        |
-| 2   | Homepage                                        | `feature/homepage`                  | 🔄 In review                                                             |
-| 3   | Building transformation (scroll-scrubbed video) | `feature/building-scroll-animation` | 🔄 In review                                                             |
-| 4   | Project portfolio                               | `feature/projects-portfolio`        | ⏳                                                                       |
-| 5   | Project details                                 | `feature/project-details`           | ✅ Sections render only with data                                        |
-| 6   | Virtual room tour                               | `feature/virtual-room-tour`         | ◐ Pilot: illustrative rooms for The Linden; needs real renders or photos |
-| 7   | About, Expertise, Contact                       | `feature/about-contact`             | ⏳                                                                       |
-| 8   | Final optimisation                              | `feature/responsive-optimization`   | ⏳                                                                       |
+| #   | Milestone                                       | Branch                              | Status                                                                               |
+| --- | ----------------------------------------------- | ----------------------------------- | ------------------------------------------------------------------------------------ |
+| 0   | Audit & plan                                    | n/a                                 | ✅ Approved                                                                          |
+| 1   | Foundation & design system                      | `feature/project-foundation`        | ✅ Merged (PR #1)                                                                    |
+| 2   | Homepage                                        | `feature/homepage`                  | 🔄 In review                                                                         |
+| 3   | Building transformation (scroll-scrubbed video) | `feature/building-scroll-animation` | 🔄 In review                                                                         |
+| 4   | Project portfolio                               | `feature/projects-portfolio`        | ⏳                                                                                   |
+| 5   | Project details                                 | `feature/project-details`           | ✅ Sections render only with data                                                    |
+| 6   | Virtual room tour                               | `feature/virtual-room-tour`         | ◐ Pilot: five illustrative rooms, mini-map, room links; needs real renders or photos |
+| 7   | About, Expertise, Contact                       | `feature/about-contact`             | ⏳                                                                                   |
+| 8   | Final optimisation                              | `feature/responsive-optimization`   | ⏳                                                                                   |
 
 ## Decisions
 

@@ -1,4 +1,5 @@
 import { Container } from "@/components/common/Container";
+import { SampleBadge } from "@/components/common/SampleBadge";
 import { Section } from "@/components/common/Section";
 import { TextReveal } from "@/components/common/TextReveal";
 import { AMENITY_LABELS } from "@/lib/constants/projects";
@@ -17,6 +18,12 @@ export function ProjectAmenities({ project }: ProjectSectionProps) {
           className="col-span-full font-display text-display-lg lg:col-span-5"
           lines={["Shared *amenities.*"]}
         />
+        {project.isPlaceholder && (
+          <SampleBadge
+            label="Sample details"
+            className="col-span-full self-start text-fg-muted lg:col-span-5 lg:col-start-1"
+          />
+        )}
         <ul className="col-span-full grid gap-x-10 border-t border-rule sm:grid-cols-2 lg:col-span-6 lg:col-start-7">
           {project.amenities.map((key) => (
             <li key={key} className="border-b border-rule py-5 text-lead">

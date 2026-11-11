@@ -1,4 +1,5 @@
 import { Container } from "@/components/common/Container";
+import { SampleBadge } from "@/components/common/SampleBadge";
 import { Section } from "@/components/common/Section";
 import { TextReveal } from "@/components/common/TextReveal";
 import type { ProjectSectionProps } from "@/types/sections";
@@ -20,6 +21,12 @@ export function ProjectLocation({ project }: ProjectSectionProps) {
           className="col-span-full font-display text-display-lg lg:col-span-5"
           lines={["The *location.*"]}
         />
+        {project.isPlaceholder && (
+          <SampleBadge
+            label="Sample details"
+            className="col-span-full self-start text-fg-muted lg:col-span-5 lg:col-start-1"
+          />
+        )}
         <div className="col-span-full flex flex-col gap-10 lg:col-span-6 lg:col-start-7">
           <address className="text-lead text-fg-muted not-italic">
             {location.address.map((line) => (

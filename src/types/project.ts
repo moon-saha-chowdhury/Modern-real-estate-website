@@ -18,6 +18,8 @@ export interface MediaImage {
   credit?: { author: string; url: string; source: "Unsplash" | "Meridian" };
   /** True for stock/sample imagery standing in for real project photography. */
   isSample?: boolean;
+  /** True for generated or rendered imagery that is not a photograph of the real building. */
+  isIllustrative?: boolean;
 }
 
 export interface GalleryImage extends MediaImage {
@@ -62,6 +64,10 @@ export interface PanoramaScene {
   srcMobile?: string; // same, 2048 px wide, used on phones
   /** Starting direction in degrees (0 = the centre of the image). */
   initialYaw?: number;
+  /** One or two sentences about the room: shown as a caption and announced to screen readers. */
+  description?: string;
+  /** Where the camera stands on the tour plan, as % of the plan's width and height. */
+  mapPoint?: { x: number; y: number };
   hotspots?: PanoramaHotspot[];
 }
 
@@ -71,6 +77,8 @@ export type VirtualTour =
       scenes: PanoramaScene[];
       /** Ordinary (flat) still shown before the tour is entered. */
       poster: MediaImage;
+      /** Light-lined floor plan for the mini-map (scenes' mapPoint sit on it). */
+      plan?: MediaImage;
       /** True when the rooms are illustrative renders, not the real building. */
       isIllustrative?: boolean;
     }

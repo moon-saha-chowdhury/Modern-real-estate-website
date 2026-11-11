@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Orbit } from "lucide-react";
 import { SampleBadge } from "@/components/common/SampleBadge";
 import type { PanoramaTourProps } from "@/types/sections";
@@ -20,17 +20,44 @@ const PanoramaViewer = dynamic(() => import("./PanoramaViewer"), {
 /**
  * Click-to-load 360° tour. Until the visitor presses "Enter the tour" this is a still and a
  * button: no WebGL, no three.js, nothing that touches the page's load or scroll.
+ *
+ * A link with `?room=<id>` (the viewer keeps the address bar on the current room) opens the
+ * tour on that room straight away.
  */
-export function PanoramaTour({ scenes, poster, label, isIllustrative }: PanoramaTourProps) {
+export function PanoramaTour({ scenes, poster, plan, label, isIllustrative }: PanoramaTourProps) {
+  const frame = useRef<HTMLDivElement>(null);
   const [entered, setEntered] = useState(false);
+  const [room, setRoom] = useState<string | undefined>();
+
+  // Open straight on a shared room. Deferred one frame, so the page hydrates as the plain still first.
+  useEffect(() => {
+    const requested = new URLSearchParams(window.location.search).get("room");
+    if (!requested || !scenes.some((scene) => scene.id === requested)) return;
+    const frameId = requestAnimationFrame(() => {
+      setRoom(requested);
+      setEntered(true);
+      frame.current?.scrollIntoView({ block: "center" });
+    });
+    return () => cancelAnimationFrame(frameId);
+  }, [scenes]);
 
   return (
     <div
+      ref={frame}
       data-surface="blue"
       className="relative isolate h-[min(82svh,46rem)] min-h-[26rem] w-full overflow-hidden bg-ink text-fg"
     >
       {entered ? (
-        <PanoramaViewer scenes={scenes} label={label} onExit={() => setEntered(false)} />
+        <PanoramaViewer
+          scenes={scenes}
+          plan={plan}
+          initialRoom={room}
+          label={label}
+          onExit={() => {
+            setEntered(false);
+            setRoom(undefined);
+          }}
+        />
       ) : (
         <>
           <Image

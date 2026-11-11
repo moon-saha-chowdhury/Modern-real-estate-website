@@ -30,6 +30,7 @@ export function ProjectTour({ project }: ProjectSectionProps) {
         <PanoramaTour
           scenes={tour.scenes}
           poster={tour.poster}
+          plan={tour.plan}
           label={`${project.name}, virtual tour`}
           isIllustrative={tour.isIllustrative}
         />

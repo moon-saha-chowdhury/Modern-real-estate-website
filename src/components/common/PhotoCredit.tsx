@@ -7,6 +7,11 @@ import type { PhotoCreditProps } from "@/types/sections";
  * Full-strength text colour (no opacity) so it meets 4.5:1; the link has a 24px-tall hit area.
  */
 export function PhotoCredit({ image, className }: PhotoCreditProps) {
+  if (image.isIllustrative) {
+    return (
+      <p className={cn("label-mono text-[0.6875rem] leading-6", className)}>Illustrative render</p>
+    );
+  }
   if (!image.isSample || !image.credit) return null;
   return (
     <p className={cn("label-mono text-[0.6875rem] leading-6", className)}>
