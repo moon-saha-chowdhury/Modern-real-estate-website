@@ -5,7 +5,29 @@ export interface ExpertiseItem {
   id: string;
   title: string;
   summary: string;
+  /** What the capability covers, as short points (the Expertise page). */
+  points?: string[];
   image: MediaImage;
+}
+
+/** A paragraph block of a legal page. */
+export interface LegalSection {
+  heading: string;
+  body: string[];
+}
+
+/** A working principle shown on the About page. */
+export interface Principle {
+  id: string;
+  title: string;
+  description: string;
+}
+
+/** A moment in the company's story (About page). */
+export interface Milestone {
+  year: string;
+  title: string;
+  text: string;
 }
 
 /** A stage of the development process timeline. */
@@ -39,12 +61,16 @@ export interface Testimonial {
   quote: string;
   author: string;
   role: string;
+  /** True while the quote is invented sample copy. */
+  isSample?: boolean;
 }
 
 export interface Partner {
   id: string;
   name: string;
-  logo: MediaImage;
+  logo?: MediaImage;
+  /** True while the partner is an invented sample. */
+  isSample?: boolean;
 }
 
 /** Enquiry topics offered on the contact form. */

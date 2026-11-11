@@ -1,14 +1,15 @@
 import { Container } from "@/components/common/Container";
 import { CountUp } from "@/components/common/CountUp";
 import { Reveal } from "@/components/common/Reveal";
+import { SampleBadge } from "@/components/common/SampleBadge";
 import { Section } from "@/components/common/Section";
 import { TextReveal } from "@/components/common/TextReveal";
-import { metrics } from "@/data/metrics";
+import { metrics, metricsAreSample } from "@/data/metrics";
 
 /**
  * 05 — Company statistics (paper). A statement on the left, a hairline-ruled schedule of four
- * figures on the right. Shows only verified figures: until Meridian supplies them, each metric
- * is a drafting-style blank ("—") labelled plainly, rather than an invented number.
+ * figures on the right. The demo figures are invented and labelled "Sample figures"; a metric
+ * with no value is a drafting-style blank ("—") labelled plainly.
  */
 export function CompanyStats() {
   const pending = metrics.every((metric) => metric.value === null);
@@ -23,6 +24,9 @@ export function CompanyStats() {
             className="font-display text-display-lg"
             lines={["In *numbers,*", "once verified."]}
           />
+          {metricsAreSample && !pending && (
+            <SampleBadge label="Sample figures" className="self-start text-fg-muted" />
+          )}
           {pending && (
             <Reveal>
               <p className="max-w-sm text-lead text-fg-muted">

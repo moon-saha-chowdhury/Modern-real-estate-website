@@ -1,8 +1,33 @@
 import type { ReactNode } from "react";
-import type { ExpertiseItem, Metric, ProcessStage } from "./content";
+import type { ExpertiseItem, LegalSection, Metric, ProcessStage } from "./content";
 import type { MediaImage, PanoramaScene, Project } from "./project";
 
 /* ---------- Projects ---------- */
+
+/** The /projects page: every project with category and status filters. */
+export interface ProjectIndexProps {
+  projects: Project[];
+}
+
+/** Closing band on the blue dusk (used by the inner pages and the project page). */
+export interface CtaBandProps {
+  id: string;
+  /** One string per line; *asterisks* mark emphasis. */
+  title: string[];
+  text: string;
+  href: string;
+  label: string;
+  /** Extra row under the band (the project page's "next project" link). */
+  children?: ReactNode;
+}
+
+/** A legal page: sections of plain paragraphs. */
+export interface LegalPageProps {
+  eyebrow: string;
+  title: string[];
+  intro: string;
+  sections: LegalSection[];
+}
 
 /** A project detail section that needs only the project. */
 export interface ProjectSectionProps {
