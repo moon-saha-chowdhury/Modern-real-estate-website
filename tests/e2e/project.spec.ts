@@ -11,6 +11,9 @@ test.use({
 });
 
 test.describe("project page", () => {
+  // Software WebGL is CPU-heavy: run this file's tests one after another so they don't starve
+  // each other (and the server) when the whole suite runs in parallel.
+  test.describe.configure({ mode: "serial" });
   test.use({ viewport: { width: 1440, height: 900 } });
 
   test("renders the lead sections and only the sections it has data for", async ({ page }) => {
@@ -63,6 +66,55 @@ test.describe("project page", () => {
     await page.getByRole("region", { name: /virtual tour/ }).press("Escape");
     await expect(enter).toBeVisible();
     await expect(page.locator(".psv-container")).toHaveCount(0);
+  });
+
+  test("the sample project page is complete and its placeholder content is labelled", async ({
+    page,
+  }) => {
+    await page.goto(LINDEN);
+    for (const name of [
+      /About\s*the project/,
+      /Step inside/,
+      /The\s*gallery/,
+      /Floor\s*plans/,
+      /Shared\s*amenities/,
+      /The\s*location/,
+    ]) {
+      await expect(page.getByRole("heading", { name })).toBeVisible();
+    }
+    await expect(page.getByText("Sample details")).toHaveCount(2);
+    await expect(page.getByText("Sample drawings")).toBeVisible();
+    await expect(page.getByText("Illustrative render").first()).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Type A" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Type B" })).toBeVisible();
+  });
+
+  test("a ?room= link opens the tour on that room, with a mini-map and a way to book", async ({
+    page,
+  }) => {
+    await page.goto(LINDEN + "?room=bedroom");
+    await expect(page.locator(".psv-container canvas")).toBeVisible({ timeout: 30_000 });
+    const rooms = page.getByRole("navigation", { name: "Rooms" });
+    await expect(rooms.getByRole("button", { name: "Bedroom" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+    await expect(page.getByRole("link", { name: "Book a visit" })).toHaveAttribute(
+      "href",
+      "/contact",
+    );
+
+    // The mini-map moves between rooms, and the address bar follows.
+    await page.getByRole("button", { name: "Go to Balcony" }).click();
+    await expect(rooms.getByRole("button", { name: "Balcony" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+    await expect.poll(() => new URL(page.url()).searchParams.get("room")).toBe("balcony");
+
+    // Leaving the tour clears the room from the address.
+    await page.getByRole("button", { name: "Exit tour" }).click();
+    await expect.poll(() => new URL(page.url()).searchParams.get("room")).toBeNull();
   });
 
   test("phones fetch the smaller panorama", async ({ browser }) => {

@@ -20,6 +20,8 @@ export interface PanoramaTourProps {
   scenes: PanoramaScene[];
   /** Flat poster shown until the tour is entered. */
   poster: MediaImage;
+  /** Floor plan for the mini-map. */
+  plan?: MediaImage;
   /** Accessible name, e.g. "The Linden, virtual tour". */
   label: string;
   isIllustrative?: boolean;
@@ -28,6 +30,9 @@ export interface PanoramaTourProps {
 /** The viewer itself (loaded only after the visitor enters the tour). */
 export interface PanoramaViewerProps {
   scenes: PanoramaScene[];
+  plan?: MediaImage;
+  /** Id of the room to open first (from the `?room=` link). */
+  initialRoom?: string;
   label: string;
   onExit: () => void;
 }
