@@ -1,27 +1,33 @@
 import { Container } from "@/components/common/Container";
+import { Reveal } from "@/components/common/Reveal";
 import { Section } from "@/components/common/Section";
-import { SectionHeading } from "@/components/common/SectionHeading";
+import { TextReveal } from "@/components/common/TextReveal";
 import { processStages } from "@/data/process";
 import { ProcessTimeline } from "./ProcessTimeline";
 
 /**
- * 06 — Development process (ivory). Six stages on a drawn line: horizontal on desktop,
- * vertical on mobile. The line draws with scroll progress.
+ * 06 — Development process (white). Six stages that rise like floors of a building: each
+ * column stands one storey higher than the last, and its line fills as you scroll. Vertical
+ * list with a drawn line on small screens.
  */
 export function DevelopmentProcess() {
   return (
     <Section tone="white" id="approach" aria-labelledby="process-title">
-      <Container className="flex flex-col gap-20">
-        <SectionHeading
-          titleId="process-title"
-          title={["Six stages,", "one *standard.*"]}
-          intro={
-            <p>
+      <Container className="flex flex-col gap-16 lg:gap-24">
+        <header className="grid-editorial items-end gap-y-8">
+          <TextReveal
+            as="h2"
+            id="process-title"
+            className="col-span-full font-display text-display-lg lg:col-span-7 lg:col-start-3"
+            lines={["Six stages,", "one *standard.*"]}
+          />
+          <Reveal className="col-span-full lg:col-span-4 lg:col-start-9">
+            <p className="text-lead text-fg-muted">
               Every Meridian building follows the same disciplined path, from the first look at a
               plot of land to the day the keys change hands.
             </p>
-          }
-        />
+          </Reveal>
+        </header>
         <ProcessTimeline stages={processStages} />
       </Container>
     </Section>
