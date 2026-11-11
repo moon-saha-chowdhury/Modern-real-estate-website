@@ -17,7 +17,7 @@ Source of truth: [`src/styles/tokens.css`](../src/styles/tokens.css). Live refer
 | Token                                    | Hex     | Use                                                          |
 | ---------------------------------------- | ------- | ------------------------------------------------------------ |
 | `paper`                                  | #F1EFE7 | Primary background                                           |
-| `stone`                                  | #E7E1D5 | Alternate sections                                           |
+| `stone`                                  | #E8E6DE | Alternate sections                                           |
 | `white`                                  | #FFFFFF | Alternate sections, form panels                              |
 | `ink`                                    | #101713 | Primary text, primary buttons                                |
 | `ink-soft`                               | #4A5249 | Secondary text                                               |
@@ -45,14 +45,14 @@ so components never hard-code a theme.
 
 ### Contrast rules (computed, WCAG 2.2)
 
-| On    | ink  | ink-soft | bronze | brand   | sage |
-| ----- | ---- | -------- | ------ | ------- | ---- |
-| paper | 15.8 | 7.0      | 5.5    | 5.0     | 4.0  |
-| stone | 14.0 | 6.2      | 4.9    | **4.4** | 3.5  |
-| white | 18.2 | 8.1      | 6.4    | 5.8     | 4.6  |
+| On    | ink  | ink-soft | bronze | brand | sage |
+| ----- | ---- | -------- | ------ | ----- | ---- |
+| paper | 15.8 | 7.0      | 5.5    | 5.0   | 4.0  |
+| stone | 14.6 | 6.5      | 5.1    | 4.6   | 3.7  |
+| white | 18.2 | 8.1      | 6.4    | 5.8   | 4.6  |
 
 - Small text uses ink, ink-soft or bronze only. Never put small text at reduced opacity.
-- `brand` is not a text colour on stone (4.4:1). Use it there only for marks.
+- `brand` text passes on all three light surfaces (4.6:1 on stone); it is still used rarely.
 - Form underlines use `rule-strong` on white panels (3.6:1, meets the 3:1 non-text rule).
 - Labels on photographs keep a dark chip (`bg-obsidian/75 text-ivory`), since photos vary.
 
@@ -68,7 +68,7 @@ so components never hard-code a theme.
 | Process      | white                                                     |
 | Why Meridian | stone                                                     |
 | Testimonials | paper                                                     |
-| Contact      | stone (form on a white panel)                             |
+| Contact      | blue dusk, `data-surface="blue"` (form on a white panel)  |
 | Footer       | paper, with a top rule                                    |
 
 ## Typography
