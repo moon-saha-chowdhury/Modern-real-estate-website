@@ -16,7 +16,7 @@ export default function HomePage() {
   return (
     <>
       <HeroSection />
-      <BrandIntroduction />
+      <BrandIntroduction handover="none" />
       <FeaturedProjects />
       <ExpertiseSection />
       <CompanyStats />

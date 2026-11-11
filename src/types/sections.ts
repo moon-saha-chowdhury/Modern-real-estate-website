@@ -144,6 +144,14 @@ export interface FrameRect {
   height: number;
 }
 
+export interface BrandIntroductionProps {
+  /**
+   * "sky" (default): overlaps the scroll hero and takes over from its open sky.
+   * "none": a plain section after a one-screen hero, with the tower backdrop visible throughout.
+   */
+  handover?: "sky" | "none";
+}
+
 export interface BuildingTransformationProps {
   /** One string per line; *asterisks* mark emphasis. */
   title: string[];
