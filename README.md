@@ -25,17 +25,17 @@ npm install
 npm run dev          # http://localhost:3000
 ```
 
-| Script                        | Purpose                                                                                                                                          |
-| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `npm run dev`                 | Development server                                                                                                                               |
-| `npm run build` / `npm start` | Production build / serve                                                                                                                         |
-| `npm run lint`                | ESLint (Next core-web-vitals + TypeScript)                                                                                                       |
-| `npm run typecheck`           | `tsc --noEmit`                                                                                                                                   |
-| `npm run format`              | Prettier, with Tailwind class sorting                                                                                                            |
-| `npm run test:e2e`            | Playwright behavioural tests (run `npm run build` first)                                                                                         |
-| `npm run qa:screens`          | Writes visual QA screenshots to `.artifacts/screenshots/`                                                                                        |
-| `npm run media:panorama`      | `-- <input.png> <out-dir> <name> [--seam]`: prepare a 2:1 panorama for the tour (4096 and 2048 px WebP; `--seam` makes AI-generated edges wrap)  |
-| `npm run media:hero`          | Rebuild the hero image sequence from `references/hero/` into `public/media/hero/frames/` (also regenerates `src/lib/constants/hero-sequence.ts`) |
+| Script                        | Purpose                                                                                                                                               |
+| ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run dev`                 | Development server                                                                                                                                    |
+| `npm run build` / `npm start` | Production build / serve                                                                                                                              |
+| `npm run lint`                | ESLint (Next core-web-vitals + TypeScript)                                                                                                            |
+| `npm run typecheck`           | `tsc --noEmit`                                                                                                                                        |
+| `npm run format`              | Prettier, with Tailwind class sorting                                                                                                                 |
+| `npm run test:e2e`            | Playwright behavioural tests (run `npm run build` first)                                                                                              |
+| `npm run qa:screens`          | Writes visual QA screenshots to `.artifacts/screenshots/`                                                                                             |
+| `npm run media:panorama`      | `-- <input> <out-dir> <name> [--seam] [--check] [--poster yaw,pitch,fov]`: check and prepare a 360° panorama for the tour (see `docs/TOUR-ASSETS.md`) |
+| `npm run media:hero`          | Rebuild the hero image sequence from `references/hero/` into `public/media/hero/frames/` (also regenerates `src/lib/constants/hero-sequence.ts`)      |
 
 Playwright uses the locally installed Google Chrome (`channel: "chrome"`). To use the bundled Chromium instead, run `npx playwright install chromium` and set `PW_CHANNEL=""`.
 
