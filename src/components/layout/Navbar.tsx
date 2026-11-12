@@ -122,7 +122,7 @@ export function Navbar() {
       className={cn(
         "fixed inset-x-0 top-0 z-50 border-b border-transparent text-fg",
         "transition-[background-color,border-color,color,translate] duration-500 ease-meridian",
-        "data-[solid=true]:border-rule data-[solid=true]:bg-paper/95",
+        "data-[solid=true]:border-rule data-[solid=true]:bg-paper/80 data-[solid=true]:backdrop-blur-xl data-[solid=true]:backdrop-saturate-150",
         "data-[glass=true]:border-fg/10 data-[glass=true]:bg-ink/40 data-[glass=true]:backdrop-blur-md",
         "data-[hidden=true]:-translate-y-full",
         "data-[menu=open]:border-transparent data-[menu=open]:bg-transparent",

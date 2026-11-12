@@ -22,7 +22,7 @@ export function WorkCard({ project }: WorkCardProps) {
       <Link
         href={`/projects/${project.slug}`}
         data-surface="blue"
-        className="group/work group/cursor relative block aspect-4/5 overflow-hidden text-fg outline-offset-8 md:aspect-auto md:h-[min(680px,78svh)] md:min-h-104"
+        className="group/work group/cursor relative block aspect-4/5 overflow-hidden text-fg outline-offset-8 transition-[scale] duration-100 ease-out active:scale-[0.995] motion-reduce:transition-none md:aspect-auto md:h-[min(680px,78svh)] md:min-h-104"
       >
         <ImageReveal
           src={project.heroImage.src}

@@ -24,7 +24,7 @@ export function ProjectTile({ project }: ProjectSectionProps) {
     <article className="flex flex-col gap-3">
       <Link
         href={`/projects/${project.slug}`}
-        className="group flex flex-col gap-5 outline-offset-8"
+        className="group flex flex-col gap-5 outline-offset-8 transition-[scale] duration-100 ease-out active:scale-[0.99] motion-reduce:transition-none"
       >
         <div className="relative aspect-4/3 overflow-hidden bg-stone">
           <Image

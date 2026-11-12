@@ -6,17 +6,13 @@ import { Reveal } from "@/components/common/Reveal";
 import { Section } from "@/components/common/Section";
 import { TextReveal } from "@/components/common/TextReveal";
 import { media } from "@/data/media";
-import { DUSK_EDGE } from "@/lib/constants/hero";
 
 /**
  * 02 — Brand introduction, on paper.
  *
- * The hero is the one dark moment of the page; this is where it ends. The tower's dusk dissolves
- * into paper over a third of a screen (a many-stop gradient: two stops would band), and the
- * navbar stays blue only while it is still over the dusk, so white text never lands on paper.
- *
- * Then a quiet editorial composition: one statement, a portrait and a landscape photograph at
- * different heights, and a short paragraph. No backdrop, no frost, nothing sticky.
+ * The hero is the one dark moment of the page; this is where it ends, on a clean edge, and the
+ * page continues on paper. A quiet editorial composition: one statement, a portrait and a
+ * landscape photograph at different heights, and a short paragraph. No backdrop, nothing sticky.
  */
 export function BrandIntroduction() {
   const portrait = media.brandIntro;
@@ -24,24 +20,7 @@ export function BrandIntroduction() {
 
   return (
     <>
-      <div
-        aria-hidden="true"
-        className="relative h-[34svh] min-h-52"
-        style={{
-          backgroundImage: `linear-gradient(to bottom,
-            ${DUSK_EDGE} 0%,
-            color-mix(in oklab, ${DUSK_EDGE} 78%, var(--color-paper)) 14%,
-            color-mix(in oklab, ${DUSK_EDGE} 52%, var(--color-paper)) 32%,
-            color-mix(in oklab, ${DUSK_EDGE} 26%, var(--color-paper)) 52%,
-            color-mix(in oklab, ${DUSK_EDGE} 9%, var(--color-paper)) 74%,
-            var(--color-paper) 100%)`,
-        }}
-      >
-        {/* The navbar is blue while this upper part is under it, light after */}
-        <div data-nav-blue className="absolute inset-x-0 top-0 h-[48%]" />
-      </div>
-
-      <Section tone="paper" aria-labelledby="intro-title" className="pt-0">
+      <Section tone="paper" aria-labelledby="intro-title">
         <Container className="grid-editorial gap-y-14 lg:gap-y-24">
           <TextReveal
             id="intro-title"
@@ -66,7 +45,7 @@ export function BrandIntroduction() {
             <PhotoCredit image={portrait} className="text-fg-muted" />
           </figure>
 
-          <Reveal className="col-span-full flex flex-col gap-8 md:col-span-5 md:col-start-5 md:row-start-2 lg:col-span-3 lg:col-start-6 lg:self-end">
+          <Reveal className="col-span-full flex flex-col gap-8 md:col-span-5 md:col-start-5 md:row-start-2 lg:col-span-3 lg:col-start-5 lg:self-end">
             <span aria-hidden="true" className="h-px w-16 bg-fg/30" />
             <p className="text-lead text-fg-muted">
               Meridian develops residential and commercial buildings with an architect&apos;s
@@ -78,7 +57,7 @@ export function BrandIntroduction() {
             </Button>
           </Reveal>
 
-          <figure className="col-span-full flex flex-col gap-3 md:col-span-6 md:col-start-7 md:row-start-3 lg:col-span-4 lg:col-start-9 lg:row-start-2 lg:mt-40">
+          <figure className="col-span-full flex flex-col gap-3 md:col-span-6 md:col-start-7 md:row-start-3 lg:col-span-5 lg:col-start-8 lg:row-start-2 lg:mt-44">
             <ImageReveal
               src={interior.src}
               alt={interior.alt}
