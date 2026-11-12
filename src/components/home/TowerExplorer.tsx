@@ -10,6 +10,7 @@ import { SampleBadge } from "@/components/common/SampleBadge";
 import { TextReveal } from "@/components/common/TextReveal";
 import { residences, towerFloors } from "@/data/residences";
 import {
+  EXPLORER_CLIPS,
   EXPLORER_COPY,
   EXPLORER_GEOMETRY,
   EXPLORER_ROOM_ZOOM,
@@ -44,7 +45,9 @@ const pct = (value: number) => `${value * 100}%`;
  *
  * The floor buttons live in a box with the still's aspect ratio that covers the hero, so they
  * stay on the facade at any screen size. All figures are samples and labelled as such.
- * Reduced motion: no camera push, the two views simply swap.
+ * On landscape screens the move between tower and residence is a short film clip (the top floor
+ * lifts off the tower and becomes the cutaway), played forwards to enter and backwards to leave.
+ * Reduced motion: no clip and no camera push, the two views simply swap.
  */
 export function TowerExplorer({ title }: BuildingTransformationProps) {
   const [hovered, setHovered] = useState<number | null>(null);
@@ -57,6 +60,12 @@ export function TowerExplorer({ title }: BuildingTransformationProps) {
   const backRef = useRef<HTMLButtonElement>(null);
   const wasOpen = useRef(false);
   const wasInside = useRef(false);
+  /** The flight clips are fetched after the page has loaded, and only where they will play. */
+  const [armed, setArmed] = useState(false);
+  const [clip, setClip] = useState<"enter" | "leave" | null>(null);
+  const enterClip = useRef<HTMLVideoElement>(null);
+  const leaveClip = useRef<HTMLVideoElement>(null);
+  const leaveRef = useRef<() => void>(() => {});
 
   const isOpen = open !== null;
   const { left, right, top, bottom } = EXPLORER_GEOMETRY;
@@ -93,19 +102,65 @@ export function TowerExplorer({ title }: BuildingTransformationProps) {
     const onKey = (event: KeyboardEvent) => {
       if (event.key !== "Escape") return;
       if (inside) setInside(null);
-      else setOpen(null);
+      else leaveRef.current();
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [isOpen, inside]);
 
-  const enter = (index: number) => {
-    setLastOpen(index);
-    setOpen(index);
-    setHovered(null);
-    setRoom(null);
+  useEffect(() => {
+    if (!window.matchMedia(EXPLORER_CLIPS.query).matches) return;
+    const arm = () => setArmed(true);
+    if (document.readyState === "complete") {
+      const id = window.setTimeout(arm, 300);
+      return () => window.clearTimeout(id);
+    }
+    window.addEventListener("load", arm, { once: true });
+    return () => window.removeEventListener("load", arm);
+  }, []);
+
+  /**
+   * Plays a flight clip over the hero and runs `swap` (the change of view) underneath it. Without
+   * a clip (portrait, reduced motion, not loaded, cannot play) the view just changes.
+   */
+  const playClip = (which: "enter" | "leave", swap: () => void) => {
+    const video = (which === "enter" ? enterClip : leaveClip).current;
+    if (!video || clip) {
+      if (!clip) swap();
+      return;
+    }
+    let swapped = false;
+    let guard = 0;
+    const swapOnce = () => {
+      if (swapped) return;
+      swapped = true;
+      swap();
+    };
+    const finish = () => {
+      window.clearTimeout(guard);
+      swapOnce();
+      setClip(null);
+    };
+    guard = window.setTimeout(finish, EXPLORER_CLIPS.timeoutMs);
+    video.currentTime = 0;
+    video.onplaying = () => window.setTimeout(swapOnce, EXPLORER_CLIPS.swapAfterMs);
+    video.onended = finish;
+    setClip(which);
+    video.play().catch(finish);
   };
-  const leave = () => setOpen(null);
+
+  const enter = (index: number) => {
+    setHovered(null);
+    playClip("enter", () => {
+      setLastOpen(index);
+      setOpen(index);
+      setRoom(null);
+    });
+  };
+  const leave = () => playClip("leave", () => setOpen(null));
+  useEffect(() => {
+    leaveRef.current = leave;
+  });
   const stepInside = (id: string) => {
     setRoom(id);
     setInside(id);
@@ -413,6 +468,29 @@ export function TowerExplorer({ title }: BuildingTransformationProps) {
           </div>
         </div>
       </div>
+
+      {/* ---------- Flight clips between the tower and the residence ---------- */}
+      {armed &&
+        (["enter", "leave"] as const).map((which) => (
+          <video
+            key={which}
+            ref={which === "enter" ? enterClip : leaveClip}
+            muted
+            playsInline
+            preload="auto"
+            aria-hidden="true"
+            tabIndex={-1}
+            className={cn(
+              "absolute inset-0 z-30 size-full object-cover transition-opacity ease-meridian",
+              clip === which
+                ? "opacity-100 duration-300"
+                : "pointer-events-none opacity-0 duration-500",
+            )}
+          >
+            <source src={`${EXPLORER_CLIPS[which]}.webm`} type="video/webm" />
+            <source src={`${EXPLORER_CLIPS[which]}.mp4`} type="video/mp4" />
+          </video>
+        ))}
 
       {/* ---------- Inside a room: the 360° view, below the navbar ---------- */}
       {inside && (

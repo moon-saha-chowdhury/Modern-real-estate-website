@@ -37,3 +37,17 @@ export const EXPLORER_COPY = {
 
 /** The cutaway render's own background colour, so the image has no visible edge. */
 export const EXPLORER_UNIT_BACKDROP = "#101b2f";
+
+/**
+ * The flight between the tower and the residence: an AI-generated clip (and its reverse), played
+ * over the hero on landscape screens. Portrait screens and reduced motion keep the plain push.
+ */
+export const EXPLORER_CLIPS = {
+  query: "(min-aspect-ratio: 1/1) and (prefers-reduced-motion: no-preference)",
+  enter: "/media/explorer/clips/tower-to-residence",
+  leave: "/media/explorer/clips/residence-to-tower",
+  /** The views swap underneath this long after the clip starts (it has faded in by then). */
+  swapAfterMs: 400,
+  /** If a clip never finishes (stalled download), carry on without it. */
+  timeoutMs: 6000,
+} as const;
