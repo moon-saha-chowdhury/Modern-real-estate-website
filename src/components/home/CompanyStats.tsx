@@ -22,7 +22,7 @@ export function CompanyStats() {
             as="h2"
             id="stats-title"
             className="font-display text-display-lg"
-            lines={["In *numbers,*", "once verified."]}
+            lines={pending ? ["In *numbers,*", "once verified."] : ["In *numbers.*"]}
           />
           {metricsAreSample && !pending && (
             <SampleBadge label="Sample figures" className="self-start text-fg-muted" />

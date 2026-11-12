@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { ExpertiseItem, LegalSection, Metric, ProcessStage } from "./content";
+import type { ExpertiseItem, LegalSection, Metric, ProcessStage, Testimonial } from "./content";
 import type { MediaImage, PanoramaScene, Project } from "./project";
 
 /* ---------- Projects ---------- */
@@ -64,6 +64,11 @@ export interface PanoramaViewerProps {
   exitLabel?: string;
   /** Keep `?room=` in the address bar (default true; off where the tour is not the page's subject). */
   syncUrl?: boolean;
+}
+
+/** One-at-a-time testimonial quotes. */
+export interface QuoteCarouselProps {
+  quotes: Testimonial[];
 }
 
 /** Full-width "selected work" card on the homepage. */
