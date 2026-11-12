@@ -43,11 +43,14 @@ test.describe("hero tower explorer", () => {
     expect(new URL(page.url()).search).toBe("");
 
     // Escape leaves the room first, then the residence.
+    // (Each step plays its flight clip backwards first; software rendering makes that slow here.)
+    const flying = hero.locator("video.opacity-100");
     await page.keyboard.press("Escape");
-    await expect(tour).toHaveCount(0);
+    await expect(tour).toHaveCount(0, { timeout: 15000 });
     await expect(hero).toHaveAttribute("data-view", "residence");
+    await expect(flying).toHaveCount(0, { timeout: 15000 });
     await page.keyboard.press("Escape");
-    await expect(hero).toHaveAttribute("data-view", "tower");
+    await expect(hero).toHaveAttribute("data-view", "tower", { timeout: 15000 });
     await expect(floor).toBeFocused();
   });
 

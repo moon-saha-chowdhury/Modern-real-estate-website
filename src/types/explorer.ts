@@ -9,6 +9,8 @@ export interface ResidenceRoom {
   /** Hotspot position as a fraction of the cutaway image (0–1). */
   x: number;
   y: number;
+  /** Base path of the fly-in clip ("-in" / "-out", .webm and .mp4), when the room has one. */
+  clip?: string;
 }
 
 /** A residence type shown as an isometric cutaway. */

@@ -3,10 +3,12 @@ import type { Residence, ResidenceRoom, TowerFloor } from "@/types/explorer";
 import type { PanoramaHotspot, PanoramaScene } from "@/types/project";
 
 const DIR = "/media/explorer/residence-a";
+const CLIPS = "/media/explorer/clips";
 
 const rooms: ResidenceRoom[] = [
   {
     id: "living",
+    clip: `${CLIPS}/living`,
     label: "Living room",
     note: "Opens onto the balcony through full-height glass.",
     x: 0.355,
@@ -14,6 +16,7 @@ const rooms: ResidenceRoom[] = [
   },
   {
     id: "kitchen",
+    clip: `${CLIPS}/kitchen`,
     label: "Kitchen & dining",
     note: "A stone island with seating, and a table for six beside it.",
     x: 0.465,
@@ -21,6 +24,7 @@ const rooms: ResidenceRoom[] = [
   },
   {
     id: "bedroom",
+    clip: `${CLIPS}/bedroom`,
     label: "Primary bedroom",
     note: "Set at the quiet end of the plan, with a walk-in wardrobe.",
     x: 0.735,
@@ -35,6 +39,7 @@ const rooms: ResidenceRoom[] = [
   },
   {
     id: "balcony",
+    clip: `${CLIPS}/balcony`,
     label: "Balcony",
     note: "Glass-fronted, deep enough for a table and chairs.",
     x: 0.39,

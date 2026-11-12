@@ -62,10 +62,11 @@ export function TowerExplorer({ title }: BuildingTransformationProps) {
   const wasInside = useRef(false);
   /** The flight clips are fetched after the page has loaded, and only where they will play. */
   const [armed, setArmed] = useState(false);
-  const [clip, setClip] = useState<"enter" | "leave" | null>(null);
-  const enterClip = useRef<HTMLVideoElement>(null);
-  const leaveClip = useRef<HTMLVideoElement>(null);
-  const leaveRef = useRef<() => void>(() => {});
+  /** Key of the clip on screen: "enter", "leave", or "<room id>:in" / "<room id>:out". */
+  const [clip, setClip] = useState<string | null>(null);
+  const root = useRef<HTMLElement>(null);
+  const clipBusy = useRef(false);
+  const backOne = useRef<() => void>(() => {});
 
   const isOpen = open !== null;
   const { left, right, top, bottom } = EXPLORER_GEOMETRY;
@@ -101,8 +102,7 @@ export function TowerExplorer({ title }: BuildingTransformationProps) {
     if (!isOpen) return;
     const onKey = (event: KeyboardEvent) => {
       if (event.key !== "Escape") return;
-      if (inside) setInside(null);
-      else leaveRef.current();
+      backOne.current();
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
@@ -119,16 +119,21 @@ export function TowerExplorer({ title }: BuildingTransformationProps) {
     return () => window.removeEventListener("load", arm);
   }, []);
 
+  const clipOf = (key: string) =>
+    root.current?.querySelector<HTMLVideoElement>(`video[data-clip="${key}"]`) ?? null;
+
   /**
    * Plays a flight clip over the hero and runs `swap` (the change of view) underneath it. Without
-   * a clip (portrait, reduced motion, not loaded, cannot play) the view just changes.
+   * a clip (portrait, reduced motion, none for this move, cannot play) the view just changes.
    */
-  const playClip = (which: "enter" | "leave", swap: () => void) => {
-    const video = (which === "enter" ? enterClip : leaveClip).current;
-    if (!video || clip) {
-      if (!clip) swap();
+  const playClip = (key: string, swap: () => void) => {
+    if (clipBusy.current) return;
+    const video = clipOf(key);
+    if (!video) {
+      swap();
       return;
     }
+    clipBusy.current = true;
     let swapped = false;
     let guard = 0;
     const swapOnce = () => {
@@ -140,13 +145,25 @@ export function TowerExplorer({ title }: BuildingTransformationProps) {
       window.clearTimeout(guard);
       swapOnce();
       setClip(null);
+      clipBusy.current = false;
     };
     guard = window.setTimeout(finish, EXPLORER_CLIPS.timeoutMs);
     video.currentTime = 0;
     video.onplaying = () => window.setTimeout(swapOnce, EXPLORER_CLIPS.swapAfterMs);
     video.onended = finish;
-    setClip(which);
+    setClip(key);
     video.play().catch(finish);
+  };
+
+  /** Start downloading a room's clips when the pointer reaches it, so the click plays at once. */
+  const warmRoom = (id: string) => {
+    for (const direction of ["in", "out"]) {
+      const video = clipOf(`${id}:${direction}`);
+      if (video && video.preload !== "auto") {
+        video.preload = "auto";
+        video.load();
+      }
+    }
   };
 
   const enter = (index: number) => {
@@ -158,14 +175,19 @@ export function TowerExplorer({ title }: BuildingTransformationProps) {
     });
   };
   const leave = () => playClip("leave", () => setOpen(null));
-  useEffect(() => {
-    leaveRef.current = leave;
-  });
   const stepInside = (id: string) => {
     setRoom(id);
-    setInside(id);
+    playClip(`${id}:in`, () => setInside(id));
   };
-  const stepOut = () => setInside(null);
+  const stepOut = () => {
+    if (inside) playClip(`${inside}:out`, () => setInside(null));
+  };
+  useEffect(() => {
+    backOne.current = () => {
+      if (inside) stepOut();
+      else leave();
+    };
+  });
 
   const focusY = centreOf(open ?? lastOpen);
   const cameraStyle: CSSProperties = {
@@ -175,6 +197,7 @@ export function TowerExplorer({ title }: BuildingTransformationProps) {
 
   return (
     <section
+      ref={root}
       data-surface="blue"
       data-nav-blue
       data-hero-root
@@ -359,7 +382,9 @@ export function TowerExplorer({ title }: BuildingTransformationProps) {
                 onClick={() => stepInside(item.id)}
                 onFocus={() => setRoom(item.id)}
                 onPointerEnter={(event) => {
-                  if (event.pointerType === "mouse") setRoom(item.id);
+                  if (event.pointerType !== "mouse") return;
+                  setRoom(item.id);
+                  warmRoom(item.id);
                 }}
                 style={{ left: pct(item.x), top: pct(item.y) }}
                 className="group/spot absolute grid size-11 -translate-1/2 cursor-pointer place-items-center rounded-full outline-offset-2"
@@ -420,7 +445,9 @@ export function TowerExplorer({ title }: BuildingTransformationProps) {
                     aria-label={`Step inside: ${item.label}`}
                     onClick={() => stepInside(item.id)}
                     onPointerEnter={(event) => {
-                      if (event.pointerType === "mouse") setRoom(item.id);
+                      if (event.pointerType !== "mouse") return;
+                      setRoom(item.id);
+                      warmRoom(item.id);
                     }}
                     onFocus={() => setRoom(item.id)}
                     className={cn(
@@ -469,26 +496,37 @@ export function TowerExplorer({ title }: BuildingTransformationProps) {
         </div>
       </div>
 
-      {/* ---------- Flight clips between the tower and the residence ---------- */}
+      {/* ---------- Flight clips: tower ↔ residence, and residence ↔ each room ---------- */}
       {armed &&
-        (["enter", "leave"] as const).map((which) => (
+        [
+          { key: "enter", src: EXPLORER_CLIPS.enter, preload: "auto" },
+          { key: "leave", src: EXPLORER_CLIPS.leave, preload: "auto" },
+          ...residence.rooms.flatMap((item) =>
+            item.clip
+              ? [
+                  { key: `${item.id}:in`, src: `${item.clip}-in`, preload: "none" },
+                  { key: `${item.id}:out`, src: `${item.clip}-out`, preload: "none" },
+                ]
+              : [],
+          ),
+        ].map(({ key, src, preload }) => (
           <video
-            key={which}
-            ref={which === "enter" ? enterClip : leaveClip}
+            key={key}
+            data-clip={key}
             muted
             playsInline
-            preload="auto"
+            preload={preload}
             aria-hidden="true"
             tabIndex={-1}
             className={cn(
               "absolute inset-0 z-30 size-full object-cover transition-opacity ease-meridian",
-              clip === which
+              clip === key
                 ? "opacity-100 duration-300"
                 : "pointer-events-none opacity-0 duration-500",
             )}
           >
-            <source src={`${EXPLORER_CLIPS[which]}.webm`} type="video/webm" />
-            <source src={`${EXPLORER_CLIPS[which]}.mp4`} type="video/mp4" />
+            <source src={`${src}.webm`} type="video/webm" />
+            <source src={`${src}.mp4`} type="video/mp4" />
           </video>
         ))}
 
