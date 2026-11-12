@@ -16,6 +16,7 @@ import {
   EXPLORER_UNIT_BACKDROP,
   EXPLORER_ZOOM,
 } from "@/lib/constants/explorer";
+import { DUSK_EDGE } from "@/lib/constants/hero";
 import { cn } from "@/lib/utils/cn";
 import type { BuildingTransformationProps } from "@/types/sections";
 
@@ -200,7 +201,10 @@ export function TowerExplorer({ title }: BuildingTransformationProps) {
         />
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-48 bg-linear-to-t from-ink/60 to-transparent"
+          style={{
+            backgroundImage: `linear-gradient(to top, ${DUSK_EDGE} 0%, color-mix(in oklab, ${DUSK_EDGE} 55%, transparent) 38%, transparent 100%)`,
+          }}
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-48"
         />
 
         {/* Title: over the open sky on desktop, over the water on phones (the tower fills the middle) */}

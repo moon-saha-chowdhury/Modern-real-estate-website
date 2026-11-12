@@ -14,6 +14,12 @@ export const HERO_MEDIA = {
   framePad: 4,
 } as const;
 
+/**
+ * The colour the hero ends on (its bottom edge) and the About section's dusk dissolve starts
+ * from, so the two meet with no visible seam.
+ */
+export const DUSK_EDGE = "#0c1730";
+
 /** Scroll choreography for the pinned hero. The title never moves. */
 export const HERO_SCROLL = {
   /**
