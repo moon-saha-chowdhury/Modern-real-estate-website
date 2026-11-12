@@ -4,9 +4,11 @@ export interface FurnitureSource {
   url: string;
   author: string;
   license: "CC0" | "CC-BY" | "Purchased" | "Generated";
+  /** The credit line the licence requires (CC-BY), shown on the page that uses the model. */
+  credit?: string;
 }
 
-export type FurnitureCategory = "seating" | "tables" | "storage" | "decor" | "lighting";
+export type FurnitureCategory = "seating" | "beds" | "tables" | "storage" | "decor" | "lighting";
 
 /** One piece in the room designer's catalogue. */
 export interface FurnitureItem {
@@ -15,5 +17,7 @@ export interface FurnitureItem {
   category: FurnitureCategory;
   /** Compressed GLB (meshopt geometry, WebP textures), in metres, Y up. */
   file: string;
+  /** Multiplier that brings the model to real-world metres (1 when it already is). */
+  scale?: number;
   source: FurnitureSource;
 }

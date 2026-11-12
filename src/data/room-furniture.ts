@@ -6,7 +6,10 @@ import type { FurnitureItem } from "@/types/room3d";
  * Each file is a GLB with meshopt-compressed geometry and 1k WebP textures (see
  * scripts or docs); it is fetched only when the visitor adds the item.
  *
- * Still to find: a modern sofa, a bed, a dining table, a rug and a table lamp.
+ * The sofa, bed, dining set and lamp are CC-BY from Sketchfab: the credit line of each must be
+ * shown wherever they are used (the designer lists them). Their raw files are not in the repo
+ * (references/ is ignored); the GLBs here are compressed and the bed is simplified.
+ * Still to do: a rug (a textured plane in code, no model needed).
  */
 export const furniture: FurnitureItem[] = [
   {
@@ -187,6 +190,65 @@ export const furniture: FurnitureItem[] = [
       url: "https://polyhaven.com/a/modern_ceiling_lamp_01",
       author: "James Ray Cock",
       license: "CC0",
+    },
+  },
+  {
+    id: "sofa_modern",
+    name: "Modern sofa",
+    category: "seating",
+    file: "/media/room3d/models/sofa_modern.glb",
+    source: {
+      name: "Sketchfab",
+      url: "https://sketchfab.com/3d-models/modern-sofa-ac92f6e97eaa43c4ad6cb8f7c65ac43f",
+      author: "3dimentionalben",
+      license: "CC-BY",
+      credit:
+        'This work is based on "Modern  Sofa" (https://sketchfab.com/3d-models/modern-sofa-ac92f6e97eaa43c4ad6cb8f7c65ac43f) by 3dimentionalben (https://sketchfab.com/3dimentionalben) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)',
+    },
+  },
+  {
+    id: "bed_01",
+    name: "Bed",
+    category: "beds",
+    file: "/media/room3d/models/bed_01.glb",
+    scale: 0.245,
+    source: {
+      name: "Sketchfab",
+      url: "https://sketchfab.com/3d-models/bed-01-d4f3bf907138447cbdcee83f838228d5",
+      author: "5th Dimension",
+      license: "CC-BY",
+      credit:
+        'This work is based on "Bed 01" (https://sketchfab.com/3d-models/bed-01-d4f3bf907138447cbdcee83f838228d5) by 5th Dimension (https://sketchfab.com/5th-Dimension) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)',
+    },
+  },
+  {
+    id: "dining_set",
+    name: "Dining set",
+    category: "tables",
+    file: "/media/room3d/models/dining_set.glb",
+    scale: 0.0016,
+    source: {
+      name: "Sketchfab",
+      url: "https://sketchfab.com/3d-models/modern-dining-room-table-set-fc73e8d591ba45f8a3b369596593dcf5",
+      author: "Akshat",
+      license: "CC-BY",
+      credit:
+        'This work is based on "Modern Dining Room Table Set" (https://sketchfab.com/3d-models/modern-dining-room-table-set-fc73e8d591ba45f8a3b369596593dcf5) by Akshat (https://sketchfab.com/shooter24994) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)',
+    },
+  },
+  {
+    id: "lamp_side",
+    name: "Table lamp with stand",
+    category: "lighting",
+    file: "/media/room3d/models/lamp_side.glb",
+    scale: 0.425,
+    source: {
+      name: "Sketchfab",
+      url: "https://sketchfab.com/3d-models/modern-side-lamp-and-stand-880c46c5ddf44be58bb7cce0d682e988",
+      author: "3dimentionalben",
+      license: "CC-BY",
+      credit:
+        'This work is based on "modern side lamp and stand" (https://sketchfab.com/3d-models/modern-side-lamp-and-stand-880c46c5ddf44be58bb7cce0d682e988) by 3dimentionalben (https://sketchfab.com/3dimentionalben) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)',
     },
   },
 ];
