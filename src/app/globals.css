@@ -216,3 +216,23 @@
     color: var(--color-ink);
   }
 }
+
+/* Tower explorer: the 360° view fades in after the camera has pushed into the room */
+@keyframes explorer-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* The 360° viewer inside the hero loads on the residence's dark backdrop, not on white */
+[data-hero-root] .psv-container {
+  background: #101b2f;
+}
+
+/* 360° viewer hints ("Use Ctrl + scroll to zoom"): keep the sentence, drop the mouse/gesture icon */
+.psv-overlay-image {
+  display: none;
+}

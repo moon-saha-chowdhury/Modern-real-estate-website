@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
@@ -9,15 +10,26 @@ import { SampleBadge } from "@/components/common/SampleBadge";
 import { TextReveal } from "@/components/common/TextReveal";
 import { residences, towerFloors } from "@/data/residences";
 import {
+  EXPLORER_CLIPS,
   EXPLORER_COPY,
   EXPLORER_GEOMETRY,
-  EXPLORER_TOUR_HREF,
+  EXPLORER_ROOM_ZOOM,
   EXPLORER_TOWER,
   EXPLORER_UNIT_BACKDROP,
   EXPLORER_ZOOM,
 } from "@/lib/constants/explorer";
 import { cn } from "@/lib/utils/cn";
 import type { BuildingTransformationProps } from "@/types/sections";
+
+/** three.js and the 360° viewer are fetched only when a room is entered. */
+const PanoramaViewer = dynamic(() => import("@/components/virtual-tour/PanoramaViewer"), {
+  ssr: false,
+  loading: () => (
+    <div className="absolute inset-0 flex items-center justify-center label-mono text-white">
+      Loading the room…
+    </div>
+  ),
+});
 
 const price = (value: number) => `$${(value / 1_000_000).toFixed(2)}M`;
 const pct = (value: number) => `${value * 100}%`;
@@ -28,20 +40,33 @@ const pct = (value: number) => `${value * 100}%`;
  * The finished tower fills the screen. Each residential floor is a button laid over the still:
  * hovering (or focusing) one marks it and shows its card; choosing it pushes the camera into
  * that floor and hands over to an isometric cutaway of the residence, with a details panel and
- * a hotspot per room. Rooms link on to the sample 360° tour.
+ * a hotspot per room. Choosing a room pushes into it on the cutaway and opens its 360° view in
+ * place (the same viewer as the project tour, with the cutaway as its mini-map).
  *
  * The floor buttons live in a box with the still's aspect ratio that covers the hero, so they
  * stay on the facade at any screen size. All figures are samples and labelled as such.
- * Reduced motion: no camera push, the two views simply swap.
+ * On landscape screens the move between tower and residence is a short film clip (the top floor
+ * lifts off the tower and becomes the cutaway), played forwards to enter and backwards to leave.
+ * Reduced motion: no clip and no camera push, the two views simply swap.
  */
 export function TowerExplorer({ title }: BuildingTransformationProps) {
   const [hovered, setHovered] = useState<number | null>(null);
   const [open, setOpen] = useState<number | null>(null);
   const [lastOpen, setLastOpen] = useState(0);
   const [room, setRoom] = useState<string | null>(null);
+  /** The room being looked around in 360°, if any. */
+  const [inside, setInside] = useState<string | null>(null);
   const floorRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const backRef = useRef<HTMLButtonElement>(null);
   const wasOpen = useRef(false);
+  const wasInside = useRef(false);
+  /** The flight clips are fetched after the page has loaded, and only where they will play. */
+  const [armed, setArmed] = useState(false);
+  /** Key of the clip on screen: "enter", "leave", or "<room id>:in" / "<room id>:out". */
+  const [clip, setClip] = useState<string | null>(null);
+  const root = useRef<HTMLElement>(null);
+  const clipBusy = useRef(false);
+  const backOne = useRef<() => void>(() => {});
 
   const isOpen = open !== null;
   const { left, right, top, bottom } = EXPLORER_GEOMETRY;
@@ -53,6 +78,7 @@ export function TowerExplorer({ title }: BuildingTransformationProps) {
   const shown = towerFloors[open ?? lastOpen];
   const residence = residences.find((item) => item.id === shown.residenceId) ?? residences[0];
   const activeRoom = residence.rooms.find((item) => item.id === room) ?? null;
+  const insideRoom = residence.rooms.find((item) => item.id === inside) ?? null;
   const preview = hovered === null ? null : towerFloors[hovered];
   const previewResidence = preview
     ? (residences.find((item) => item.id === preview.residenceId) ?? residences[0])
@@ -65,13 +91,103 @@ export function TowerExplorer({ title }: BuildingTransformationProps) {
     wasOpen.current = isOpen;
   }, [isOpen, lastOpen]);
 
-  const enter = (index: number) => {
-    setLastOpen(index);
-    setOpen(index);
-    setHovered(null);
-    setRoom(null);
+  // Leaving a room puts focus back in the residence panel.
+  useEffect(() => {
+    if (!inside && wasInside.current) backRef.current?.focus({ preventScroll: true });
+    wasInside.current = inside !== null;
+  }, [inside]);
+
+  // Escape steps back one level, wherever focus is: out of the room, then out of the residence.
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      backOne.current();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [isOpen, inside]);
+
+  useEffect(() => {
+    if (!window.matchMedia(EXPLORER_CLIPS.query).matches) return;
+    const arm = () => setArmed(true);
+    if (document.readyState === "complete") {
+      const id = window.setTimeout(arm, 300);
+      return () => window.clearTimeout(id);
+    }
+    window.addEventListener("load", arm, { once: true });
+    return () => window.removeEventListener("load", arm);
+  }, []);
+
+  const clipOf = (key: string) =>
+    root.current?.querySelector<HTMLVideoElement>(`video[data-clip="${key}"]`) ?? null;
+
+  /**
+   * Plays a flight clip over the hero and runs `swap` (the change of view) underneath it. Without
+   * a clip (portrait, reduced motion, none for this move, cannot play) the view just changes.
+   */
+  const playClip = (key: string, swap: () => void) => {
+    if (clipBusy.current) return;
+    const video = clipOf(key);
+    if (!video) {
+      swap();
+      return;
+    }
+    clipBusy.current = true;
+    let swapped = false;
+    let guard = 0;
+    const swapOnce = () => {
+      if (swapped) return;
+      swapped = true;
+      swap();
+    };
+    const finish = () => {
+      window.clearTimeout(guard);
+      swapOnce();
+      setClip(null);
+      clipBusy.current = false;
+    };
+    guard = window.setTimeout(finish, EXPLORER_CLIPS.timeoutMs);
+    video.currentTime = 0;
+    video.onplaying = () => window.setTimeout(swapOnce, EXPLORER_CLIPS.swapAfterMs);
+    video.onended = finish;
+    setClip(key);
+    video.play().catch(finish);
   };
-  const leave = () => setOpen(null);
+
+  /** Start downloading a room's clips when the pointer reaches it, so the click plays at once. */
+  const warmRoom = (id: string) => {
+    for (const direction of ["in", "out"]) {
+      const video = clipOf(`${id}:${direction}`);
+      if (video && video.preload !== "auto") {
+        video.preload = "auto";
+        video.load();
+      }
+    }
+  };
+
+  const enter = (index: number) => {
+    setHovered(null);
+    playClip("enter", () => {
+      setLastOpen(index);
+      setOpen(index);
+      setRoom(null);
+    });
+  };
+  const leave = () => playClip("leave", () => setOpen(null));
+  const stepInside = (id: string) => {
+    setRoom(id);
+    playClip(`${id}:in`, () => setInside(id));
+  };
+  const stepOut = () => {
+    if (inside) playClip(`${inside}:out`, () => setInside(null));
+  };
+  useEffect(() => {
+    backOne.current = () => {
+      if (inside) stepOut();
+      else leave();
+    };
+  });
 
   const focusY = centreOf(open ?? lastOpen);
   const cameraStyle: CSSProperties = {
@@ -81,14 +197,12 @@ export function TowerExplorer({ title }: BuildingTransformationProps) {
 
   return (
     <section
+      ref={root}
       data-surface="blue"
       data-nav-blue
       data-hero-root
       data-view={isOpen ? "residence" : "tower"}
       aria-labelledby="hero-title"
-      onKeyDown={(event) => {
-        if (event.key === "Escape" && isOpen) leave();
-      }}
       className="relative isolate h-svh min-h-[36rem] overflow-hidden bg-twilight text-fg"
     >
       {/* ---------- Tower view ---------- */}
@@ -227,7 +341,7 @@ export function TowerExplorer({ title }: BuildingTransformationProps) {
 
       {/* ---------- Residence view ---------- */}
       <div
-        inert={!isOpen}
+        inert={!isOpen || inside !== null}
         aria-label={`${residence.name}, floor ${shown.level}`}
         role="group"
         style={{ backgroundColor: EXPLORER_UNIT_BACKDROP }}
@@ -239,8 +353,16 @@ export function TowerExplorer({ title }: BuildingTransformationProps) {
         {/* Cutaway with a hotspot per room. Wider than a phone screen, so the plan fills it. */}
         <div className="relative shrink-0 lg:min-w-0 lg:flex-1">
           <div
+            style={
+              insideRoom
+                ? {
+                    transformOrigin: `${pct(insideRoom.x)} ${pct(insideRoom.y)}`,
+                    transform: `scale(${EXPLORER_ROOM_ZOOM})`,
+                  }
+                : undefined
+            }
             className={cn(
-              "relative left-1/2 aspect-[16/9] w-[140%] -translate-x-1/2 transition-[scale] duration-[1200ms] ease-meridian motion-reduce:transition-none sm:w-full lg:w-[112%]",
+              "relative left-1/2 aspect-[16/9] w-[140%] -translate-x-1/2 transition-[scale,transform] duration-[1200ms] ease-meridian motion-reduce:transition-none sm:w-full lg:w-[112%]",
               isOpen ? "scale-100" : "scale-90",
             )}
           >
@@ -256,11 +378,13 @@ export function TowerExplorer({ title }: BuildingTransformationProps) {
               <button
                 key={item.id}
                 type="button"
-                aria-label={item.label}
-                aria-pressed={room === item.id}
-                onClick={() => setRoom(room === item.id ? null : item.id)}
+                aria-label={`Step inside: ${item.label}`}
+                onClick={() => stepInside(item.id)}
+                onFocus={() => setRoom(item.id)}
                 onPointerEnter={(event) => {
-                  if (event.pointerType === "mouse") setRoom(item.id);
+                  if (event.pointerType !== "mouse") return;
+                  setRoom(item.id);
+                  warmRoom(item.id);
                 }}
                 style={{ left: pct(item.x), top: pct(item.y) }}
                 className="group/spot absolute grid size-11 -translate-1/2 cursor-pointer place-items-center rounded-full outline-offset-2"
@@ -318,10 +442,16 @@ export function TowerExplorer({ title }: BuildingTransformationProps) {
                 <li key={item.id} className="flex items-center border-t border-rule last:border-b">
                   <button
                     type="button"
-                    aria-pressed={pressed}
-                    onClick={() => setRoom(pressed ? null : item.id)}
+                    aria-label={`Step inside: ${item.label}`}
+                    onClick={() => stepInside(item.id)}
+                    onPointerEnter={(event) => {
+                      if (event.pointerType !== "mouse") return;
+                      setRoom(item.id);
+                      warmRoom(item.id);
+                    }}
+                    onFocus={() => setRoom(item.id)}
                     className={cn(
-                      "flex flex-1 cursor-pointer items-center gap-3 py-2.5 text-left text-small transition-colors duration-300",
+                      "group/row flex flex-1 cursor-pointer items-center gap-3 py-2.5 text-left text-small transition-colors duration-300",
                       pressed ? "text-fg" : "text-fg-muted hover:text-fg",
                     )}
                   >
@@ -332,17 +462,18 @@ export function TowerExplorer({ title }: BuildingTransformationProps) {
                         pressed ? "bg-accent" : "bg-fg/40",
                       )}
                     />
-                    {item.label}
-                  </button>
-                  {pressed && item.tourRoom && (
-                    <Link
-                      href={`${EXPLORER_TOUR_HREF}?room=${item.tourRoom}`}
-                      className="flex items-center gap-1.5 label-mono text-[0.625rem] text-accent hover:text-fg"
+                    <span className="flex-1">{item.label}</span>
+                    <span
+                      aria-hidden="true"
+                      className={cn(
+                        "flex items-center gap-1.5 label-mono text-[0.625rem] text-accent transition-opacity duration-300",
+                        pressed ? "opacity-100" : "opacity-0 group-hover/row:opacity-100",
+                      )}
                     >
-                      {EXPLORER_COPY.tour}
-                      <ArrowUpRight aria-hidden="true" strokeWidth={1.5} className="size-3.5" />
-                    </Link>
-                  )}
+                      360°
+                      <ArrowUpRight strokeWidth={1.5} className="size-3.5" />
+                    </span>
+                  </button>
                 </li>
               );
             })}
@@ -364,6 +495,61 @@ export function TowerExplorer({ title }: BuildingTransformationProps) {
           </div>
         </div>
       </div>
+
+      {/* ---------- Flight clips: tower ↔ residence, and residence ↔ each room ---------- */}
+      {armed &&
+        [
+          { key: "enter", src: EXPLORER_CLIPS.enter, preload: "auto" },
+          { key: "leave", src: EXPLORER_CLIPS.leave, preload: "auto" },
+          ...residence.rooms.flatMap((item) =>
+            item.clip
+              ? [
+                  { key: `${item.id}:in`, src: `${item.clip}-in`, preload: "none" },
+                  { key: `${item.id}:out`, src: `${item.clip}-out`, preload: "none" },
+                ]
+              : [],
+          ),
+        ].map(({ key, src, preload }) => (
+          <video
+            key={key}
+            data-clip={key}
+            muted
+            playsInline
+            preload={preload}
+            aria-hidden="true"
+            tabIndex={-1}
+            className={cn(
+              "absolute inset-0 z-30 size-full object-cover transition-opacity ease-meridian",
+              clip === key
+                ? "opacity-100 duration-300"
+                : "pointer-events-none opacity-0 duration-500",
+            )}
+          >
+            <source src={`${src}.webm`} type="video/webm" />
+            <source src={`${src}.mp4`} type="video/mp4" />
+          </video>
+        ))}
+
+      {/* ---------- Inside a room: the 360° view, below the navbar ---------- */}
+      {inside && (
+        <div
+          style={{ backgroundColor: EXPLORER_UNIT_BACKDROP }}
+          className="absolute inset-0 z-20 pt-nav motion-safe:animate-[explorer-in_0.7s_0.5s_both]"
+        >
+          <div className="relative size-full">
+            <PanoramaViewer
+              key={residence.id}
+              scenes={residence.scenes}
+              plan={residence.image}
+              initialRoom={inside}
+              label={`${residence.name}, 360° view`}
+              exitLabel={EXPLORER_COPY.exitRoom}
+              syncUrl={false}
+              onExit={stepOut}
+            />
+          </div>
+        </div>
+      )}
     </section>
   );
 }
