@@ -4,19 +4,18 @@ import { Reveal } from "@/components/common/Reveal";
 import { SampleBadge } from "@/components/common/SampleBadge";
 import { Section } from "@/components/common/Section";
 import { TextReveal } from "@/components/common/TextReveal";
+import { PhotoCredit } from "@/components/common/PhotoCredit";
+import { media } from "@/data/media";
 import { strengths } from "@/data/strengths";
-import { frameUrl } from "@/lib/animations/frame-sequence";
-import { HERO_SHOWCASE_FRAME } from "@/lib/constants/hero";
-import { HERO_SEQUENCE } from "@/lib/constants/hero-sequence";
 import { displayIndex } from "@/lib/utils/projects";
 
 /**
- * 07 — Why Meridian (stone). A sticky column on the left (statement over a tall frame of our own
- * build footage); the strengths as a two-column index on the right, each under its own hairline,
+ * 07 — Why Meridian (stone). A sticky column on the left (statement over a tall photograph of a
+ * building's edge); the strengths as a two-column index on the right, each under its own hairline,
  * like a specification sheet.
  */
 export function WhyChooseUs() {
-  const frame = HERO_SEQUENCE.mobile;
+  const image = media.projectConcreteEdge;
 
   return (
     <Section tone="stone" aria-labelledby="why-title">
@@ -31,14 +30,15 @@ export function WhyChooseUs() {
             <figure className="hidden max-w-xs flex-col gap-3 lg:flex">
               <div className="relative aspect-4/5 overflow-hidden bg-paper">
                 <Image
-                  src={frameUrl(frame, HERO_SHOWCASE_FRAME)}
-                  alt="The glass facade of the Meridian concept tower rising at dusk"
+                  src={image.src}
+                  alt={image.alt}
                   fill
-                  sizes="20vw"
+                  sizes="(min-width: 1024px) 24vw, 0px"
+                  quality={90}
                   className="object-cover"
                 />
               </div>
-              <figcaption className="label-mono text-fg-muted">Illustrative concept</figcaption>
+              <PhotoCredit image={image} className="text-fg-muted" />
             </figure>
             <SampleBadge label="Draft — to be confirmed" className="self-start text-fg-muted" />
           </div>
