@@ -3,17 +3,16 @@ import { Reveal } from "@/components/common/Reveal";
 import { Section } from "@/components/common/Section";
 import { TextReveal } from "@/components/common/TextReveal";
 import { processStages } from "@/data/process";
-import { ProcessTimeline } from "./ProcessTimeline";
+import { ProcessDrawing } from "./ProcessDrawing";
 
 /**
- * 06 — Development process (white). Six stages that rise like floors of a building: each
- * column stands one storey higher than the last, and its line fills as you scroll. Vertical
- * list with a drawn line on small screens.
+ * 06 — Development process (white). Six stages beside a line drawing of the building they
+ * produce: each stage, as you reach it, adds its layer to the drawing (see ProcessDrawing).
  */
 export function DevelopmentProcess() {
   return (
     <Section tone="white" id="approach" aria-labelledby="process-title">
-      <Container className="flex flex-col gap-16 lg:gap-24">
+      <Container className="flex flex-col gap-16 lg:gap-20">
         <header className="grid-editorial items-end gap-y-8">
           <TextReveal
             as="h2"
@@ -28,7 +27,7 @@ export function DevelopmentProcess() {
             </p>
           </Reveal>
         </header>
-        <ProcessTimeline stages={processStages} />
+        <ProcessDrawing stages={processStages} />
       </Container>
     </Section>
   );

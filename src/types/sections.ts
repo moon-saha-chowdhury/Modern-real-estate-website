@@ -89,7 +89,7 @@ export interface ExpertiseListProps {
   items: ExpertiseItem[];
 }
 
-export interface ProcessTimelineProps {
+export interface ProcessDrawingProps {
   stages: ProcessStage[];
 }
 

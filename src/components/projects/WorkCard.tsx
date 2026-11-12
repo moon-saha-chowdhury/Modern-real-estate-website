@@ -30,7 +30,7 @@ export function WorkCard({ project, index }: WorkCardProps) {
         href={`/projects/${project.slug}`}
         className="group/work group/cursor flex flex-col gap-8 text-fg outline-offset-8 transition-[scale] duration-100 ease-out active:scale-[0.995] motion-reduce:transition-none md:gap-10"
       >
-        <div className="relative aspect-4/5 overflow-hidden md:aspect-auto md:h-[min(720px,80svh)] md:min-h-104">
+        <div className="relative aspect-4/5 overflow-hidden text-white [text-shadow:0_1px_18px_rgb(0_0_0/0.55)] md:aspect-auto md:h-[min(720px,80svh)] md:min-h-104">
           <ImageReveal
             src={project.heroImage.src}
             alt={project.heroImage.alt}
