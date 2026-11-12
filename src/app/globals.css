@@ -231,3 +231,8 @@
 [data-hero-root] .psv-container {
   background: #101b2f;
 }
+
+/* 360° viewer hints ("Use Ctrl + scroll to zoom"): keep the sentence, drop the mouse/gesture icon */
+.psv-overlay-image {
+  display: none;
+}
