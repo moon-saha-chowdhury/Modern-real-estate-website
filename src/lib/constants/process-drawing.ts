@@ -1,11 +1,16 @@
 import type { DrawingLayer, DrawingLight, DrawingPath } from "@/types/process";
 
 /**
- * The elevation drawn beside the six development stages. A tower of 20 floors on a plot, in a
- * 600 × 720 space; each stage adds one layer of lines, so the drawing becomes the building as the
- * list is read: plot, massing, facade, structure, crane, lit windows.
+ * The elevation drawn across the process sheet: a tower of 20 floors on a plot, between two
+ * neighbours. The sheet is 1500 × 720; the building is drawn in its own 600-wide space and
+ * placed in the middle (DRAWING_OFFSET), so its coordinates stay simple. Each stage adds one
+ * layer of lines: plot and context, massing, facade and level marks, structure, crane, lit
+ * windows.
  */
-export const DRAWING_SIZE = { width: 600, height: 720 } as const;
+export const DRAWING_SIZE = { width: 1500, height: 720 } as const;
+
+/** Where the building's own space sits on the sheet. */
+export const DRAWING_OFFSET = { x: 450, y: 0 } as const;
 
 const GROUND = 650;
 const LEFT = 200;
@@ -19,9 +24,19 @@ const MAST = 440;
 const range = (count: number, from: number, step: number) =>
   Array.from({ length: count }, (_, i) => from + i * step);
 
-/** 1 — the plot: ground line, boundary, survey ticks and a dimension line. */
+/** 1 — the plot: the ground, two neighbours for scale, boundary, survey ticks, a dimension line. */
 const plot: DrawingPath[] = [
-  { d: `M30 ${GROUND} H570`, width: 1.5 },
+  { d: `M-450 ${GROUND} H1050`, width: 1.5 },
+  {
+    d: `M-400 ${GROUND} V500 H-300 V${GROUND} M-300 ${GROUND} V420 H-170 V${GROUND} M-120 ${GROUND} V560 H-40 V${GROUND}`,
+    width: 1,
+    opacity: 0.35,
+  },
+  {
+    d: `M640 ${GROUND} V470 H760 V${GROUND} M760 ${GROUND} V540 H880 V${GROUND} M930 ${GROUND} V590 H1010 V${GROUND}`,
+    width: 1,
+    opacity: 0.35,
+  },
   { d: `M60 ${GROUND} V${GROUND - 14} M540 ${GROUND} V${GROUND - 14}`, width: 1 },
   { d: `M60 ${GROUND - 14} H540`, width: 1, dash: "3 7", opacity: 0.5 },
   {
@@ -51,8 +66,27 @@ const massing: DrawingPath[] = [
   },
 ];
 
-/** 3 — the facade: a line at every floor, mullions, podium glazing, pavilion glazing. */
+/** Level marks beside the facade: datum lines across the sheet and a small label at each. */
+const LEVELS = [0, 5, 10, 15, 20];
+const levelLines: DrawingPath[] = [
+  {
+    d: LEVELS.slice(1)
+      .map((k) => `M-450 ${GROUND - PITCH * k} H1050`)
+      .join(" "),
+    width: 0.75,
+    dash: "2 8",
+    opacity: 0.4,
+  },
+];
+const levelLabels = LEVELS.slice(1).map((k) => ({
+  x: -440,
+  y: GROUND - PITCH * k - 8,
+  text: `L${String(k).padStart(2, "0")}`,
+}));
+
+/** 3 — the facade: a line at every floor, mullions, podium glazing, pavilion glazing, levels. */
 const facade: DrawingPath[] = [
+  ...levelLines,
   {
     d: range(FLOORS - 1, 1, 1)
       .map((k) => `M${LEFT} ${GROUND - PITCH * k} H${RIGHT}`)
@@ -141,7 +175,7 @@ const lights: DrawingLight[] = LIT.map(([floor, bay]) => ({
 export const DRAWING_LAYERS: DrawingLayer[] = [
   { stageId: "land", paths: plot },
   { stageId: "concept", paths: massing },
-  { stageId: "design", paths: facade },
+  { stageId: "design", paths: facade, labels: levelLabels },
   { stageId: "approvals", paths: engineering },
   { stageId: "construction", paths: crane },
   { stageId: "handover", paths: [], lights },
@@ -154,6 +188,3 @@ export const DRAWING_SPRING = {
   mass: 0.5,
   restDelta: 0.0005,
 } as const;
-
-/** Scroll range over which the list drives the drawing (relative to the viewport). */
-export const DRAWING_SCROLL_OFFSET = ["start 75%", "end 55%"] as const;

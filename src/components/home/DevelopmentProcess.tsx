@@ -3,11 +3,11 @@ import { Reveal } from "@/components/common/Reveal";
 import { Section } from "@/components/common/Section";
 import { TextReveal } from "@/components/common/TextReveal";
 import { processStages } from "@/data/process";
-import { ProcessDrawing } from "./ProcessDrawing";
+import { ProcessSheet } from "./ProcessSheet";
 
 /**
- * 06 — Development process (white). Six stages beside a line drawing of the building they
- * produce: each stage, as you reach it, adds its layer to the drawing (see ProcessDrawing).
+ * 06 — Development process (white). Six stages on one drawing sheet: the building is drawn layer by
+ * layer as each stage is reached, and the stage being drawn is named beneath it (see ProcessSheet).
  */
 export function DevelopmentProcess() {
   return (
@@ -27,7 +27,7 @@ export function DevelopmentProcess() {
             </p>
           </Reveal>
         </header>
-        <ProcessDrawing stages={processStages} />
+        <ProcessSheet stages={processStages} />
       </Container>
     </Section>
   );

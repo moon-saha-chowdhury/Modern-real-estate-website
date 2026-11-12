@@ -20,9 +20,17 @@ export interface DrawingLight {
   height: number;
 }
 
+/** A small mono annotation on the drawing (a level mark). */
+export interface DrawingLabel {
+  x: number;
+  y: number;
+  text: string;
+}
+
 /** What one stage adds to the drawing. */
 export interface DrawingLayer {
   stageId: string;
   paths: DrawingPath[];
   lights?: DrawingLight[];
+  labels?: DrawingLabel[];
 }
