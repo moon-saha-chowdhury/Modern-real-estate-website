@@ -15,7 +15,9 @@ import type { ExpertiseListProps } from "@/types/sections";
  * past on the right. The row crossing the middle of the viewport becomes active: its photograph
  * cross-fades in and its text comes to full strength. The active row is written to
  * data-attributes by an IntersectionObserver (no React state, no scroll handler).
- * Below lg: each row carries its own photograph; nothing is pinned.
+ * A thin rail under the photograph fills as the list advances, and the active row opens to show
+ * what the capability covers. Below lg: each row carries its own photograph, with its points
+ * always shown; nothing is pinned.
  */
 export function ExpertiseList({ items }: ExpertiseListProps) {
   const root = useRef<HTMLDivElement>(null);
@@ -26,11 +28,15 @@ export function ExpertiseList({ items }: ExpertiseListProps) {
     const rows = [...el.querySelectorAll<HTMLElement>("[data-row]")];
     const slides = [...el.querySelectorAll<HTMLElement>("[data-slide]")];
     const figure = el.querySelector<HTMLElement>("[data-figure]");
+    const count = el.querySelector<HTMLElement>("[data-count]");
+    const rail = el.querySelector<HTMLElement>("[data-rail]");
 
     const activate = (index: number) => {
       rows.forEach((row, i) => (row.dataset.active = String(i === index)));
       slides.forEach((slide, i) => (slide.dataset.active = String(i === index)));
       if (figure) figure.textContent = `Fig. ${displayIndex(index)}`;
+      if (count) count.textContent = `${displayIndex(index)} / ${displayIndex(rows.length - 1)}`;
+      if (rail) rail.style.transform = `scaleX(${(index + 1) / rows.length})`;
     };
 
     // A line across the middle of the viewport: the row crossing it is the active one.
@@ -51,7 +57,7 @@ export function ExpertiseList({ items }: ExpertiseListProps) {
       {/* Pinned photograph (lg+): all slides stacked, the active one visible */}
       <div className="hidden lg:col-span-5 lg:block">
         <div className="sticky top-[calc(var(--spacing-nav)+2rem)]">
-          <div className="relative aspect-4/5 max-h-[calc(100svh-var(--spacing-nav)-4rem)] w-full overflow-hidden bg-paper">
+          <div className="relative aspect-4/5 max-h-[calc(100svh-var(--spacing-nav)-7rem)] w-full overflow-hidden bg-paper">
             {items.map((item, i) => (
               <div
                 key={item.id}
@@ -79,6 +85,18 @@ export function ExpertiseList({ items }: ExpertiseListProps) {
               className="absolute top-4 left-4 bg-obsidian/80 px-2 py-1 label-mono text-ivory"
             >
               Fig. 01
+            </span>
+          </div>
+          <div aria-hidden="true" className="mt-5 flex items-center gap-5">
+            <span data-count className="label-mono text-fg-muted tabular-nums">
+              01 / {displayIndex(items.length - 1)}
+            </span>
+            <span className="relative h-px flex-1 bg-fg/15">
+              <span
+                data-rail
+                style={{ transform: `scaleX(${1 / items.length})` }}
+                className="absolute inset-0 origin-left bg-fg/70 transition-transform duration-700 ease-meridian motion-reduce:transition-none"
+              />
             </span>
           </div>
         </div>
@@ -117,6 +135,20 @@ export function ExpertiseList({ items }: ExpertiseListProps) {
                   className="size-5 self-center text-fg/40 transition-[color,translate] duration-500 ease-meridian group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-accent"
                 />
                 <p className="col-start-2 max-w-xl text-fg-muted">{item.summary}</p>
+                {item.points && (
+                  <div className="col-start-2 grid transition-[grid-template-rows,opacity] duration-700 ease-meridian motion-reduce:transition-none lg:grid-rows-[0fr] lg:opacity-0 lg:group-data-[active=true]/row:grid-rows-[1fr] lg:group-data-[active=true]/row:opacity-100">
+                    <ul className="overflow-hidden">
+                      {item.points.map((point) => (
+                        <li
+                          key={point}
+                          className="border-t border-rule py-2.5 text-small text-fg-muted first:mt-1"
+                        >
+                          {point}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </Link>
             </div>
           </li>
