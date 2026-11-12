@@ -66,6 +66,11 @@ export interface PanoramaViewerProps {
   syncUrl?: boolean;
 }
 
+/** "Step inside" teaser for a project's 360° tour. */
+export interface TourTeaserProps {
+  project: Project;
+}
+
 /** One-at-a-time testimonial quotes. */
 export interface QuoteCarouselProps {
   quotes: Testimonial[];

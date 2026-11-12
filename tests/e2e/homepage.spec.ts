@@ -3,10 +3,10 @@ import { expect, test } from "@playwright/test";
 test.describe("homepage", () => {
   test.use({ viewport: { width: 1440, height: 900 } });
 
-  test("renders all nine sections in order", async ({ page }) => {
+  test("renders all eleven sections in order", async ({ page }) => {
     await page.goto("/");
-    await expect(page.locator("main section")).toHaveCount(9);
-    await expect(page.locator("main section[aria-labelledby]")).toHaveCount(9);
+    await expect(page.locator("main section")).toHaveCount(11);
+    await expect(page.locator("main section[aria-labelledby]")).toHaveCount(11);
     await expect(page.locator("#hero-title")).toContainText("Building spaces.");
     await expect(page.locator("#contact-title")).toContainText("meaningful");
   });
