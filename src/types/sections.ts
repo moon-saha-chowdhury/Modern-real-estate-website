@@ -69,6 +69,8 @@ export interface PanoramaViewerProps {
 /** Full-width "selected work" card on the homepage. */
 export interface WorkCardProps {
   project: Project;
+  /** Position in the list (0-based), shown as 01, 02 … */
+  index: number;
 }
 
 /* ---------- Home sections ---------- */

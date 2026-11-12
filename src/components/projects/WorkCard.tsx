@@ -6,68 +6,84 @@ import { PhotoCredit } from "@/components/common/PhotoCredit";
 import { Reveal } from "@/components/common/Reveal";
 import { SampleBadge } from "@/components/common/SampleBadge";
 import { CATEGORY_LABELS, STATUS_LABELS } from "@/lib/constants/projects";
+import { displayIndex } from "@/lib/utils/projects";
 import type { WorkCardProps } from "@/types/sections";
 
 /**
- * Full-width project card (homepage "Selected work"): the photograph fills the card, the
- * one-line summary sits top right, status and name bottom left — text set straight on the image
- * over soft shading. The frame opens and the photograph settles as the card scrolls in; on hover
- * the photograph eases in a little.
+ * Full-width project card (homepage "Selected work"): a clean photograph, then a caption set on
+ * paper like a gallery label — number, name and one line on the left, a hairline table of facts
+ * on the right. The photograph carries only its badges. The frame opens and the photograph
+ * settles as the card scrolls in; on hover the photograph eases in a little. The whole card
+ * (photograph and caption) is one link; the photo credit sits outside it.
  */
-export function WorkCard({ project }: WorkCardProps) {
-  const meta = `${STATUS_LABELS[project.status]} · ${CATEGORY_LABELS[project.category]}`;
+export function WorkCard({ project, index }: WorkCardProps) {
+  const facts = [
+    ["Location", project.location],
+    ["Type", CATEGORY_LABELS[project.category]],
+    ["Stage", STATUS_LABELS[project.status]],
+    ["Completion", project.completionInformation?.label],
+  ].filter((fact): fact is [string, string] => Boolean(fact[1]));
 
   return (
     <article className="flex flex-col gap-3">
       <Link
         href={`/projects/${project.slug}`}
-        data-surface="blue"
-        className="group/work group/cursor relative block aspect-4/5 overflow-hidden text-fg outline-offset-8 transition-[scale] duration-100 ease-out active:scale-[0.995] motion-reduce:transition-none md:aspect-auto md:h-[min(680px,78svh)] md:min-h-104"
+        className="group/work group/cursor flex flex-col gap-8 text-fg outline-offset-8 transition-[scale] duration-100 ease-out active:scale-[0.995] motion-reduce:transition-none md:gap-10"
       >
-        <ImageReveal
-          src={project.heroImage.src}
-          alt={project.heroImage.alt}
-          sizes="(min-width: 1440px) 1360px, 94vw"
-          className="absolute inset-0"
-          imageClassName="transition-[scale] duration-[1400ms] ease-meridian group-hover/work:scale-[1.04] motion-reduce:transition-none"
-        />
-
-        {/* Legibility: shade under the title and behind the summary */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-linear-to-t from-ink/75 via-ink/15 to-transparent"
-        />
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 hidden bg-[radial-gradient(ellipse_at_top_right,rgb(0_0_0/0.35),transparent_55%)] md:block"
-        />
-
-        {project.isPlaceholder && (
-          <SampleBadge
-            label="Sample project"
-            className="absolute top-4 left-4 border-ivory/30 bg-obsidian/75 text-ivory md:top-8 md:left-8"
+        <div className="relative aspect-4/5 overflow-hidden md:aspect-auto md:h-[min(720px,80svh)] md:min-h-104">
+          <ImageReveal
+            src={project.heroImage.src}
+            alt={project.heroImage.alt}
+            sizes="(min-width: 1440px) 1360px, 94vw"
+            className="absolute inset-0"
+            imageClassName="transition-[scale] duration-[1400ms] ease-meridian group-hover/work:scale-[1.04] motion-reduce:transition-none"
           />
-        )}
 
-        <Reveal className="absolute top-8 right-8 hidden max-w-xs md:block lg:max-w-sm">
-          <p className="text-lead text-fg">{project.summary}</p>
+          {project.isPlaceholder && (
+            <SampleBadge
+              label="Sample project"
+              className="absolute top-4 left-4 border-ivory/30 bg-obsidian/75 text-ivory md:top-6 md:left-6"
+            />
+          )}
+          {project.virtualTour && (
+            <span className="absolute top-4 right-4 bg-white px-2 py-1 label-mono text-[0.625rem] text-ink md:top-6 md:right-6">
+              360° tour
+            </span>
+          )}
+
+          <CursorLabel label="View project" />
+
+          <span
+            aria-hidden="true"
+            className="absolute right-4 bottom-4 flex size-11 translate-y-2 items-center justify-center bg-white text-ink opacity-0 transition-[opacity,translate] duration-500 ease-meridian group-hover/work:translate-y-0 group-hover/work:opacity-100 group-focus-visible/work:translate-y-0 group-focus-visible/work:opacity-100 md:right-6 md:bottom-6"
+          >
+            <ArrowUpRight className="size-4" strokeWidth={1.5} />
+          </span>
+        </div>
+
+        <Reveal className="grid gap-x-8 gap-y-8 lg:grid-cols-12">
+          <div className="flex gap-6 lg:col-span-7 lg:gap-10">
+            <span aria-hidden="true" className="pt-2 label-mono text-fg-muted">
+              {displayIndex(index)}
+            </span>
+            <div className="flex flex-col gap-4">
+              <h3 className="font-display text-display-md">{project.name}</h3>
+              <p className="max-w-md text-fg-muted">{project.summary}</p>
+              <span className="sr-only">View project</span>
+            </div>
+          </div>
+          <dl className="lg:col-span-5">
+            {facts.map(([term, value]) => (
+              <div
+                key={term}
+                className="grid grid-cols-[7rem_1fr] gap-4 border-t border-rule py-3 text-small last:border-b"
+              >
+                <dt className="label-mono text-fg-muted">{term}</dt>
+                <dd>{value}</dd>
+              </div>
+            ))}
+          </dl>
         </Reveal>
-
-        <Reveal className="absolute inset-x-4 bottom-5 flex flex-col gap-3 md:inset-x-8 md:bottom-8">
-          <p className="label-mono text-fg-muted">{meta}</p>
-          <h3 className="font-display text-display-md">{project.name}</h3>
-          <p className="max-w-sm text-small text-fg-muted md:hidden">{project.summary}</p>
-          <span className="sr-only">View project</span>
-        </Reveal>
-
-        <CursorLabel label="View project" />
-
-        <span
-          aria-hidden="true"
-          className="absolute right-4 bottom-5 flex size-11 translate-y-2 items-center justify-center bg-white text-ink opacity-0 transition-[opacity,translate] duration-500 ease-meridian group-hover/work:translate-y-0 group-hover/work:opacity-100 group-focus-visible/work:translate-y-0 group-focus-visible/work:opacity-100 md:right-8 md:bottom-8"
-        >
-          <ArrowUpRight className="size-4" strokeWidth={1.5} />
-        </span>
       </Link>
       <PhotoCredit image={project.heroImage} className="text-fg-muted" />
     </article>
