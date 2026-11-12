@@ -1,18 +1,17 @@
 import { Container } from "@/components/common/Container";
-import { Reveal } from "@/components/common/Reveal";
 import { SampleBadge } from "@/components/common/SampleBadge";
 import { Section } from "@/components/common/Section";
 import { TextReveal } from "@/components/common/TextReveal";
 import { partners, testimonials } from "@/data/testimonials";
 import { PARTNER_PLACEHOLDER_SLOTS } from "@/lib/constants/ui";
+import { QuoteCarousel } from "./QuoteCarousel";
 
 /**
- * 08 — Testimonials & partners (paper). One large quote, the others in two columns beneath it,
- * then the partners. Sample quotes and partners carry a "Sample" label; with none at all the
+ * 08 — Testimonials & partners (paper). One large quote at a time (QuoteCarousel), then the partners. Sample quotes and partners carry a "Sample" label; with none at all the
  * section states its policy instead and reserves quiet slots for partner marks.
  */
 export function Testimonials() {
-  const [featured, ...others] = testimonials;
+  const featured = testimonials[0];
   const sample = testimonials.some((quote) => quote.isSample);
   const samplePartners = partners.some((partner) => partner.isSample);
 
@@ -25,33 +24,9 @@ export function Testimonials() {
 
         {featured ? (
           <>
-            <figure className="col-span-full flex flex-col gap-10 lg:col-span-9 lg:col-start-3">
-              <blockquote className="font-display text-display-md">
-                <p>&ldquo;{featured.quote}&rdquo;</p>
-              </blockquote>
-              <figcaption className="label-mono text-fg-muted">
-                {featured.author} · {featured.role}
-              </figcaption>
-            </figure>
-
-            {others.length > 0 && (
-              <ul className="col-span-full grid gap-x-10 gap-y-10 border-t border-fg/15 pt-10 md:grid-cols-2 lg:col-span-9 lg:col-start-3">
-                {others.map((quote, i) => (
-                  <li key={quote.id}>
-                    <Reveal delay={i * 0.08}>
-                      <figure className="flex flex-col gap-5">
-                        <blockquote className="text-lead">
-                          <p>&ldquo;{quote.quote}&rdquo;</p>
-                        </blockquote>
-                        <figcaption className="label-mono text-fg-muted">
-                          {quote.author} · {quote.role}
-                        </figcaption>
-                      </figure>
-                    </Reveal>
-                  </li>
-                ))}
-              </ul>
-            )}
+            <div className="col-span-full lg:col-span-9 lg:col-start-3">
+              <QuoteCarousel quotes={testimonials} />
+            </div>
             {sample && (
               <div className="col-span-full lg:col-span-9 lg:col-start-3">
                 <SampleBadge label="Sample testimonials" className="text-fg-muted" />
@@ -79,7 +54,7 @@ export function Testimonials() {
             {samplePartners && <SampleBadge label="Sample partners" className="text-fg-muted" />}
           </div>
           {partners.length > 0 ? (
-            <ul className="flex flex-wrap items-center gap-x-14 gap-y-6 font-display text-display-sm text-fg/80">
+            <ul className="flex flex-wrap items-center gap-x-12 gap-y-5 font-display text-display-sm text-fg-muted">
               {partners.map((partner) => (
                 <li key={partner.id}>{partner.name}</li>
               ))}

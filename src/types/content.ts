@@ -10,6 +10,14 @@ export interface ExpertiseItem {
   image: MediaImage;
 }
 
+/** A material the buildings are made of (the homepage's materials strip). */
+export interface Material {
+  id: string;
+  name: string;
+  note: string;
+  image: MediaImage;
+}
+
 /** A paragraph block of a legal page. */
 export interface LegalSection {
   heading: string;

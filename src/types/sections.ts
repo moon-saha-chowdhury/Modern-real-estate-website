@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { ExpertiseItem, LegalSection, Metric, ProcessStage } from "./content";
+import type { ExpertiseItem, LegalSection, Metric, ProcessStage, Testimonial } from "./content";
 import type { MediaImage, PanoramaScene, Project } from "./project";
 
 /* ---------- Projects ---------- */
@@ -66,9 +66,21 @@ export interface PanoramaViewerProps {
   syncUrl?: boolean;
 }
 
+/** "Step inside" teaser for a project's 360° tour. */
+export interface TourTeaserProps {
+  project: Project;
+}
+
+/** One-at-a-time testimonial quotes. */
+export interface QuoteCarouselProps {
+  quotes: Testimonial[];
+}
+
 /** Full-width "selected work" card on the homepage. */
 export interface WorkCardProps {
   project: Project;
+  /** Position in the list (0-based), shown as 01, 02 … */
+  index: number;
 }
 
 /* ---------- Home sections ---------- */
@@ -77,7 +89,7 @@ export interface ExpertiseListProps {
   items: ExpertiseItem[];
 }
 
-export interface ProcessTimelineProps {
+export interface ProcessSheetProps {
   stages: ProcessStage[];
 }
 
@@ -146,14 +158,6 @@ export interface FrameRect {
   y: number;
   width: number;
   height: number;
-}
-
-export interface BrandIntroductionProps {
-  /**
-   * "sky" (default): overlaps the scroll hero and takes over from its open sky.
-   * "none": a plain section after a one-screen hero, with the tower backdrop visible throughout.
-   */
-  handover?: "sky" | "none";
 }
 
 export interface BuildingTransformationProps {

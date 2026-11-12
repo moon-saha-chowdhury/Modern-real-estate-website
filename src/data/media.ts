@@ -27,6 +27,36 @@ function unsplash(
 }
 
 export const media = {
+  /* ---------- Materials ---------- */
+  materialTravertine: unsplash(
+    "photo-1789659529658-4ceaf4777f72",
+    1.5,
+    "A wall of beige travertine tiles with natural horizontal veining",
+    "Pawel Czerwinski",
+    "travertine-tile-wall-with-veining-o5cHCZTwBNA",
+  ),
+  materialOak: unsplash(
+    "photo-1611072337226-1140ab367200",
+    1200 / 884,
+    "Light oak planks with soft grain and a few small knots",
+    "Simon Berger",
+    "light-oak-wood-plank-texture-background-JH_R66BihvA",
+  ),
+  materialMarble: unsplash(
+    "photo-1566041510394-cf7c8fe21800",
+    2 / 3,
+    "White marble with fine grey veining",
+    "Augustine Wong",
+    "a-close-up-of-a-white-marble-surface-li0iC0rjvvg",
+  ),
+  materialGlass: unsplash(
+    "photo-1758830596893-7aa7c7caf245",
+    1.5,
+    "A blue glass facade reflecting the sky, with figures passing behind it",
+    "Olga Schraven",
+    "modern-building-facade-with-glass-reflections-yEJ37R74dMo",
+  ),
+
   /* ---------- Brand ---------- */
   brandIntro: unsplash(
     "photo-1743760676341-ac13322116ad",

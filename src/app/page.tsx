@@ -5,23 +5,32 @@ import { DevelopmentProcess } from "@/components/home/DevelopmentProcess";
 import { ExpertiseSection } from "@/components/home/ExpertiseSection";
 import { FeaturedProjects } from "@/components/home/FeaturedProjects";
 import { HeroSection } from "@/components/home/HeroSection";
+import { MaterialsStrip } from "@/components/home/MaterialsStrip";
+import { TourTeaser } from "@/components/home/TourTeaser";
 import { Testimonials } from "@/components/home/Testimonials";
 import { WhyChooseUs } from "@/components/home/WhyChooseUs";
+import { getProjects } from "@/lib/data/projects";
 
 /**
- * Homepage. Section order and surfaces follow docs/DESIGN-SYSTEM.md:
- * obsidian → ivory → obsidian → forest → obsidian → ivory → charcoal → forest → obsidian → (footer) charcoal
+ * Homepage, in order: hero (tower explorer) · About (paper) · Step inside (stone) · Selected work
+ * (white) · Expertise (stone) · Stats (paper) · Process (white) · Why Meridian (stone) ·
+ * Materials (white) · Testimonials (paper) · Contact (blue), then the footer.
  */
-export default function HomePage() {
+export default async function HomePage() {
+  // The first project that has a 360° tour is the one the "Step inside" section invites you into.
+  const tourProject = (await getProjects()).find((project) => project.virtualTour);
+
   return (
     <>
       <HeroSection />
-      <BrandIntroduction handover="none" />
+      <BrandIntroduction />
+      {tourProject && <TourTeaser project={tourProject} />}
       <FeaturedProjects />
       <ExpertiseSection />
       <CompanyStats />
       <DevelopmentProcess />
       <WhyChooseUs />
+      <MaterialsStrip />
       <Testimonials />
       <ContactSection />
     </>

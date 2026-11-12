@@ -8,7 +8,7 @@ import { getFeaturedProjects } from "@/lib/data/projects";
 
 /**
  * 03 — Selected work. A heading row (title and intro, link to all projects on the right), then
- * one full-width card per featured project, stacked with a narrow gap.
+ * one full-width card per featured project, each a photograph with a gallery-label caption.
  */
 export async function FeaturedProjects() {
   const projects = await getFeaturedProjects();
@@ -38,10 +38,10 @@ export async function FeaturedProjects() {
           </Reveal>
         </header>
 
-        <ul className="flex flex-col gap-5" aria-label="Featured projects">
-          {projects.map((project) => (
+        <ul className="flex flex-col gap-20 lg:gap-28" aria-label="Featured projects">
+          {projects.map((project, index) => (
             <li key={project.id}>
-              <WorkCard project={project} />
+              <WorkCard project={project} index={index} />
             </li>
           ))}
         </ul>

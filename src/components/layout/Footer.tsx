@@ -89,6 +89,9 @@ export function Footer() {
                     {contact.email}
                   </a>
                 )}
+                {contact.officeHours && (
+                  <span className="text-fg-muted">{contact.officeHours}</span>
+                )}
               </address>
             ) : (
               <p className="text-small text-fg-muted">

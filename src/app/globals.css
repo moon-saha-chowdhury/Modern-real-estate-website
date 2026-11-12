@@ -168,6 +168,29 @@
   transform-origin: left center;
 }
 
+/* ---------- Reduced transparency / more contrast ---------- */
+@media (prefers-reduced-transparency: reduce) {
+  header[data-solid="true"] {
+    background-color: var(--color-paper);
+    backdrop-filter: none;
+  }
+  header[data-glass="true"] {
+    background-color: var(--color-ink);
+    backdrop-filter: none;
+  }
+  [class*="backdrop-blur"] {
+    backdrop-filter: none !important;
+  }
+}
+@media (prefers-contrast: more) {
+  header[data-solid="true"] {
+    border-bottom-color: var(--color-ink);
+  }
+  :root {
+    --color-ink-soft: var(--color-ink);
+  }
+}
+
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
   *,

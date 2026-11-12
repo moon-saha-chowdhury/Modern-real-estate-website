@@ -45,6 +45,8 @@ test.describe("hero tower explorer", () => {
     // Escape leaves the room first, then the residence.
     // (Each step plays its flight clip backwards first; software rendering makes that slow here.)
     const flying = hero.locator("video.opacity-100");
+    // A key pressed while a flight clip is playing is ignored, so wait for the fly-in to end.
+    await expect(flying).toHaveCount(0, { timeout: 15000 });
     await page.keyboard.press("Escape");
     await expect(tour).toHaveCount(0, { timeout: 15000 });
     await expect(hero).toHaveAttribute("data-view", "residence");

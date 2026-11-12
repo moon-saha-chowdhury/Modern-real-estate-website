@@ -18,3 +18,13 @@ export const IMAGE_SETTLE_SCALE = 1.12;
 
 /** Delay between text lines, relative to the base stagger. */
 export const LINE_STAGGER_MULTIPLIER = 1.5;
+
+/**
+ * Springs for anything the visitor can touch (apple-design): critically damped by default, so
+ * motion settles without overshoot; `FLICK` adds a little bounce only where a gesture carried
+ * momentum. Motion's `bounce` + `duration` map onto Apple's damping + response.
+ */
+export const SPRING = {
+  DEFAULT: { type: "spring", bounce: 0, duration: 0.4 },
+  FLICK: { type: "spring", bounce: 0.2, duration: 0.4 },
+} as const;
