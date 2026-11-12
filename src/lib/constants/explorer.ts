@@ -22,8 +22,8 @@ export const EXPLORER_FIRST_LEVEL = 2;
 /** How far the camera pushes into a floor before the residence appears. */
 export const EXPLORER_ZOOM = 3.4;
 
-/** Where "look around in 360°" goes: the sample project that has a tour. */
-export const EXPLORER_TOUR_HREF = "/projects/sample-the-linden";
+/** How far the camera pushes into a room of the cutaway before its 360° view appears. */
+export const EXPLORER_ROOM_ZOOM = 2.6;
 
 export const EXPLORER_COPY = {
   hintHover: "Hover a floor to explore",
@@ -31,7 +31,8 @@ export const EXPLORER_COPY = {
   sample: "Illustrative concept · sample figures",
   back: "Back to tower",
   request: "Request floor plan",
-  tour: "Look around in 360°",
+  roomHint: "Choose a room to step inside",
+  exitRoom: "Back to residence",
 } as const;
 
 /** The cutaway render's own background colour, so the image has no visible edge. */

@@ -63,6 +63,8 @@ export default function PanoramaViewer({
   plan,
   initialRoom,
   onExit,
+  exitLabel = "Exit tour",
+  syncUrl = true,
 }: PanoramaViewerProps) {
   const container = useRef<HTMLDivElement>(null);
   const viewer = useRef<Viewer | null>(null);
@@ -130,9 +132,14 @@ export default function PanoramaViewer({
 
   // The address bar follows the room; leaving the tour removes it again.
   useEffect(() => {
-    setRoomInUrl(scene.id);
-  }, [scene.id]);
-  useEffect(() => () => setRoomInUrl(null), []);
+    if (syncUrl) setRoomInUrl(scene.id);
+  }, [scene.id, syncUrl]);
+  useEffect(
+    () => () => {
+      if (syncUrl) setRoomInUrl(null);
+    },
+    [syncUrl],
+  );
 
   // While the browser is idle, fetch the rooms this one links to.
   useEffect(() => {
@@ -164,7 +171,7 @@ export default function PanoramaViewer({
         className="absolute top-4 left-4 z-10 inline-flex items-center gap-2 border border-white/35 bg-ink/45 px-3 py-2 label-mono text-white backdrop-blur-md transition-colors duration-300 hover:bg-ink/70 md:top-6 md:left-6"
       >
         <X aria-hidden="true" className="size-3.5" strokeWidth={1.5} />
-        Exit tour
+        {exitLabel}
       </button>
       <Link
         href="/contact"

@@ -1,13 +1,14 @@
+import type { PanoramaScene } from "./project";
+
 /** A room marked on a residence cutaway (the hero's tower explorer). */
 export interface ResidenceRoom {
+  /** Also the id of the room's 360° scene. */
   id: string;
   label: string;
   note: string;
   /** Hotspot position as a fraction of the cutaway image (0–1). */
   x: number;
   y: number;
-  /** Room id in the sample 360° tour, when that room can be looked around. */
-  tourRoom?: string;
 }
 
 /** A residence type shown as an isometric cutaway. */
@@ -20,6 +21,8 @@ export interface Residence {
   summary: string;
   image: { src: string; alt: string; width: number; height: number };
   rooms: ResidenceRoom[];
+  /** The 360° view from inside each room (same ids as `rooms`). */
+  scenes: PanoramaScene[];
 }
 
 /** One selectable floor of the hero tower. */

@@ -60,6 +60,10 @@ export interface PanoramaViewerProps {
   initialRoom?: string;
   label: string;
   onExit: () => void;
+  /** Text of the exit button (default "Exit tour"). */
+  exitLabel?: string;
+  /** Keep `?room=` in the address bar (default true; off where the tour is not the page's subject). */
+  syncUrl?: boolean;
 }
 
 /** Full-width "selected work" card on the homepage. */
