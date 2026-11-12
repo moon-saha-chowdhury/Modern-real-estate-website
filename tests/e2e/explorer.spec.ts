@@ -1,6 +1,14 @@
 import { expect, test } from "@playwright/test";
 
+// WebGL in headless Chromium needs the software renderer (as in project.spec.ts).
+test.use({
+  launchOptions: {
+    args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"],
+  },
+});
+
 test.describe("hero tower explorer", () => {
+  test.describe.configure({ mode: "serial" });
   test.use({ viewport: { width: 1440, height: 900 } });
 
   test("hovering a floor shows its card; choosing it opens the residence", async ({ page }) => {
@@ -21,16 +29,28 @@ test.describe("hero tower explorer", () => {
     await expect(panel.getByText("Sample residence")).toBeVisible();
     await expect(panel.getByRole("button", { name: "Back to tower" })).toBeFocused();
 
-    // A room: its note replaces the summary and the 360° tour is one click away.
-    await panel.getByRole("button", { name: "Living room" }).last().click();
+    // A room: its note replaces the summary on hover; choosing it opens its 360° view in place.
+    const living = panel.getByRole("button", { name: "Step inside: Living room" }).last();
+    await living.hover();
     await expect(panel.getByText(/full-height glass/)).toBeVisible();
-    await expect(panel.getByRole("link", { name: /Look around in 360/ })).toHaveAttribute(
-      "href",
-      "/projects/sample-the-linden?room=living",
+    await living.click();
+    const tour = hero.getByRole("region", { name: "Residence A, 360° view" });
+    await expect(tour.locator(".psv-container canvas")).toBeVisible({ timeout: 20000 });
+    await expect(tour.getByRole("button", { name: "Living room", exact: true })).toHaveAttribute(
+      "aria-pressed",
+      "true",
     );
+    expect(new URL(page.url()).search).toBe("");
 
+    // Escape leaves the room first, then the residence.
+    // (Each step plays its flight clip backwards first; software rendering makes that slow here.)
+    const flying = hero.locator("video.opacity-100");
     await page.keyboard.press("Escape");
-    await expect(hero).toHaveAttribute("data-view", "tower");
+    await expect(tour).toHaveCount(0, { timeout: 15000 });
+    await expect(hero).toHaveAttribute("data-view", "residence");
+    await expect(flying).toHaveCount(0, { timeout: 15000 });
+    await page.keyboard.press("Escape");
+    await expect(hero).toHaveAttribute("data-view", "tower", { timeout: 15000 });
     await expect(floor).toBeFocused();
   });
 

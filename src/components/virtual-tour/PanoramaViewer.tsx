@@ -63,6 +63,8 @@ export default function PanoramaViewer({
   plan,
   initialRoom,
   onExit,
+  exitLabel = "Exit tour",
+  syncUrl = true,
 }: PanoramaViewerProps) {
   const container = useRef<HTMLDivElement>(null);
   const viewer = useRef<Viewer | null>(null);
@@ -78,33 +80,39 @@ export default function PanoramaViewer({
   const [index, setIndex] = useState(startIndex);
   const scene = scenes[index];
 
-  // Create the viewer once, on the first room.
+  // Create the viewer once, on the first room. Creation waits one frame: in development React
+  // mounts effects twice, and a viewer destroyed mid-download leaves its aborted request in
+  // three's loader, which the second viewer then waits on forever ("Loading the room").
   useEffect(() => {
     const el = container.current;
     if (!el) return;
-    const first = scenes[startIndex];
-    const instance = new Viewer({
-      container: el,
-      panorama: sourceOf(first),
-      defaultYaw: `${first.initialYaw ?? 0}deg`,
-      defaultPitch: 0,
-      defaultZoomLvl: TOUR.defaultZoom,
-      mousewheelCtrlKey: true,
-      touchmoveTwoFingers: true,
-      keyboard: "always",
-      navbar: ["zoom", "move", "gyroscope", "fullscreen"],
-      loadingTxt: "Loading the room",
-      plugins: [[MarkersPlugin, { markers: markersOf(first) }], GyroscopePlugin],
+    let instance: Viewer | null = null;
+    const frame = requestAnimationFrame(() => {
+      const first = scenes[startIndex];
+      instance = new Viewer({
+        container: el,
+        panorama: sourceOf(first),
+        defaultYaw: `${first.initialYaw ?? 0}deg`,
+        defaultPitch: 0,
+        defaultZoomLvl: TOUR.defaultZoom,
+        mousewheelCtrlKey: true,
+        touchmoveTwoFingers: true,
+        keyboard: "always",
+        navbar: ["zoom", "move", "gyroscope", "fullscreen"],
+        loadingTxt: "Loading the room",
+        plugins: [[MarkersPlugin, { markers: markersOf(first) }], GyroscopePlugin],
+      });
+      const plugin = instance.getPlugin<MarkersPlugin>(MarkersPlugin);
+      plugin.addEventListener("select-marker", ({ marker }) => {
+        const target = scenes.findIndex((s) => s.id === marker.data?.toSceneId);
+        if (target >= 0) setIndex(target);
+      });
+      viewer.current = instance;
+      markers.current = plugin;
     });
-    const plugin = instance.getPlugin<MarkersPlugin>(MarkersPlugin);
-    plugin.addEventListener("select-marker", ({ marker }) => {
-      const target = scenes.findIndex((s) => s.id === marker.data?.toSceneId);
-      if (target >= 0) setIndex(target);
-    });
-    viewer.current = instance;
-    markers.current = plugin;
     return () => {
-      instance.destroy();
+      cancelAnimationFrame(frame);
+      instance?.destroy();
       viewer.current = null;
       markers.current = null;
     };
@@ -130,9 +138,14 @@ export default function PanoramaViewer({
 
   // The address bar follows the room; leaving the tour removes it again.
   useEffect(() => {
-    setRoomInUrl(scene.id);
-  }, [scene.id]);
-  useEffect(() => () => setRoomInUrl(null), []);
+    if (syncUrl) setRoomInUrl(scene.id);
+  }, [scene.id, syncUrl]);
+  useEffect(
+    () => () => {
+      if (syncUrl) setRoomInUrl(null);
+    },
+    [syncUrl],
+  );
 
   // While the browser is idle, fetch the rooms this one links to.
   useEffect(() => {
@@ -164,7 +177,7 @@ export default function PanoramaViewer({
         className="absolute top-4 left-4 z-10 inline-flex items-center gap-2 border border-white/35 bg-ink/45 px-3 py-2 label-mono text-white backdrop-blur-md transition-colors duration-300 hover:bg-ink/70 md:top-6 md:left-6"
       >
         <X aria-hidden="true" className="size-3.5" strokeWidth={1.5} />
-        Exit tour
+        {exitLabel}
       </button>
       <Link
         href="/contact"

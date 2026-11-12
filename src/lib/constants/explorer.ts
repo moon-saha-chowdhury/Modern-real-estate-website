@@ -22,8 +22,8 @@ export const EXPLORER_FIRST_LEVEL = 2;
 /** How far the camera pushes into a floor before the residence appears. */
 export const EXPLORER_ZOOM = 3.4;
 
-/** Where "look around in 360°" goes: the sample project that has a tour. */
-export const EXPLORER_TOUR_HREF = "/projects/sample-the-linden";
+/** How far the camera pushes into a room of the cutaway before its 360° view appears. */
+export const EXPLORER_ROOM_ZOOM = 2.6;
 
 export const EXPLORER_COPY = {
   hintHover: "Hover a floor to explore",
@@ -31,8 +31,23 @@ export const EXPLORER_COPY = {
   sample: "Illustrative concept · sample figures",
   back: "Back to tower",
   request: "Request floor plan",
-  tour: "Look around in 360°",
+  roomHint: "Choose a room to step inside",
+  exitRoom: "Back to residence",
 } as const;
 
 /** The cutaway render's own background colour, so the image has no visible edge. */
 export const EXPLORER_UNIT_BACKDROP = "#101b2f";
+
+/**
+ * The flight between the tower and the residence: an AI-generated clip (and its reverse), played
+ * over the hero on landscape screens. Portrait screens and reduced motion keep the plain push.
+ */
+export const EXPLORER_CLIPS = {
+  query: "(min-aspect-ratio: 1/1) and (prefers-reduced-motion: no-preference)",
+  enter: "/media/explorer/clips/tower-to-residence",
+  leave: "/media/explorer/clips/residence-to-tower",
+  /** The views swap underneath this long after the clip starts (it has faded in by then). */
+  swapAfterMs: 400,
+  /** If a clip never finishes (stalled download), carry on without it. */
+  timeoutMs: 6000,
+} as const;
