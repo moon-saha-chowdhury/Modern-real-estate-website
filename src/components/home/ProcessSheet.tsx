@@ -9,15 +9,11 @@ import {
   useTransform,
   type MotionValue,
 } from "motion/react";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
-import {
-  DRAWING_LAYERS,
-  DRAWING_OFFSET,
-  DRAWING_SIZE,
-  DRAWING_SPRING,
-} from "@/lib/constants/process-drawing";
+import { DRAWING_LAYERS, DRAWING_SIZE, DRAWING_SPRING } from "@/lib/constants/process-drawing";
+import { cn } from "@/lib/utils/cn";
 import { displayIndex } from "@/lib/utils/projects";
 import type { DrawingLabel, DrawingLight, DrawingPath } from "@/types/process";
 import type { ProcessSheetProps } from "@/types/sections";
@@ -44,7 +40,7 @@ function Stroke({
     <motion.path
       d={path.d}
       fill="none"
-      stroke={path.tone === "brand" ? "var(--color-brand)" : "currentColor"}
+      className="[stroke:var(--stroke)] transition-[stroke] duration-700 ease-meridian motion-reduce:transition-none"
       strokeWidth={path.width ?? 1}
       strokeDasharray={path.dash}
       strokeLinecap="square"
@@ -103,6 +99,27 @@ function Label({
   );
 }
 
+/** A hairline that fills, in the brand colour, as the stage `index` is drawn, and stays full after. */
+function StageFill({
+  progress,
+  index,
+  className,
+}: {
+  progress: MotionValue<number>;
+  index: number;
+  className?: string;
+}) {
+  const start = (index / STEPS) * START_SCALE;
+  const scaleX = useTransform(progress, [start, start + SPAN], [0, 1], { clamp: true });
+  return (
+    <motion.span
+      aria-hidden="true"
+      style={{ scaleX }}
+      className={cn("pointer-events-none absolute inset-x-0 origin-left bg-brand", className)}
+    />
+  );
+}
+
 /**
  * Six stages on one drawing sheet. On lg+ the sheet is pinned (a CSS sticky scene inside a tall
  * track, so the scroll distance is reserved before JavaScript runs) while the stages play out:
@@ -133,10 +150,26 @@ export function ProcessSheet({ stages }: ProcessSheetProps) {
     for (const node of el.querySelectorAll<HTMLElement>("[data-stage]")) {
       node.dataset.active = String(Number(node.dataset.stage) === index);
     }
+    for (const node of el.querySelectorAll<SVGGElement>("[data-layer]")) {
+      const layer = Number(node.dataset.layer);
+      node.dataset.state = layer < index ? "done" : layer === index ? "active" : "todo";
+    }
   };
   useMotionValueEvent(smooth, "change", (value) => {
     if (live) activate(value);
   });
+  // Pinned: start at the first stage. Not pinned: every layer is finished (ink).
+  useEffect(() => {
+    const el = track.current;
+    if (!el) return;
+    if (live) activate(smooth.get());
+    else {
+      for (const node of el.querySelectorAll<SVGGElement>("[data-layer]")) {
+        node.dataset.state = "done";
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [live]);
 
   return (
     <div ref={track} data-process-track className="relative lg:h-[420svh] motion-reduce:lg:h-auto">
@@ -149,11 +182,16 @@ export function ProcessSheet({ stages }: ProcessSheetProps) {
             aria-label="An elevation drawing of a twenty-storey residential tower between two neighbouring buildings, built up in six layers: the plot, the massing, the facade, the structure, a crane and lit windows."
             className="min-h-0 w-full flex-1 text-fg max-lg:aspect-[1500/720] max-lg:flex-none"
           >
-            <g transform={`translate(${DRAWING_OFFSET.x} ${DRAWING_OFFSET.y})`}>
+            <g>
               {DRAWING_LAYERS.map((layer, i) => {
                 const start = (i / STEPS) * START_SCALE;
                 return (
-                  <g key={layer.stageId}>
+                  <g
+                    key={layer.stageId}
+                    data-layer={i}
+                    data-state="done"
+                    className="[--stroke:currentColor] data-[state=active]:[--stroke:var(--color-brand)]"
+                  >
                     {layer.paths.map((path, j) => {
                       const from = start + (j / Math.max(layer.paths.length, 1)) * SPAN * 0.35;
                       return (
@@ -196,7 +234,7 @@ export function ProcessSheet({ stages }: ProcessSheetProps) {
 
         <div className="grid-editorial gap-y-8">
           {/* The stage being drawn, in large type. Stacked in one cell on lg+; a plain list below. */}
-          <div className="col-span-full grid gap-y-10 lg:col-span-6 lg:gap-y-0 lg:[&>*]:[grid-area:1/1]">
+          <div className="col-span-full grid gap-y-10 lg:col-span-7 lg:gap-y-0 lg:[&>*]:[grid-area:1/1]">
             {stages.map((stage, i) => (
               <div
                 key={stage.id}
@@ -205,12 +243,17 @@ export function ProcessSheet({ stages }: ProcessSheetProps) {
                 className="flex flex-col gap-3 transition-opacity duration-700 ease-meridian motion-reduce:transition-none lg:pointer-events-none lg:opacity-0 lg:data-[active=true]:pointer-events-auto lg:data-[active=true]:opacity-100"
               >
                 <div className="flex items-baseline gap-5">
-                  <span className="label-mono text-accent tabular-nums">{displayIndex(i)}</span>
-                  <h3 className="font-display text-display-sm">{stage.title}</h3>
+                  <span className="font-display text-display-sm text-brand tabular-nums">
+                    {displayIndex(i)}
+                  </span>
+                  <h3 className="font-display text-display-md lg:text-[clamp(2rem,1.2rem+2.2vw,3.25rem)]">
+                    {stage.title}
+                  </h3>
                 </div>
-                <p className="max-w-md text-fg-muted lg:pl-[calc(2ch+1.25rem)]">
-                  {stage.description}
-                </p>
+                <div className="relative h-px bg-rule lg:max-w-lg">
+                  <StageFill progress={progress} index={i} className="h-px" />
+                </div>
+                <p className="max-w-md text-lead text-fg-muted">{stage.description}</p>
               </div>
             ))}
           </div>
@@ -225,8 +268,10 @@ export function ProcessSheet({ stages }: ProcessSheetProps) {
                 key={stage.id}
                 data-stage={i}
                 data-active={i === 0}
-                className="flex items-baseline gap-4 border-t border-rule py-2.5 text-small text-fg-muted/50 transition-colors duration-700 ease-meridian data-[active=true]:text-fg motion-reduce:transition-none"
+                className="relative flex items-baseline gap-4 py-3 text-small text-fg-muted/50 transition-colors duration-700 ease-meridian data-[active=true]:text-fg motion-reduce:transition-none"
               >
+                <span aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-rule" />
+                <StageFill progress={progress} index={i} className="top-0 h-0.5" />
                 <span className="label-mono tabular-nums">{displayIndex(i)}</span>
                 {stage.title}
               </li>

@@ -4,8 +4,6 @@ export interface DrawingPath {
   d: string;
   /** Stroke width in screen pixels (the stroke does not scale with the drawing). */
   width?: number;
-  /** "ink" is the text colour; "brand" is the accent used for the engineering layer. */
-  tone?: "ink" | "brand";
   /** A dashed stroke fades in instead of being drawn. */
   dash?: string;
   /** Opacity of the stroke at rest, 0–1. */

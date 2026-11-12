@@ -1,176 +1,191 @@
 import type { DrawingLayer, DrawingLight, DrawingPath } from "@/types/process";
 
 /**
- * The elevation drawn across the process sheet: a tower of 20 floors on a plot, between two
- * neighbours. The sheet is 1500 × 720; the building is drawn in its own 600-wide space and
- * placed in the middle (DRAWING_OFFSET), so its coordinates stay simple. Each stage adds one
- * layer of lines: plot and context, massing, facade and level marks, structure, crane, lit
- * windows.
+ * The elevation drawn across the process sheet: a 22-storey tower with a lower wing either side
+ * of it, on a plot between two neighbours. The sheet is 1500 × 680 and the building fills most of
+ * its height. Each stage adds one layer of lines: plot and context, massing, facade and level
+ * marks, structure, a crane, lit windows.
  */
-export const DRAWING_SIZE = { width: 1500, height: 720 } as const;
+export const DRAWING_SIZE = { width: 1500, height: 680 } as const;
 
-/** Where the building's own space sits on the sheet. */
-export const DRAWING_OFFSET = { x: 450, y: 0 } as const;
+const GROUND = 620;
+const PITCH = 24;
 
-const GROUND = 650;
-const LEFT = 200;
-const RIGHT = 400;
-const TOP = 130;
-const FLOORS = 20;
-const PITCH = (GROUND - TOP) / FLOORS;
-const PODIUM_TOP = 566;
-const MAST = 440;
+const TOWER = { left: 520, right: 780, floors: 22 } as const;
+const WING_L = { left: 280, right: 520, floors: 8 } as const;
+const WING_R = { left: 780, right: 1040, floors: 6 } as const;
+const PLOT = { left: 240, right: 1080 } as const;
+const MAST = 1062;
+
+const topOf = (block: { floors: number }) => GROUND - PITCH * block.floors;
+const TOWER_TOP = topOf(TOWER);
 
 const range = (count: number, from: number, step: number) =>
   Array.from({ length: count }, (_, i) => from + i * step);
+const levelY = (floor: number) => GROUND - PITCH * floor;
 
-/** 1 — the plot: the ground, two neighbours for scale, boundary, survey ticks, a dimension line. */
+/** 1 — the plot: the ground, two neighbours for scale, the boundary, survey ticks, a dimension. */
 const plot: DrawingPath[] = [
-  { d: `M-450 ${GROUND} H1050`, width: 1.5 },
+  { d: `M0 ${GROUND} H1500`, width: 1.5 },
   {
-    d: `M-400 ${GROUND} V500 H-300 V${GROUND} M-300 ${GROUND} V420 H-170 V${GROUND} M-120 ${GROUND} V560 H-40 V${GROUND}`,
+    d: [
+      `M40 ${GROUND} V440 H150 V${GROUND}`,
+      `M150 ${GROUND} V520 H220 V${GROUND}`,
+      `M1120 ${GROUND} V500 H1210 V${GROUND}`,
+      `M1210 ${GROUND} V430 H1330 V${GROUND}`,
+      `M1330 ${GROUND} V540 H1420 V${GROUND}`,
+    ].join(" "),
     width: 1,
     opacity: 0.35,
   },
   {
-    d: `M640 ${GROUND} V470 H760 V${GROUND} M760 ${GROUND} V540 H880 V${GROUND} M930 ${GROUND} V590 H1010 V${GROUND}`,
+    d: `M${PLOT.left} ${GROUND} V${GROUND - 14} M${PLOT.right} ${GROUND} V${GROUND - 14}`,
     width: 1,
-    opacity: 0.35,
   },
-  { d: `M60 ${GROUND} V${GROUND - 14} M540 ${GROUND} V${GROUND - 14}`, width: 1 },
-  { d: `M60 ${GROUND - 14} H540`, width: 1, dash: "3 7", opacity: 0.5 },
+  { d: `M${PLOT.left} ${GROUND - 14} H${PLOT.right}`, width: 1, dash: "3 7", opacity: 0.5 },
   {
-    d: range(15, 90, 30)
+    d: range(27, PLOT.left + 30, 30)
       .map((x) => `M${x} ${GROUND} V${GROUND + 8}`)
       .join(" "),
     width: 1,
     opacity: 0.6,
   },
   {
-    d: `M60 ${GROUND + 36} H540 M60 ${GROUND + 28} V${GROUND + 44} M540 ${GROUND + 28} V${GROUND + 44}`,
+    d: `M${PLOT.left} ${GROUND + 36} H${PLOT.right} M${PLOT.left} ${GROUND + 28} V${GROUND + 44} M${PLOT.right} ${GROUND + 28} V${GROUND + 44}`,
     width: 1,
     opacity: 0.7,
   },
 ];
 
-/** 2 — massing: the tower, its podium, the roof pavilion and a height guide. */
+/** 2 — massing: the tower, its two wings, the roof pavilion and a centre line. */
 const massing: DrawingPath[] = [
-  { d: `M${LEFT} ${GROUND} V${TOP} H${RIGHT} V${GROUND}`, width: 1.5 },
-  { d: `M150 ${GROUND} V${PODIUM_TOP} H450 V${GROUND}`, width: 1.5 },
-  { d: `M225 ${TOP} V${TOP - 26} H375 V${TOP}`, width: 1.5 },
-  { d: `M${RIGHT + 70} ${GROUND} V${TOP - 26}`, width: 1, dash: "2 6", opacity: 0.55 },
-  {
-    d: `M${RIGHT + 62} ${TOP - 26} H${RIGHT + 78} M${RIGHT + 62} ${GROUND} H${RIGHT + 78}`,
-    width: 1,
-    opacity: 0.7,
-  },
+  { d: `M${TOWER.left} ${GROUND} V${TOWER_TOP} H${TOWER.right} V${GROUND}`, width: 1.75 },
+  { d: `M${WING_L.left} ${GROUND} V${topOf(WING_L)} H${WING_L.right}`, width: 1.75 },
+  { d: `M${WING_R.right} ${GROUND} V${topOf(WING_R)} H${WING_R.left}`, width: 1.75 },
+  { d: `M590 ${TOWER_TOP} V${TOWER_TOP - 28} H710 V${TOWER_TOP}`, width: 1.75 },
+  { d: `M650 ${GROUND} V${TOWER_TOP - 60}`, width: 1, dash: "2 8", opacity: 0.5 },
 ];
 
-/** Level marks beside the facade: datum lines across the sheet and a small label at each. */
-const LEVELS = [0, 5, 10, 15, 20];
+/** Level marks: datum lines across the sheet and a small label at each. */
+const LEVELS = [5, 10, 15, 20];
 const levelLines: DrawingPath[] = [
   {
-    d: LEVELS.slice(1)
-      .map((k) => `M-450 ${GROUND - PITCH * k} H1050`)
-      .join(" "),
+    d: LEVELS.map((k) => `M0 ${levelY(k)} H1500`).join(" "),
     width: 0.75,
     dash: "2 8",
     opacity: 0.4,
   },
 ];
-const levelLabels = LEVELS.slice(1).map((k) => ({
-  x: -440,
-  y: GROUND - PITCH * k - 8,
+const levelLabels = LEVELS.map((k) => ({
+  x: 12,
+  y: levelY(k) - 8,
   text: `L${String(k).padStart(2, "0")}`,
 }));
 
-/** 3 — the facade: a line at every floor, mullions, podium glazing, pavilion glazing, levels. */
+type Block = { left: number; right: number; floors: number };
+
+/** A line at every floor of a block. */
+const floorLines = (block: Block) =>
+  range(block.floors - 1, 1, 1)
+    .map((k) => `M${block.left} ${levelY(k)} H${block.right}`)
+    .join(" ");
+/** Vertical mullions every 40 units inside a block. */
+const mullions = (block: Block) =>
+  range(Math.floor((block.right - block.left) / 40) - 1, block.left + 40, 40)
+    .map((x) => `M${x} ${topOf(block)} V${GROUND}`)
+    .join(" ");
+
+/** 3 — the facade: a line at every floor, mullions, the pavilion's glazing, level marks. */
 const facade: DrawingPath[] = [
   ...levelLines,
+  { d: floorLines(TOWER), width: 0.75, opacity: 0.55 },
+  { d: floorLines(WING_L), width: 0.75, opacity: 0.55 },
+  { d: floorLines(WING_R), width: 0.75, opacity: 0.55 },
+  { d: mullions(TOWER), width: 0.75, opacity: 0.55 },
+  { d: mullions(WING_L), width: 0.75, opacity: 0.55 },
+  { d: mullions(WING_R), width: 0.75, opacity: 0.55 },
   {
-    d: range(FLOORS - 1, 1, 1)
-      .map((k) => `M${LEFT} ${GROUND - PITCH * k} H${RIGHT}`)
-      .join(" "),
+    d: [620, 650, 680].map((x) => `M${x} ${TOWER_TOP} V${TOWER_TOP - 28}`).join(" "),
     width: 0.75,
     opacity: 0.55,
   },
-  {
-    d: [250, 300, 350].map((x) => `M${x} ${TOP} V${PODIUM_TOP}`).join(" "),
-    width: 0.75,
-    opacity: 0.55,
-  },
-  {
-    d: range(9, 180, 30)
-      .map((x) => `M${x} ${PODIUM_TOP} V${GROUND}`)
-      .join(" "),
-    width: 0.75,
-    opacity: 0.55,
-  },
-  { d: `M275 ${TOP} V${TOP - 26} M325 ${TOP} V${TOP - 26}`, width: 0.75, opacity: 0.55 },
 ];
 
-/** 4 — engineering: the core, columns and bracing, in the brand colour. */
+/** 4 — engineering: the tower's core, and bracing across the wings and the tower's base. */
+const bay = (x: number, width: number, bottom: number, top: number) =>
+  `M${x} ${bottom} L${x + width} ${top} M${x + width} ${bottom} L${x} ${top}`;
 const engineering: DrawingPath[] = [
-  { d: `M280 ${GROUND} V${TOP} M320 ${GROUND} V${TOP}`, width: 1.5, tone: "brand" },
+  { d: `M610 ${GROUND} V${TOWER_TOP} M690 ${GROUND} V${TOWER_TOP}`, width: 1.75 },
   {
-    d: range(5, 150, 75)
-      .slice(0, 4)
-      .map(
-        (x) => `M${x} ${GROUND} L${x + 75} ${PODIUM_TOP} M${x + 75} ${GROUND} L${x} ${PODIUM_TOP}`,
-      )
+    d: range(3, WING_L.left, 80)
+      .map((x) => bay(x, 80, GROUND, topOf(WING_L)))
       .join(" "),
     width: 1,
-    tone: "brand",
-    opacity: 0.85,
+    opacity: 0.8,
   },
   {
-    d: range(4, 1, 5)
-      .map((k) => `M${LEFT - 8} ${GROUND - PITCH * k * 3} H${LEFT}`)
+    d: range(3, WING_R.left, 260 / 3)
+      .map((x) => bay(x, 260 / 3, GROUND, topOf(WING_R)))
       .join(" "),
     width: 1,
-    tone: "brand",
+    opacity: 0.8,
+  },
+  {
+    d: range(4, TOWER.left, 65)
+      .map((x) => bay(x, 65, GROUND, GROUND - PITCH * 4))
+      .join(" "),
+    width: 1,
+    opacity: 0.8,
   },
 ];
 
-/** 5 — construction: a tower crane beside the building, lattice mast and hook. */
+/** 5 — construction: a tower crane beside the building, lattice mast, jib and hook. */
 const crane: DrawingPath[] = [
-  { d: `M${MAST - 6} ${GROUND} V70 M${MAST + 6} ${GROUND} V70`, width: 1.5 },
+  { d: `M${MAST - 6} ${GROUND} V6 M${MAST + 6} ${GROUND} V6`, width: 1.75 },
   {
-    d: range(28, 0, 1)
+    d: range(30, 0, 1)
       .map((i) => `${i === 0 ? "M" : "L"}${MAST + (i % 2 === 0 ? -6 : 6)} ${GROUND - i * 20}`)
       .join(" "),
     width: 0.75,
     opacity: 0.7,
   },
-  { d: `M${MAST} 70 V38 M${MAST} 38 L330 70 M${MAST} 38 L548 70 M320 70 H560`, width: 1.5 },
-  { d: `M548 70 V100 M360 70 V190`, width: 1, opacity: 0.8 },
+  {
+    d: `M${MAST} 6 L840 30 M${MAST} 6 L1290 30 M840 30 H1320 M${MAST} 30 V6 M1290 30 V62`,
+    width: 1.75,
+  },
+  { d: `M900 30 V170 M893 170 H907`, width: 1, opacity: 0.8 },
 ];
 
-/** 6 — handover: the lit windows (not paths, so the layer has none to draw). */
-const LIT: [floor: number, bay: number][] = [
-  [0, 0],
-  [2, 2],
-  [3, 1],
-  [5, 3],
-  [6, 0],
-  [8, 2],
-  [9, 1],
-  [11, 3],
-  [12, 0],
-  [13, 2],
-  [14, 1],
-  [15, 3],
-  [16, 0],
-  [17, 2],
-  [18, 1],
-  [19, 3],
+/** 6 — handover: lit windows, chosen by a fixed sequence so the drawing never changes. */
+function windows(block: Block, count: number, seed: number): DrawingLight[] {
+  const columns = Math.floor((block.right - block.left) / 40);
+  let state = seed;
+  const next = () => {
+    state = (state * 1103515245 + 12345) % 2147483648;
+    return state / 2147483648;
+  };
+  const taken = new Set<string>();
+  const found: DrawingLight[] = [];
+  while (found.length < count) {
+    const column = Math.floor(next() * columns);
+    const floor = Math.floor(next() * block.floors);
+    const key = `${column}:${floor}`;
+    if (taken.has(key)) continue;
+    taken.add(key);
+    found.push({
+      x: block.left + column * 40 + 13,
+      y: GROUND - PITCH * (floor + 1) + 7,
+      width: 14,
+      height: 10,
+    });
+  }
+  return found;
+}
+const lights: DrawingLight[] = [
+  ...windows(TOWER, 30, 7),
+  ...windows(WING_L, 9, 11),
+  ...windows(WING_R, 7, 13),
 ];
-const lights: DrawingLight[] = LIT.map(([floor, bay]) => ({
-  x: LEFT + bay * 50 + 18,
-  y: GROUND - PITCH * (floor + 1) + 8,
-  width: 14,
-  height: 10,
-}));
 
 export const DRAWING_LAYERS: DrawingLayer[] = [
   { stageId: "land", paths: plot },
