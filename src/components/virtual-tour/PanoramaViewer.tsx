@@ -80,33 +80,39 @@ export default function PanoramaViewer({
   const [index, setIndex] = useState(startIndex);
   const scene = scenes[index];
 
-  // Create the viewer once, on the first room.
+  // Create the viewer once, on the first room. Creation waits one frame: in development React
+  // mounts effects twice, and a viewer destroyed mid-download leaves its aborted request in
+  // three's loader, which the second viewer then waits on forever ("Loading the room").
   useEffect(() => {
     const el = container.current;
     if (!el) return;
-    const first = scenes[startIndex];
-    const instance = new Viewer({
-      container: el,
-      panorama: sourceOf(first),
-      defaultYaw: `${first.initialYaw ?? 0}deg`,
-      defaultPitch: 0,
-      defaultZoomLvl: TOUR.defaultZoom,
-      mousewheelCtrlKey: true,
-      touchmoveTwoFingers: true,
-      keyboard: "always",
-      navbar: ["zoom", "move", "gyroscope", "fullscreen"],
-      loadingTxt: "Loading the room",
-      plugins: [[MarkersPlugin, { markers: markersOf(first) }], GyroscopePlugin],
+    let instance: Viewer | null = null;
+    const frame = requestAnimationFrame(() => {
+      const first = scenes[startIndex];
+      instance = new Viewer({
+        container: el,
+        panorama: sourceOf(first),
+        defaultYaw: `${first.initialYaw ?? 0}deg`,
+        defaultPitch: 0,
+        defaultZoomLvl: TOUR.defaultZoom,
+        mousewheelCtrlKey: true,
+        touchmoveTwoFingers: true,
+        keyboard: "always",
+        navbar: ["zoom", "move", "gyroscope", "fullscreen"],
+        loadingTxt: "Loading the room",
+        plugins: [[MarkersPlugin, { markers: markersOf(first) }], GyroscopePlugin],
+      });
+      const plugin = instance.getPlugin<MarkersPlugin>(MarkersPlugin);
+      plugin.addEventListener("select-marker", ({ marker }) => {
+        const target = scenes.findIndex((s) => s.id === marker.data?.toSceneId);
+        if (target >= 0) setIndex(target);
+      });
+      viewer.current = instance;
+      markers.current = plugin;
     });
-    const plugin = instance.getPlugin<MarkersPlugin>(MarkersPlugin);
-    plugin.addEventListener("select-marker", ({ marker }) => {
-      const target = scenes.findIndex((s) => s.id === marker.data?.toSceneId);
-      if (target >= 0) setIndex(target);
-    });
-    viewer.current = instance;
-    markers.current = plugin;
     return () => {
-      instance.destroy();
+      cancelAnimationFrame(frame);
+      instance?.destroy();
       viewer.current = null;
       markers.current = null;
     };
