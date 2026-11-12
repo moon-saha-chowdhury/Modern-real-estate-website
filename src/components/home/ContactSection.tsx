@@ -38,18 +38,19 @@ export function ContactSection() {
           <TextReveal
             id="contact-title"
             className="font-display text-display-lg"
-            lines={["Let's build", "something", "*meaningful.*"]}
+            lines={["Arrange a", "private", "*viewing.*"]}
           />
           <Reveal className="flex flex-col gap-10">
             <p className="max-w-sm text-lead text-fg-muted">
               Buying a home, visiting a site or bringing land to the table: tell us what you have in
-              mind.
+              mind, and a member of the team will come back to you personally.
             </p>
             <div className="flex flex-col gap-3 border-t border-rule pt-6 text-small">
               {contact.email || contact.phone ? (
                 <>
                   {contact.email && <a href={`mailto:${contact.email}`}>{contact.email}</a>}
                   {contact.phone && <a href={`tel:${contact.phone}`}>{contact.phone}</a>}
+                  {contact.officeHours && <p className="text-fg-muted">{contact.officeHours}</p>}
                 </>
               ) : (
                 <p className="text-fg-muted">Office phone and email will be published shortly.</p>

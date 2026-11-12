@@ -8,7 +8,7 @@ test.describe("homepage", () => {
     await expect(page.locator("main section")).toHaveCount(11);
     await expect(page.locator("main section[aria-labelledby]")).toHaveCount(11);
     await expect(page.locator("#hero-title")).toContainText("Building spaces.");
-    await expect(page.locator("#contact-title")).toContainText("meaningful");
+    await expect(page.locator("#contact-title")).toContainText("private");
   });
 
   test("selected work lists each featured project as a full-width card", async ({ page }) => {
