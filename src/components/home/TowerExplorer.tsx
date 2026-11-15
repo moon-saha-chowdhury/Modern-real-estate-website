@@ -489,6 +489,9 @@ export function TowerExplorer({ title }: BuildingTransformationProps) {
               <ArrowLeft aria-hidden="true" strokeWidth={1.5} className="size-4" />
               {EXPLORER_COPY.back}
             </button>
+            <Link href="/design" className={buttonClasses("outline", "dark")}>
+              {EXPLORER_COPY.design}
+            </Link>
             <Link href="/contact" className={buttonClasses("primary", "dark")}>
               {EXPLORER_COPY.request}
             </Link>

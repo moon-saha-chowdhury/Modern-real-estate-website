@@ -31,6 +31,7 @@ export const EXPLORER_COPY = {
   sample: "Illustrative concept · sample figures",
   back: "Back to tower",
   request: "Request floor plan",
+  design: "Design this residence",
   roomHint: "Choose a room to step inside",
   exitRoom: "Back to residence",
 } as const;
