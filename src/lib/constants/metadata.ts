@@ -39,6 +39,11 @@ export const pageMetadata = {
     description:
       "Residential and commercial development, architecture, engineering, project management and landowner partnership.",
   },
+  design: {
+    title: "Design your residence",
+    description:
+      "Walk a sample Meridian apartment in 3D: move furniture, repaint the walls and change the floors, then share the result.",
+  },
   contact: {
     title: "Contact",
     description:
