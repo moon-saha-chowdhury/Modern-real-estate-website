@@ -29,4 +29,5 @@ export const portfolioNav: NavItem[] = [
   { label: "Upcoming", href: "/projects?status=upcoming" },
   { label: "Ongoing", href: "/projects?status=ongoing" },
   { label: "Completed", href: "/projects?status=completed" },
+  { label: "Design a residence", href: "/design" },
 ];
