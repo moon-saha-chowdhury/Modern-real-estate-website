@@ -543,7 +543,7 @@ export function TowerExplorer({ title }: BuildingTransformationProps) {
               "absolute inset-0 z-30 size-full object-cover transition-opacity ease-meridian",
               clip === key
                 ? "opacity-100 duration-300"
-                : "pointer-events-none opacity-0 duration-500",
+                : "pointer-events-none opacity-0 duration-700",
             )}
           >
             <source src={`${src}.webm`} type="video/webm" />
