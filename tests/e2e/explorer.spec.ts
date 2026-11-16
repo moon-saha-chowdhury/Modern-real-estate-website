@@ -7,7 +7,7 @@ test.use({
   },
 });
 
-test.describe("hero tower explorer", () => {
+test.describe.skip("hero tower explorer (kept for the old hero)", () => {
   test.describe.configure({ mode: "serial" });
   test.use({ viewport: { width: 1440, height: 900 } });
 
@@ -72,5 +72,28 @@ test.describe("hero tower explorer", () => {
     await expect(hero).toHaveAttribute("data-view", "residence");
     await expect(hero.getByRole("button", { name: "Back to tower" })).toBeVisible();
     await context.close();
+  });
+});
+
+test.describe("hero scroll film", () => {
+  test.use({ viewport: { width: 1440, height: 900 } });
+
+  test("scrolling takes the building to the plan and into a room in 360°", async ({ page }) => {
+    await page.goto("/");
+    const hero = page.locator("[data-hero-root]");
+    await expect(hero.locator("#hero-title")).toContainText("Building spaces.");
+    await expect(hero).toHaveAttribute("data-view", "film");
+
+    const scrollTo = (f: number) =>
+      page.evaluate((f) => {
+        const h = document.querySelector<HTMLElement>("[data-hero-root]")!;
+        window.scrollTo(0, h.offsetTop + f * (h.offsetHeight - innerHeight));
+      }, f);
+
+    await scrollTo(0.6);
+    await expect(hero.getByText("Explore the floor")).toBeVisible();
+    await scrollTo(0.98);
+    await expect(hero).toHaveAttribute("data-view", "room");
+    await expect(hero.locator(".psv-container canvas")).toBeVisible({ timeout: 20000 });
   });
 });
