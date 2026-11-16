@@ -116,9 +116,9 @@ export const residences: Residence[] = [
   },
 ];
 
-/** Twenty residential floors, lowest first. Sample prices rise with the view. */
-export const towerFloors: TowerFloor[] = Array.from({ length: 20 }, (_, i) => ({
+/** Four floors, lowest first. Sample prices rise with the view. */
+export const towerFloors: TowerFloor[] = Array.from({ length: 4 }, (_, i) => ({
   level: EXPLORER_FIRST_LEVEL + i,
   residenceId: "residence-a",
-  priceFrom: 1_100_000 + i * 45_000,
+  priceFrom: 1_250_000 + i * 120_000,
 }));

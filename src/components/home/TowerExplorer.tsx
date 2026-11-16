@@ -69,10 +69,11 @@ export function TowerExplorer({ title }: BuildingTransformationProps) {
   const backOne = useRef<() => void>(() => {});
 
   const isOpen = open !== null;
-  const { left, right, top, bottom } = EXPLORER_GEOMETRY;
-  const band = (bottom - top) / towerFloors.length;
+  const { left, right, edges } = EXPLORER_GEOMETRY;
+  const top = edges[edges.length - 1];
+  const bottom = edges[0];
   /** Vertical centre of a floor on the still (index 0 is the lowest floor). */
-  const centreOf = (index: number) => bottom - band * (index + 0.5);
+  const centreOf = (index: number) => (edges[index] + edges[index + 1]) / 2;
 
   // The panel keeps showing the last residence while it fades out.
   const shown = towerFloors[open ?? lastOpen];
@@ -213,10 +214,20 @@ export function TowerExplorer({ title }: BuildingTransformationProps) {
           isOpen ? "opacity-0 delay-500 motion-reduce:delay-0" : "opacity-100",
         )}
       >
+        {/* Phones show the whole building, smaller; this blurred copy fills the screen around it */}
+        <Image
+          src={EXPLORER_TOWER.src}
+          alt=""
+          aria-hidden="true"
+          fill
+          sizes="50vw"
+          quality={40}
+          className="scale-110 object-cover blur-2xl sm:hidden"
+        />
         {/* Frame box: the still's aspect ratio, sized to cover the hero. The camera push scales it. */}
         <div
           style={cameraStyle}
-          className="absolute top-1/2 left-1/2 aspect-[2752/1536] w-[max(100%,calc(100svh*2752/1536))] max-w-none -translate-1/2 transition-transform duration-[1100ms] ease-meridian will-change-transform motion-reduce:transition-none"
+          className="absolute top-1/2 left-1/2 aspect-[2560/1428] w-[175vw] sm:w-[max(100%,calc(100svh*2560/1428))] max-w-none -translate-1/2 transition-transform duration-[1100ms] ease-meridian will-change-transform motion-reduce:transition-none"
         >
           <Image
             src={EXPLORER_TOWER.src}
@@ -243,7 +254,11 @@ export function TowerExplorer({ title }: BuildingTransformationProps) {
             {towerFloors.map((floor, index) => {
               const active = hovered === index;
               return (
-                <li key={floor.level} className="relative flex-1">
+                <li
+                  key={floor.level}
+                  className="relative"
+                  style={{ flexGrow: edges[index] - edges[index + 1], flexBasis: 0 }}
+                >
                   <button
                     ref={(node) => {
                       floorRefs.current[index] = node;
@@ -257,8 +272,12 @@ export function TowerExplorer({ title }: BuildingTransformationProps) {
                     onBlur={() => setHovered(null)}
                     onClick={() => enter(index)}
                     className={cn(
-                      "absolute inset-0 block w-full cursor-pointer border-y transition-colors duration-200 outline-none focus-visible:border-accent",
-                      active ? "border-fg/80 bg-fg/15" : "border-transparent bg-transparent",
+                      "absolute inset-0 block w-full cursor-pointer border-y transition-colors duration-500 ease-meridian outline-none focus-visible:border-accent",
+                      active
+                        ? "border-fg/80 bg-fg/10"
+                        : hovered !== null
+                          ? "border-transparent bg-ink/45"
+                          : "border-transparent bg-transparent",
                     )}
                   >
                     <span
@@ -274,16 +293,15 @@ export function TowerExplorer({ title }: BuildingTransformationProps) {
             })}
           </ul>
 
-          {/* Floor card (lg+): beside the tower, level with the floor it describes */}
+          {/* Floor card (lg+): on the facade, at the left end of the floor it describes */}
           <div
             aria-hidden="true"
             className={cn(
               "pointer-events-none absolute hidden -translate-y-1/2 items-center transition-[opacity,top] duration-300 ease-meridian lg:flex",
               preview ? "opacity-100" : "opacity-0",
             )}
-            style={{ left: pct(right), top: pct(centreOf(hovered ?? lastOpen)) }}
+            style={{ left: pct(left + 0.02), top: pct(centreOf(hovered ?? lastOpen)) }}
           >
-            <span className="h-px w-10 bg-fg/60 xl:w-16" />
             {preview && previewResidence && (
               <span className="flex items-center gap-4 border border-fg/20 bg-ink/70 px-4 py-3 whitespace-nowrap backdrop-blur-md">
                 <span className="flex flex-col items-center">
@@ -317,14 +335,14 @@ export function TowerExplorer({ title }: BuildingTransformationProps) {
           className="pointer-events-none absolute inset-x-0 bottom-0 h-48 bg-linear-to-t from-ink/60 to-transparent"
         />
 
-        {/* Title: over the open sky on desktop, over the water on phones (the tower fills the middle) */}
-        <div className="pointer-events-none absolute inset-x-0 bottom-20 flex flex-col px-gutter [text-shadow:0_2px_28px_rgb(0_0_0/0.4)] lg:top-[calc(var(--spacing-nav)+clamp(3rem,14vh,9rem))] lg:bottom-auto">
+        {/* Title: in the open sky to the right on desktop, under the building on phones */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-20 flex flex-col px-gutter lg:items-end lg:text-right [text-shadow:0_2px_28px_rgb(0_0_0/0.4)] lg:top-[calc(var(--spacing-nav)+clamp(1.5rem,6vh,4rem))] lg:bottom-auto">
           <TextReveal
             as="h1"
             id="hero-title"
             immediate
             delay={0.15}
-            className="font-display text-display-md lg:text-display-hero"
+            className="font-display text-display-md lg:max-w-[16vw] lg:text-[clamp(1.75rem,2.4vw,2.75rem)] lg:leading-[1.05]"
             lines={title}
           />
         </div>

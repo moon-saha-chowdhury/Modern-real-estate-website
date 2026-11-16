@@ -35,10 +35,13 @@ export interface TowerFloor {
   priceFrom: number;
 }
 
-/** Where the residential floors sit on the tower still, as fractions of the image (0–1). */
+/**
+ * Where the floors sit on the building still, as fractions of the image (0–1). `edges` are the
+ * floor lines from the bottom of the lowest floor up to the top of the highest one, so the
+ * floors need not be the same height.
+ */
 export interface TowerGeometry {
   left: number;
   right: number;
-  top: number;
-  bottom: number;
+  edges: readonly number[];
 }
