@@ -49,5 +49,5 @@ export const EXPLORER_CLIPS = {
   /** The views swap underneath this long after the clip starts (it has faded in by then). */
   swapAfterMs: 400,
   /** If a clip never finishes (stalled download), carry on without it. */
-  timeoutMs: 6000,
+  timeoutMs: 8000,
 } as const;

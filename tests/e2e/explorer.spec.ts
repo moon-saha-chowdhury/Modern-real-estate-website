@@ -9,6 +9,8 @@ test.use({
 
 test.describe("hero tower explorer", () => {
   test.describe.configure({ mode: "serial" });
+  // Headless Chrome decodes the flight clips in software, well below real time.
+  test.setTimeout(90000);
   test.use({ viewport: { width: 1440, height: 900 } });
 
   test("hovering a floor shows its card; choosing it opens the residence", async ({ page }) => {
