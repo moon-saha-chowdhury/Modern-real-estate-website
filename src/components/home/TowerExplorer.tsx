@@ -257,7 +257,8 @@ export function TowerExplorer({ title }: BuildingTransformationProps) {
                 <li
                   key={floor.level}
                   className="relative"
-                  style={{ flexGrow: edges[index] - edges[index + 1], flexBasis: 0 }}
+                  // flex-grow below 1 in total would leave part of the list empty, so scale it up
+                  style={{ flexGrow: (edges[index] - edges[index + 1]) * 100, flexBasis: 0 }}
                 >
                   <button
                     ref={(node) => {
@@ -272,18 +273,17 @@ export function TowerExplorer({ title }: BuildingTransformationProps) {
                     onBlur={() => setHovered(null)}
                     onClick={() => enter(index)}
                     className={cn(
-                      "absolute inset-0 block w-full cursor-pointer border-y transition-colors duration-500 ease-meridian outline-none focus-visible:border-accent",
+                      // As in the reel: the floor under the pointer turns to frosted glass.
+                      "absolute inset-0 block w-full cursor-pointer border-y border-transparent transition-[background-color,backdrop-filter] duration-500 ease-meridian outline-none focus-visible:border-accent",
                       active
-                        ? "border-fg/80 bg-fg/10"
-                        : hovered !== null
-                          ? "border-transparent bg-ink/45"
-                          : "border-transparent bg-transparent",
+                        ? "bg-white/40 backdrop-blur-[1.5px] backdrop-saturate-50"
+                        : "bg-transparent backdrop-blur-none",
                     )}
                   >
                     <span
                       aria-hidden="true"
                       className={cn(
-                        "absolute top-1/2 left-1/2 size-3 -translate-1/2 rounded-full bg-accent shadow-[0_0_0_5px_rgb(255_255_255/0.2)] transition-[opacity,scale] duration-300 ease-meridian",
+                        "absolute top-1/2 left-1/2 size-2 -translate-1/2 rounded-full bg-white shadow-[0_0_0_4px_rgb(255_255_255/0.35)] transition-[opacity,scale] duration-300 ease-meridian",
                         active ? "scale-100 opacity-100" : "scale-50 opacity-0",
                       )}
                     />
