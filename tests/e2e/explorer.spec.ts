@@ -9,6 +9,8 @@ test.use({
 
 test.describe("hero tower explorer", () => {
   test.describe.configure({ mode: "serial" });
+  // Headless Chrome decodes the flight clips in software, well below real time.
+  test.setTimeout(90000);
   test.use({ viewport: { width: 1440, height: 900 } });
 
   test("hovering a floor shows its card; choosing it opens the residence", async ({ page }) => {
@@ -16,18 +18,18 @@ test.describe("hero tower explorer", () => {
     const hero = page.locator("[data-hero-root]");
     await expect(hero.locator("#hero-title")).toContainText("Building spaces.");
     const floors = hero.getByRole("list", { name: "Floors" }).getByRole("button");
-    await expect(floors).toHaveCount(20);
+    await expect(floors).toHaveCount(4);
 
-    const floor = hero.getByRole("button", { name: /^Floor 15,/ });
+    const floor = hero.getByRole("button", { name: /^Floor 3,/ });
     await floor.hover();
-    await expect(hero.getByText("Available · from $1.69M")).toBeVisible();
+    await expect(hero.getByText("Available · from $1.49M")).toBeVisible();
 
     await floor.click();
     await expect(hero).toHaveAttribute("data-view", "residence");
-    const panel = hero.getByRole("group", { name: "Residence A, floor 15" });
+    const panel = hero.getByRole("group", { name: "Residence A, floor 3" });
     await expect(panel.getByRole("heading", { name: "Residence A" })).toBeVisible();
     await expect(panel.getByText("Sample residence")).toBeVisible();
-    await expect(panel.getByRole("button", { name: "Back to tower" })).toBeFocused();
+    await expect(panel.getByRole("button", { name: "Back to building" })).toBeFocused();
 
     // A room: its note replaces the summary on hover; choosing it opens its 360° view in place.
     const living = panel.getByRole("button", { name: "Step inside: Living room" }).last();
@@ -68,9 +70,9 @@ test.describe("hero tower explorer", () => {
     expect(box!.x).toBeGreaterThan(0);
     expect(box!.x + box!.width).toBeLessThan(390);
 
-    await hero.getByRole("button", { name: /^Floor 8,/ }).tap();
+    await hero.getByRole("button", { name: /^Floor 2,/ }).tap();
     await expect(hero).toHaveAttribute("data-view", "residence");
-    await expect(hero.getByRole("button", { name: "Back to tower" })).toBeVisible();
+    await expect(hero.getByRole("button", { name: "Back to building" })).toBeVisible();
     await context.close();
   });
 });
